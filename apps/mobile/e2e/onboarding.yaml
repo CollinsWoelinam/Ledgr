@@ -1,0 +1,4 @@
+appId: com.ledgr.app
+---
+- launchApp
+# TODO: welcome → permission → providers → import → dashboard

@@ -1,0 +1,13 @@
+node_modules/
+.expo/
+dist/
+build/
+coverage/
+*.apk
+*.aab
+*.keystore
+.env*
+!.env.example
+.DS_Store
+# Real SMS samples must be anonymized before they land in fixtures
+packages/parser/fixtures/raw/

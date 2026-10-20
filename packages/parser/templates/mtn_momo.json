@@ -1,0 +1,9 @@
+[
+  {
+    "provider": "mtn_momo",
+    "version": 3,
+    "type": "transfer_out",
+    "pattern": "Payment made for (?<currency>[A-Z]{3}) ?(?<amount>[\\d,.]+) to (?<name>.+?)\\. .*Fee was (?<fee_currency>[A-Z]{3}) ?(?<fee>[\\d,.]+).*balance: (?<balance_currency>[A-Z]{3}) ?(?<balance>[\\d,.]+).*Transaction Id: (?<ref>\\d+)",
+    "date_format": "yyyy-MM-dd HH:mm:ss"
+  }
+]

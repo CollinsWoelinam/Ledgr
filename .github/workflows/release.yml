@@ -1,0 +1,10 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # TODO: build signed APK (keystore from secrets) and attach to GitHub Release

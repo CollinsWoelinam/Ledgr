@@ -1,0 +1,5 @@
+[
+  { "id": "mtn_momo", "name": "MTN MoMo", "senderIds": ["MobileMoney"], "currency": "GHS" },
+  { "id": "telecel_cash", "name": "Telecel Cash", "senderIds": ["T-CASH"], "currency": "GHS" },
+  { "id": "at_money", "name": "AT Money", "senderIds": ["AT_MONEY"], "currency": "GHS" }
+]

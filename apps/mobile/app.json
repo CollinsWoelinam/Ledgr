@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Ledgr",
+    "slug": "ledgr",
+    "scheme": "ledgr",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "com.ledgr.app",
+      "permissions": ["READ_SMS", "RECEIVE_SMS", "USE_BIOMETRIC", "POST_NOTIFICATIONS"]
+    },
+    "plugins": ["expo-router"]
+  }
+}

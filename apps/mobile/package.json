@@ -1,0 +1,15 @@
+{
+  "name": "@ledgr/mobile",
+  "version": "0.1.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "e2e": "maestro test e2e"
+  },
+  "dependencies": {
+    "@ledgr/parser": "*"
+  }
+}
