@@ -1,61 +1,77 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { useRef, useState } from 'react';
-import { FlatList, useWindowDimensions, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Text } from '@/ui/components';
-import { space, useColors } from '@/ui/theme';
+import { useColors } from '@/ui/theme';
 
-// FR-1.1: earn trust before asking for SMS access.
-const SLIDES = [
-  { icon: 'chatbubbles', title: 'Your MoMo alerts, organised', body: 'Ledgr reads your mobile money SMS and turns them into a spending record. No typing.' },
-  { icon: 'lock-closed', title: 'Your SMS never leave this phone', body: 'Messages are read on your device. Nothing is uploaded unless you turn on encrypted backup.' },
-  { icon: 'pie-chart', title: 'See where your money goes', body: 'Automatic categories, monthly budgets and a clear view of fees you pay.' },
-] as const;
+const BG = '#0B221C';
 
+// FR-1.1: earn trust before asking for SMS access, by showing what Ledgr does with one message.
 export default function WelcomeScreen() {
   const c = useColors();
-  const { width } = useWindowDimensions();
-  const [index, setIndex] = useState(0);
-  const list = useRef<FlatList>(null);
-  const last = index === SLIDES.length - 1;
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: c.bg }}>
-      <FlatList
-        ref={list}
-        data={SLIDES}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(s) => s.title}
-        onMomentumScrollEnd={(e) => setIndex(Math.round(e.nativeEvent.contentOffset.x / width))}
-        renderItem={({ item }) => (
-          <View style={{ width, padding: space.xxl, justifyContent: 'center', gap: space.lg }}>
-            <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: c.primarySoft, alignItems: 'center', justifyContent: 'center' }}>
-              <Ionicons name={item.icon} size={42} color={c.primary} />
-            </View>
-            <Text variant="display">{item.title}</Text>
-            <Text muted style={{ fontSize: 17, lineHeight: 24 }}>
-              {item.body}
+    <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
+      <StatusBar style="light" />
+      <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 12, paddingBottom: 16, gap: 24 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: c.accent, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="reader-outline" size={18} color={c.onAccent} />
+          </View>
+          <Text variant="heading" size={20} weight="bold" color={c.heroText}>
+            Ledgr
+          </Text>
+        </View>
+
+        <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={{ flex: 1, justifyContent: 'center', gap: 14 }}>
+          <View style={{ alignSelf: 'flex-start', maxWidth: 290, backgroundColor: '#1A3A31', borderRadius: 20, borderBottomLeftRadius: 6, paddingVertical: 14, paddingHorizontal: 16, gap: 6 }}>
+            <Text variant="overline" size={11} color={c.heroMuted}>
+              SMS · MobileMoney
+            </Text>
+            <Text size={13} color="#D4E3DC" style={{ lineHeight: 20 }}>
+              Payment made for GHS 45.00 to KWAME MENSAH 0244000172. Current Balance: GHS 1,370.36. Fee was GHS 0.34…
             </Text>
           </View>
-        )}
-      />
-      <View style={{ padding: space.xl, gap: space.lg }}>
-        <View style={{ flexDirection: 'row', gap: space.sm, justifyContent: 'center' }} accessibilityLabel={`Slide ${index + 1} of ${SLIDES.length}`}>
-          {SLIDES.map((s, i) => (
-            <View key={s.title} style={{ width: i === index ? 20 : 8, height: 8, borderRadius: 4, backgroundColor: i === index ? c.primary : c.track }} />
-          ))}
+          <View style={{ alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: c.heroAlt, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="arrow-down" size={20} color={c.accent} />
+          </View>
+          <View style={{ alignSelf: 'flex-end', width: 300, maxWidth: '100%', backgroundColor: '#FFFFFF', borderRadius: 22, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, elevation: 10, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 20, shadowOffset: { width: 0, height: 16 } }}>
+            <View style={{ width: 42, height: 42, borderRadius: 14, backgroundColor: '#D9F4F0', alignItems: 'center', justifyContent: 'center' }}>
+              <Ionicons name="people-outline" size={20} color="#0F766E" />
+            </View>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text variant="label" weight="semibold" color="#0D1714">
+                Kwame Mensah
+              </Text>
+              <Text variant="caption" color="#56635D">
+                Transfers · just now
+              </Text>
+            </View>
+            <Text numeric weight="bold" size={16} color="#0D1714">
+              −45.00
+            </Text>
+          </View>
+          <View style={{ alignSelf: 'flex-end', backgroundColor: c.accent, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 }}>
+            <Text variant="caption" weight="semibold" color={c.onAccent}>
+              Sorted automatically
+            </Text>
+          </View>
         </View>
-        <Button
-          title={last ? 'Get started' : 'Next'}
-          onPress={() => {
-            if (last) return router.push('/permissions');
-            list.current?.scrollToIndex({ index: index + 1 });
-            setIndex(index + 1);
-          }}
-        />
+
+        <View style={{ gap: 12 }}>
+          <Text variant="display" size={36} color={c.heroText} style={{ lineHeight: 39 }} accessibilityRole="header">
+            Your MoMo alerts, turned into a money diary.
+          </Text>
+          <Text size={16} color="#B9CDC5" style={{ lineHeight: 24 }}>
+            Ledgr reads mobile money SMS on your phone and sorts every cedi. Nothing to type. Nothing uploaded.
+          </Text>
+        </View>
+
+        <View style={{ gap: 4 }}>
+          <Button title="Get started" kind="accent" onPress={() => router.push('/permissions')} />
+          <Button title="Try it with demo data" kind="ghost" textColor={c.accent} style={{ height: 44 }} onPress={() => router.push({ pathname: '/import', params: { source: 'demo' } })} />
+        </View>
       </View>
     </SafeAreaView>
   );

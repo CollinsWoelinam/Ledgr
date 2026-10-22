@@ -1,11 +1,14 @@
-import * as Haptics from 'expo-haptics';
-import { Stack, useLocalSearchParams } from 'expo-router';
-import { Alert, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { bundledConfig } from '@ledgr/parser';
+import { useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+import { View } from 'react-native';
 import { counterpartyKey } from '@/features/categorization/categorize';
-import { formatDateTime, formatMoney } from '@/lib/format';
+import { formatAmount, formatMoney } from '@/lib/format';
+import { highlight } from '@/lib/highlight';
 import { useCategory, useLedger } from '@/state/ledger';
-import { Card, CategoryIcon, Chip, EmptyState, Screen, Text } from '@/ui/components';
-import { space, useColors } from '@/ui/theme';
+import { Card, CategoryIcon, Chip, EmptyState, Screen, ScreenHeader, Text, titleCase, Toggle } from '@/ui/components';
+import { useColors } from '@/ui/theme';
 
 const TYPE_LABELS: Record<string, string> = {
   transfer_out: 'Sent',
@@ -27,79 +30,139 @@ export default function TransactionDetailScreen() {
   const category = useCategory(tx?.categoryId);
   const key = tx && counterpartyKey(tx);
   const others = useLedger((s) => (key ? s.transactions.filter((t) => t.id !== id && counterpartyKey(t) === key).length : 0));
+  const [applyAll, setApplyAll] = useState(true);
 
-  if (!tx) return <EmptyState icon="help-circle" title="Transaction not found" body="It may have been deleted." />;
+  if (!tx) {
+    return (
+      <Screen>
+        <ScreenHeader title="Transaction" back />
+        <EmptyState icon="help-circle-outline" title="Transaction not found" body="It may have been deleted." />
+      </Screen>
+    );
+  }
+
+  const provider = bundledConfig.providers.find((p) => p.id === tx.provider)?.name;
+  const name = titleCase(tx.counterpartyName ?? 'Unknown');
+  const when = new Date(tx.occurredAt);
+  const dateLine = [
+    when.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }),
+    when.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+    tx.counterpartyNumber?.replace(/^(\d{3})(\d{3})(\d+)$/, '$1 $2 $3'),
+  ].filter(Boolean);
+  const canApplyAll = !!key;
 
   const pick = (categoryId: string) => {
-    if (categoryId === tx.categoryId) return;
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    if (!key) return setCategory(tx.id, categoryId, false);
-    const name = categories.find((cat) => cat.id === categoryId)?.name;
-    const scope = others > 0 ? `all ${others + 1} transactions with ${tx.counterpartyName}, and future ones` : `future transactions with ${tx.counterpartyName}`;
-    Alert.alert(`Move to ${name}?`, `Apply this to ${scope}?`, [
-      { text: 'Just this one', onPress: () => setCategory(tx.id, categoryId, false) },
-      { text: 'Apply to all', onPress: () => setCategory(tx.id, categoryId, true) },
-    ]);
+    if (categoryId !== tx.categoryId) setCategory(tx.id, categoryId, canApplyAll && applyAll);
   };
-
-  const amount = tx.direction === 'in' ? tx.amountMinor : -tx.amountMinor;
-  const rows: [string, string | undefined][] = [
-    ['Date', formatDateTime(tx.occurredAt)],
-    ['Fee', formatMoney(tx.feeMinor, tx.currency)],
-    ['Tax / levy', formatMoney(tx.taxMinor, tx.currency)],
-    ['Balance after', tx.balanceAfterMinor === undefined ? undefined : formatMoney(tx.balanceAfterMinor, tx.currency)],
-    ['Number', tx.counterpartyNumber],
-    ['Transaction ID', tx.externalRef],
-    ['Reverses', tx.reversesRef],
-    ['Source', tx.source === 'demo' ? 'Demo data' : tx.source === 'sms' ? 'SMS' : 'Manual'],
-  ];
 
   return (
     <Screen>
-      <Stack.Screen options={{ title: TYPE_LABELS[tx.type] }} />
-      <View style={{ alignItems: 'center', gap: space.sm, paddingVertical: space.md }}>
-        <CategoryIcon category={category} size={56} />
-        <Text variant="heading" style={{ textAlign: 'center' }}>
-          {tx.counterpartyName ?? 'Unknown'}
-        </Text>
-        <Text variant="display" color={tx.direction === 'in' ? c.in : c.text}>
-          {formatMoney(amount, tx.currency, { sign: true })}
-        </Text>
-      </View>
-
-      <Card style={{ paddingVertical: space.xs }}>
-        {rows
-          .filter(([, v]) => v)
-          .map(([label, value], i) => (
-            <View key={label} style={{ flexDirection: 'row', justifyContent: 'space-between', gap: space.md, paddingVertical: space.md, borderTopWidth: i ? 1 : 0, borderColor: c.border }}>
-              <Text muted>{label}</Text>
-              <Text variant="label" selectable style={{ flexShrink: 1, textAlign: 'right' }}>
-                {value}
+      <ScreenHeader
+        title={TYPE_LABELS[tx.type] ?? 'Transaction'}
+        back
+        right={
+          provider ? (
+            <View style={{ backgroundColor: c.okSoft, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 }}>
+              <Text variant="caption" weight="semibold" color={c.okInk}>
+                {provider}
               </Text>
             </View>
-          ))}
-      </Card>
+          ) : undefined
+        }
+      />
 
-      <View style={{ gap: space.sm }}>
-        <Text variant="heading">Category</Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-          {categories.map((cat) => (
-            <Chip key={cat.id} label={cat.name} color={cat.color} selected={cat.id === tx.categoryId} onPress={() => pick(cat.id)} />
-          ))}
+      <View style={{ alignItems: 'center', gap: 6, paddingTop: 6, paddingBottom: 4 }}>
+        <View style={{ marginBottom: 4 }}>
+          <CategoryIcon category={category} size={60} />
         </View>
+        <Text variant="label" size={17} weight="semibold" style={{ textAlign: 'center' }}>
+          {name}
+        </Text>
+        <Text variant="display" size={44} color={tx.direction === 'in' ? c.positive : c.ink} adjustsFontSizeToFit numberOfLines={1}>
+          {tx.direction === 'in' ? '+' : '−'}
+          {formatMoney(tx.amountMinor, tx.currency)}
+        </Text>
+        <Text variant="caption" size={13} muted>
+          {dateLine.join(' · ')}
+        </Text>
       </View>
 
       {tx.smsBody && (
-        <View style={{ gap: space.sm }}>
-          <Text variant="heading">Original SMS</Text>
-          <Card>
-            <Text selectable>{tx.smsBody}</Text>
-          </Card>
-          <Text variant="caption" muted>
-            Stored only on this phone.
+        <Card style={{ borderRadius: 22, gap: 10 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Ionicons name="shield-checkmark-outline" size={16} color={c.okInk} />
+            <Text variant="caption" weight="semibold" color={c.okInk}>
+              Read from your SMS, on this phone
+            </Text>
+          </View>
+          <Text size={13} style={{ lineHeight: 21 }} selectable>
+            {highlight(tx.smsBody, [
+              formatMoney(tx.amountMinor, tx.currency),
+              [tx.counterpartyName, tx.counterpartyNumber].filter(Boolean).join(' '),
+              tx.balanceAfterMinor === undefined ? undefined : formatMoney(tx.balanceAfterMinor, tx.currency),
+              tx.externalRef,
+              formatMoney(tx.feeMinor, tx.currency),
+              formatMoney(tx.taxMinor, tx.currency),
+            ]).map((seg, i) =>
+              seg.match ? (
+                <Text key={i} size={13} weight="medium" style={{ backgroundColor: c.highlight }}>
+                  {seg.text}
+                </Text>
+              ) : (
+                seg.text
+              ),
+            )}
           </Text>
-        </View>
+        </Card>
       )}
+
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <Tile label="Fee" value={formatAmount(tx.feeMinor)} />
+        <Tile label="E-levy" value={formatAmount(tx.taxMinor)} />
+        <Tile label="Balance after" value={tx.balanceAfterMinor === undefined ? '—' : formatAmount(tx.balanceAfterMinor)} />
+      </View>
+      {tx.externalRef && (
+        <Text variant="caption" muted selectable style={{ textAlign: 'center' }}>
+          Transaction ID {tx.externalRef}
+          {tx.reversesRef ? ` · reverses ${tx.reversesRef}` : ''}
+          {tx.source === 'demo' ? ' · demo data' : ''}
+        </Text>
+      )}
+
+      <Card style={{ borderRadius: 22, gap: 14 }}>
+        <Text variant="heading">Category</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {categories.map((cat) => (
+            <Chip key={cat.id} label={cat.name} dot={cat.color} selected={cat.id === tx.categoryId} onPress={() => pick(cat.id)} />
+          ))}
+        </View>
+        {canApplyAll && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 12, borderTopWidth: 1, borderColor: c.divider }}>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text variant="label" size={14}>
+                Apply to all from {name}
+              </Text>
+              <Text variant="caption" muted>
+                {others > 0 ? `${others} other transaction${others > 1 ? 's' : ''}, and future ones` : 'Future transactions too'}
+              </Text>
+            </View>
+            <Toggle value={applyAll} onChange={setApplyAll} label={`Apply category changes to all transactions from ${name}`} />
+          </View>
+        )}
+      </Card>
     </Screen>
+  );
+}
+
+function Tile({ label, value }: { label: string; value: string }) {
+  return (
+    <Card style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 16, gap: 2 }}>
+      <Text variant="caption" muted>
+        {label}
+      </Text>
+      <Text numeric weight="semibold" size={16} numberOfLines={1} adjustsFontSizeToFit>
+        {value}
+      </Text>
+    </Card>
   );
 }

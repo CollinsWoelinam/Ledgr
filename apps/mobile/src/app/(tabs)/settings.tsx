@@ -1,16 +1,20 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { bundledConfig } from '@ledgr/parser';
 import { router } from 'expo-router';
+import type { ReactNode } from 'react';
 import { Alert, Pressable, View } from 'react-native';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { Card, ListRow, Screen, Text } from '@/ui/components';
-import { space, useColors } from '@/ui/theme';
+import { Button, Card, ListRow, Screen, ScreenHeader, Text, Toggle } from '@/ui/components';
+import { useColors } from '@/ui/theme';
 
-// FR-6: control. Lock, backup and export arrive with their features.
+// FR-6: control. App lock, backup and export are shown but switched off until they exist.
 export default function SettingsScreen() {
   const c = useColors();
-  const { monthStartDay, setMonthStartDay, currency, dataSource } = useSettings();
+  const { monthStartDay, setMonthStartDay, currency, dataSource, providers } = useSettings();
   const resetSettings = useSettings((s) => s.reset);
   const { categories, reviewQueue, reset: resetLedger, loadDemo } = useLedger();
+  const wallets = bundledConfig.providers.filter((p) => providers.includes(p.id)).map((p) => p.name).join(', ') || 'None';
 
   // FR-6.3: delete all data in one action.
   const deleteAll = () =>
@@ -28,64 +32,104 @@ export default function SettingsScreen() {
     ]);
 
   return (
-    <Screen>
-      <Section title="Budgets">
+    <Screen tab>
+      <ScreenHeader title="Settings" />
+
+      <Card tone="hero" style={{ borderRadius: 24, padding: 18, gap: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <View style={{ width: 40, height: 40, borderRadius: 14, backgroundColor: c.accent, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="shield-checkmark-outline" size={22} color={c.onAccent} />
+          </View>
+          <Text variant="heading" size={18} color={c.heroText} style={{ flex: 1 }}>
+            Everything stays on this phone
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+          {['SMS read on-device', 'Nothing uploaded', 'No ads or trackers'].map((label) => (
+            <View key={label} style={{ backgroundColor: c.heroAlt, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 }}>
+              <Text variant="caption" color="#D4E3DC">
+                {label}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </Card>
+
+      <Group title="Money">
+        <ListRow title="Month starts on" detail="Match your payday" right={<Stepper value={monthStartDay} onChange={setMonthStartDay} />} />
+        <ListRow title="Wallets" value={wallets} divider />
+        <ListRow title="Currency" value={currency} divider />
+      </Group>
+
+      <Group title="Data">
+        <ListRow title="Categories & rules" value={String(categories.length)} onPress={() => router.push('/categories')} />
         <ListRow
-          icon="calendar"
-          title="Month starts on"
-          detail="Set this to your payday"
-          right={<Stepper value={monthStartDay} onChange={setMonthStartDay} />}
+          title="Needs review"
+          divider
+          onPress={() => router.push('/review')}
+          right={
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              {reviewQueue.length > 0 && (
+                <View style={{ minWidth: 22, height: 22, borderRadius: 11, backgroundColor: c.noticeInk, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 }}>
+                  <Text variant="caption" weight="bold" color="#FFFFFF">
+                    {reviewQueue.length}
+                  </Text>
+                </View>
+              )}
+              <Ionicons name="chevron-forward" size={18} color={c.muted} />
+            </View>
+          }
         />
-        <ListRow icon="cash" title="Currency" detail={currency} />
-      </Section>
+        {dataSource === 'demo' && <ListRow title="Reset demo data" detail="Restore the original sample transactions" divider onPress={loadDemo} />}
+        <ListRow title="Export CSV or PDF" detail="Coming in v1.1" divider disabled />
+      </Group>
 
-      <Section title="Data">
-        <ListRow icon="pricetags" title="Categories" detail={`${categories.length} categories`} onPress={() => router.push('/categories')} />
-        <ListRow icon="alert-circle" title="Needs review" detail={`${reviewQueue.length} unrecognised messages`} onPress={() => router.push('/review')} />
-        {dataSource === 'demo' && <ListRow icon="refresh" title="Reset demo data" detail="Restore the original sample transactions" onPress={loadDemo} />}
-        <ListRow icon="download" title="Export CSV or PDF" detail="Coming in v1.1" disabled />
-      </Section>
+      <Group title="Security">
+        <ListRow title="App lock" detail="Fingerprint or PIN · coming soon" right={<Toggle value={false} onChange={() => {}} label="App lock" disabled />} />
+        <ListRow title="Encrypted backup" detail="Locked with your passphrase · coming in v1.1" value="Off" divider disabled />
+      </Group>
 
-      <Section title="Security">
-        <ListRow icon="finger-print" title="App lock" detail="Coming soon" disabled />
-        <ListRow icon="cloud-upload" title="Encrypted backup" detail="Coming in v1.1" disabled />
-      </Section>
-
-      <Section title="Danger zone">
-        <ListRow icon="trash" title="Delete all data" danger onPress={deleteAll} />
-      </Section>
+      <Button title="Delete all data" kind="danger" icon={<Ionicons name="trash-outline" size={18} color={c.danger} />} onPress={deleteAll} />
 
       <Text variant="caption" muted style={{ textAlign: 'center' }}>
-        Ledgr 0.1.0 · Your SMS never leave this phone
+        Ledgr 0.1.0
       </Text>
     </Screen>
   );
-
-  function Stepper({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-    const btn = (label: string, next: number, a11y: string) => (
-      <Pressable accessibilityRole="button" accessibilityLabel={a11y} onPress={() => onChange(next)} style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: c.cardAlt, alignItems: 'center', justifyContent: 'center' }}>
-        <Text variant="heading">{label}</Text>
-      </Pressable>
-    );
-    return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-        {btn('−', value - 1, 'Earlier day')}
-        <Text variant="label" style={{ minWidth: 24, textAlign: 'center' }}>
-          {value}
-        </Text>
-        {btn('+', value + 1, 'Later day')}
-      </View>
-    );
-  }
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <View style={{ gap: space.sm }}>
-      <Text variant="caption" muted style={{ fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+    <View style={{ gap: 6 }}>
+      <Text variant="overline" muted style={{ paddingHorizontal: 4 }}>
         {title}
       </Text>
-      <Card style={{ paddingVertical: space.xs }}>{children}</Card>
+      <Card style={{ borderRadius: 22, paddingVertical: 0 }}>{children}</Card>
+    </View>
+  );
+}
+
+function Stepper({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const c = useColors();
+  const step = (label: string, next: number, a11y: string) => (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={a11y}
+      onPress={() => onChange(next)}
+      style={({ pressed }) => ({ width: 36, height: 36, borderRadius: 11, backgroundColor: c.surface, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}
+    >
+      <Text variant="heading" size={18}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: c.bg, borderRadius: 14, padding: 3 }}>
+      {step('−', value - 1, 'Earlier day')}
+      <Text numeric weight="semibold" size={15} style={{ minWidth: 28, textAlign: 'center' }} accessibilityLiveRegion="polite">
+        {value}
+      </Text>
+      {step('+', value + 1, 'Later day')}
     </View>
   );
 }

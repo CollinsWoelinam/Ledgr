@@ -7,6 +7,13 @@ export function formatMoney(minor: number, currency: string, opts: { sign?: bool
   return `${sign}${currency} ${body}`;
 }
 
+// Minor units → "1,234.50", for places where the currency is already clear.
+export function formatAmount(minor: number, opts: { compact?: boolean } = {}): string {
+  const abs = Math.abs(minor) / 100;
+  const digits = opts.compact && abs >= 1000 ? 0 : 2;
+  return abs.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
+
 export function formatDay(at: number, now = Date.now()): string {
   const d = new Date(at);
   const today = new Date(now);

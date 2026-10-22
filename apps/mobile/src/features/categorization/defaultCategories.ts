@@ -2,16 +2,16 @@ import type { Category, CategoryRule } from '@/db/schema';
 
 // FR-3.1
 export const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'food', name: 'Food', icon: 'fast-food', color: '#E8833A', kind: 'expense', isDefault: true },
-  { id: 'transport', name: 'Transport', icon: 'car', color: '#3B82C4', kind: 'expense', isDefault: true },
-  { id: 'airtime', name: 'Airtime & Data', icon: 'cellular', color: '#D4A017', kind: 'expense', isDefault: true },
-  { id: 'bills', name: 'Bills & Utilities', icon: 'flash', color: '#8B5CF6', kind: 'expense', isDefault: true },
-  { id: 'shopping', name: 'Shopping', icon: 'bag-handle', color: '#DB4F8A', kind: 'expense', isDefault: true },
-  { id: 'transfers', name: 'Transfers to People', icon: 'people', color: '#14A39A', kind: 'expense', isDefault: true },
-  { id: 'income', name: 'Income', icon: 'arrow-down-circle', color: '#2E9E5B', kind: 'income', isDefault: true },
-  { id: 'fees', name: 'Fees', icon: 'receipt', color: '#9A6B4F', kind: 'expense', isDefault: true },
-  { id: 'savings', name: 'Savings', icon: 'wallet', color: '#5B7FD6', kind: 'expense', isDefault: true },
-  { id: 'other', name: 'Other', icon: 'ellipsis-horizontal-circle', color: '#8A8F98', kind: 'expense', isDefault: true },
+  { id: 'food', name: 'Food', icon: 'fast-food-outline', color: '#F28C38', kind: 'expense', isDefault: true },
+  { id: 'transport', name: 'Transport', icon: 'car-outline', color: '#3B82F6', kind: 'expense', isDefault: true },
+  { id: 'airtime', name: 'Airtime & Data', icon: 'cellular-outline', color: '#EAB308', kind: 'expense', isDefault: true },
+  { id: 'bills', name: 'Bills & Utilities', icon: 'flash-outline', color: '#8B5CF6', kind: 'expense', isDefault: true },
+  { id: 'shopping', name: 'Shopping', icon: 'bag-handle-outline', color: '#EC4899', kind: 'expense', isDefault: true },
+  { id: 'transfers', name: 'Transfers to People', icon: 'people-outline', color: '#14B8A6', kind: 'expense', isDefault: true },
+  { id: 'income', name: 'Income', icon: 'arrow-down-outline', color: '#22A05A', kind: 'income', isDefault: true },
+  { id: 'fees', name: 'Fees', icon: 'receipt-outline', color: '#9A6B4F', kind: 'expense', isDefault: true },
+  { id: 'savings', name: 'Savings', icon: 'wallet-outline', color: '#6366F1', kind: 'expense', isDefault: true },
+  { id: 'other', name: 'Other', icon: 'ellipsis-horizontal', color: '#8A948F', kind: 'expense', isDefault: true },
 ];
 
 export const SYSTEM_RULES: CategoryRule[] = [

@@ -1,25 +1,33 @@
-import { Pressable } from 'react-native';
-import { radius, space, useColors } from '../theme';
+import * as Haptics from 'expo-haptics';
+import { Pressable, View } from 'react-native';
+import { radius, useColors } from '../theme';
 import { Text } from './Text';
 
-export function Chip({ label, selected, onPress, color }: { label: string; selected?: boolean; onPress?: () => void; color?: string }) {
+// Selected chips go solid dark. A category colour shows as a dot, never as text colour.
+export function Chip({ label, selected, onPress, dot }: { label: string; selected?: boolean; onPress?: () => void; dot?: string }) {
   const c = useColors();
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected }}
-      onPress={onPress}
+      onPress={() => {
+        Haptics.selectionAsync().catch(() => {});
+        onPress?.();
+      }}
       style={{
-        paddingVertical: space.sm - 1,
-        paddingHorizontal: space.md,
+        height: 38,
+        paddingHorizontal: 14,
         borderRadius: radius.pill,
-        borderWidth: selected ? 2 : 1,
-        borderColor: selected ? (color ?? c.primary) : c.border,
-        backgroundColor: selected ? (color ? `${color}22` : c.primarySoft) : c.card,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        borderWidth: 1,
+        borderColor: selected ? c.inverse : c.chipBorder,
+        backgroundColor: selected ? c.inverse : c.surface,
       }}
     >
-      {/* Category colours are too light for text, so they only tint the border and fill. */}
-      <Text variant="label" color={selected && !color ? c.primary : c.text} style={selected ? { fontWeight: '600' } : undefined}>
+      {dot && <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: dot }} />}
+      <Text variant="label" size={13} weight={selected ? 'semibold' : 'medium'} color={selected ? c.onInverse : c.ink}>
         {label}
       </Text>
     </Pressable>

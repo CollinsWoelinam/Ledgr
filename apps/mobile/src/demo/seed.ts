@@ -1,5 +1,6 @@
 import type { TransactionType } from '@ledgr/parser';
 import type { ReviewItem, Transaction } from '@/db/schema';
+import { formatMoney } from '@/lib/format';
 
 // Demo mode: realistic fake data so the app can be tried without real SMS. Every name and number is invented.
 
@@ -74,6 +75,7 @@ export function seedDemoData(now = new Date()): { transactions: Transaction[]; r
     balance += t.direction === 'in' ? t.amountMinor : -(t.amountMinor + t.feeMinor + t.taxMinor);
     balance = Math.max(balance, 0);
     t.balanceAfterMinor = balance;
+    t.smsBody = smsFor(t);
   }
 
   const reviewQueue: ReviewItem[] = [
@@ -107,8 +109,29 @@ export function seedDemoData(now = new Date()): { transactions: Transaction[]; r
       counterpartyName: name,
       counterpartyNumber: number,
       externalRef: String(ref),
-      occurredAt: Math.round(at),
+      occurredAt: Math.round(at / 1000) * 1000, // whole seconds, as SMS timestamps are
       source: 'demo',
     };
+  }
+}
+
+// The SMS each demo transaction would have come from, in the same wording as the parser's MTN templates.
+function smsFor(t: Omit<Transaction, 'categoryId'>): string {
+  const ghs = (minor = 0) => formatMoney(minor, 'GHS');
+  const who = [t.counterpartyName, t.counterpartyNumber].filter(Boolean).join(' ');
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const d = new Date(t.occurredAt);
+  const stamp = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+  switch (t.type) {
+    case 'transfer_in':
+      return `Payment received for ${ghs(t.amountMinor)} from ${who} Current Balance: ${ghs(t.balanceAfterMinor)}. Available Balance: ${ghs(t.balanceAfterMinor)}. Reference: . Transaction ID: ${t.externalRef}. TRANSACTION FEE: 0.00`;
+    case 'cash_out':
+      return `Cash Out made for ${ghs(t.amountMinor)} to ${who}. Current Balance: ${ghs(t.balanceAfterMinor)}. Fee was ${ghs(t.feeMinor)}. Transaction Id: ${t.externalRef}.`;
+    case 'payment':
+    case 'airtime_data':
+      return `Your payment of ${ghs(t.amountMinor)} to ${who} has been completed at ${stamp}. Your new balance: ${ghs(t.balanceAfterMinor)}. Fee was ${ghs(t.feeMinor)} Tax was ${ghs(t.taxMinor)}. Reference: . Financial Transaction Id: ${t.externalRef}.`;
+    default:
+      return `Payment made for ${ghs(t.amountMinor)} to ${who}. Current Balance: ${ghs(t.balanceAfterMinor)}. Reference: . Transaction Id: ${t.externalRef}. Fee was ${ghs(t.feeMinor)} Tax was ${ghs(t.taxMinor)}. ${stamp}`;
   }
 }

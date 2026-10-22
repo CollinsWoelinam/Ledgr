@@ -1,16 +1,17 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
-import { space, useColors } from '../theme';
+import { useColors } from '../theme';
 import { Text } from './Text';
 
-export function ListRow({ icon, title, detail, onPress, right, danger, disabled }: {
-  icon: keyof typeof Ionicons.glyphMap;
+// Settings-style row: title, optional detail underneath, value or control on the right.
+export function ListRow({ title, detail, value, onPress, right, divider, disabled }: {
   title: string;
   detail?: string;
+  value?: string;
   onPress?: () => void;
   right?: ReactNode;
-  danger?: boolean;
+  divider?: boolean;
   disabled?: boolean;
 }) {
   const c = useColors();
@@ -19,20 +20,27 @@ export function ListRow({ icon, title, detail, onPress, right, danger, disabled 
       accessibilityRole={onPress ? 'button' : undefined}
       disabled={disabled || !onPress}
       onPress={onPress}
-      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.md, opacity: disabled ? 0.45 : pressed ? 0.6 : 1 })}
+      style={({ pressed }) => ({
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        minHeight: detail ? 58 : 52,
+        borderTopWidth: divider ? 1 : 0,
+        borderColor: c.divider,
+        opacity: disabled ? 0.45 : pressed ? 0.6 : 1,
+      })}
     >
-      <Ionicons name={icon} size={22} color={danger ? c.danger : c.muted} />
-      <View style={{ flex: 1 }}>
-        <Text variant="label" color={danger ? c.danger : undefined}>
-          {title}
-        </Text>
+      <View style={{ flex: 1, gap: 1 }}>
+        <Text variant="label">{title}</Text>
         {detail && (
           <Text variant="caption" muted>
             {detail}
           </Text>
         )}
       </View>
-      {right ?? (onPress && <Ionicons name="chevron-forward" size={18} color={c.muted} />)}
+      {value && <Text muted>{value}</Text>}
+      {right}
+      {onPress && !right && <Ionicons name="chevron-forward" size={18} color={c.muted} />}
     </Pressable>
   );
 }

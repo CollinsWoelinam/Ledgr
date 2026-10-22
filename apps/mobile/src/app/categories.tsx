@@ -3,17 +3,18 @@ import { useState } from 'react';
 import { Alert, Pressable, TextInput, View } from 'react-native';
 import type { Category } from '@/db/schema';
 import { useLedger } from '@/state/ledger';
-import { Button, Card, CategoryIcon, Screen, Text } from '@/ui/components';
-import { radius, space, useColors } from '@/ui/theme';
+import { Button, Card, CategoryIcon, Screen, ScreenHeader, Text } from '@/ui/components';
+import { fonts, useColors } from '@/ui/theme';
 
-const PALETTE = ['#E8833A', '#3B82C4', '#D4A017', '#8B5CF6', '#DB4F8A', '#14A39A', '#2E9E5B', '#9A6B4F', '#5B7FD6', '#8A8F98'];
+const PALETTE = ['#F28C38', '#3B82F6', '#EAB308', '#8B5CF6', '#EC4899', '#14B8A6', '#22A05A', '#9A6B4F', '#6366F1', '#8A948F'];
 
-// FR-3.4: create, rename, recolor and delete categories.
+// FR-3.4: create, rename, recolour and delete categories.
 export default function CategoriesScreen() {
   const c = useColors();
-  const { categories, transactions, addCategory, updateCategory, deleteCategory } = useLedger();
+  const { categories, transactions, rules, addCategory, updateCategory, deleteCategory } = useLedger();
   const [editing, setEditing] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
+  const userRules = rules.filter((r) => r.createdBy === 'user').length;
 
   const remove = (cat: Category) => {
     const count = transactions.filter((t) => t.categoryId === cat.id).length;
@@ -23,16 +24,23 @@ export default function CategoriesScreen() {
     ]);
   };
 
-  const input = { borderWidth: 1, borderColor: c.border, borderRadius: radius.md, padding: space.md, color: c.text, fontSize: 15 };
+  const input = { height: 48, borderWidth: 1, borderColor: c.line, borderRadius: 16, paddingHorizontal: 14, color: c.ink, fontSize: 15, fontFamily: fonts.body.regular, backgroundColor: c.bg };
 
   return (
     <Screen keyboardShouldPersistTaps="handled">
-      <Card style={{ paddingVertical: space.xs }}>
+      <ScreenHeader title="Categories & rules" back />
+      {userRules > 0 && (
+        <Text muted>
+          {userRules} saved rule{userRules > 1 ? 's' : ''} from your corrections keep future transactions in the right place.
+        </Text>
+      )}
+
+      <Card style={{ borderRadius: 24, paddingVertical: 4 }}>
         {categories.map((cat, i) => {
           const open = editing === cat.id;
           return (
-            <View key={cat.id} style={{ borderTopWidth: i ? 1 : 0, borderColor: c.border, paddingVertical: space.md, gap: space.md }}>
-              <Pressable onPress={() => setEditing(open ? null : cat.id)} style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+            <View key={cat.id} style={{ borderTopWidth: i ? 1 : 0, borderColor: c.divider, paddingVertical: 12, gap: 12 }}>
+              <Pressable accessibilityRole="button" accessibilityState={{ expanded: open }} onPress={() => setEditing(open ? null : cat.id)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <CategoryIcon category={cat} size={36} />
                 <Text variant="label" style={{ flex: 1 }}>
                   {cat.name}
@@ -40,14 +48,14 @@ export default function CategoriesScreen() {
                 <Ionicons name={open ? 'chevron-up' : 'create-outline'} size={20} color={c.muted} />
               </Pressable>
               {open && (
-                <View style={{ gap: space.md }}>
+                <View style={{ gap: 12 }}>
                   <TextInput
                     defaultValue={cat.name}
                     onEndEditing={(e) => e.nativeEvent.text.trim() && updateCategory(cat.id, { name: e.nativeEvent.text.trim() })}
                     accessibilityLabel="Category name"
                     style={input}
                   />
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                     {PALETTE.map((color) => (
                       <Pressable
                         key={color}
@@ -55,11 +63,11 @@ export default function CategoriesScreen() {
                         accessibilityLabel={`Colour ${color}`}
                         accessibilityState={{ selected: cat.color === color }}
                         onPress={() => updateCategory(cat.id, { color })}
-                        style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: color, borderWidth: 3, borderColor: cat.color === color ? c.text : 'transparent' }}
+                        style={{ width: 34, height: 34, borderRadius: 12, backgroundColor: color, borderWidth: 3, borderColor: cat.color === color ? c.ink : 'transparent' }}
                       />
                     ))}
                   </View>
-                  {cat.id !== 'other' && <Button title="Delete category" kind="danger" onPress={() => remove(cat)} />}
+                  {cat.id !== 'other' && <Button title="Delete category" kind="danger" small onPress={() => remove(cat)} style={{ alignSelf: 'flex-start' }} />}
                 </View>
               )}
             </View>
@@ -67,14 +75,14 @@ export default function CategoriesScreen() {
         })}
       </Card>
 
-      <Card style={{ gap: space.md }}>
+      <Card style={{ borderRadius: 24, gap: 12 }}>
         <Text variant="heading">New category</Text>
-        <TextInput value={newName} onChangeText={setNewName} placeholder="e.g. Church, Hair, School fees" placeholderTextColor={c.muted} accessibilityLabel="New category name" style={input} />
+        <TextInput value={newName} onChangeText={setNewName} placeholder="e.g. Church, Hair, School fees" placeholderTextColor={c.placeholder} accessibilityLabel="New category name" style={input} />
         <Button
-          title="Add"
+          title="Add category"
           disabled={!newName.trim()}
           onPress={() => {
-            addCategory({ name: newName.trim(), icon: 'pricetag', color: PALETTE[categories.length % PALETTE.length]!, kind: 'expense' });
+            addCategory({ name: newName.trim(), icon: 'pricetag-outline', color: PALETTE[categories.length % PALETTE.length]!, kind: 'expense' });
             setNewName('');
           }}
         />
