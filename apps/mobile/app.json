@@ -6,8 +6,16 @@
     "userInterfaceStyle": "automatic",
     "android": {
       "package": "com.ledgr.app",
-      "permissions": ["READ_SMS", "RECEIVE_SMS", "USE_BIOMETRIC", "POST_NOTIFICATIONS"]
+      "permissions": [
+        "READ_SMS",
+        "RECEIVE_SMS",
+        "USE_BIOMETRIC",
+        "POST_NOTIFICATIONS"
+      ]
     },
-    "plugins": ["expo-router"]
+    "plugins": [
+      "expo-router",
+      "expo-status-bar"
+    ]
   }
 }

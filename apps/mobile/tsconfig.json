@@ -1,5 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "jsx": "react-native", "paths": { "@/*": ["./src/*"] } },
+  "compilerOptions": { "jsx": "react-native", "types": ["jest"], "paths": { "@/*": ["./src/*"] } },
   "include": ["src", "modules"]
 }
