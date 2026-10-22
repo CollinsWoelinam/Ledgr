@@ -1,0 +1,15 @@
+{
+  "description": "Reversal links to the original ref and has no ref of its own",
+  "synthetic": true,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your transaction of GHS 45.00 with Transaction ID 41234567890 has been reversed. Your new balance: GHS 165.50.",
+    "receivedAt": "2026-10-20T16:00:00"
+  },
+  "expected": {
+    "provider": "mtn_momo", "type": "reversal", "direction": "in",
+    "amountMinor": 4500, "feeMinor": 0, "taxMinor": 0, "currency": "GHS",
+    "balanceAfterMinor": 16550, "reversesRef": "41234567890",
+    "occurredAt": "2026-10-20T16:00:00"
+  }
+}

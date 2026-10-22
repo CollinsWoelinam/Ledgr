@@ -1,0 +1,16 @@
+{
+  "description": "Airtime purchase, matched before the generic payment template",
+  "synthetic": true,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your payment of GHS 10.00 to MTN AIRTIME has been completed at 2026-10-20 09:15:03. Your new balance: GHS 110.50. Fee was GHS 0.00 Tax was GHS 0.00. Reference: . Financial Transaction Id: 41234567893.",
+    "receivedAt": "2026-10-20T09:15:05"
+  },
+  "expected": {
+    "provider": "mtn_momo", "type": "airtime_data", "direction": "out",
+    "amountMinor": 1000, "feeMinor": 0, "taxMinor": 0, "currency": "GHS",
+    "counterpartyName": "MTN AIRTIME",
+    "balanceAfterMinor": 11050, "externalRef": "41234567893",
+    "occurredAt": "2026-10-20T09:15:03"
+  }
+}

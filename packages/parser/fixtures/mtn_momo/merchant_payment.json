@@ -1,0 +1,16 @@
+{
+  "description": "Merchant payment with e-levy",
+  "synthetic": true,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your payment of GHS 250.00 to ECG PREPAID has been completed at 2026-10-21 19:02:44. Your new balance: GHS 870.25. Fee was GHS 0.00 Tax was GHS 2.50. Reference: meter. Financial Transaction Id: 41234567894.",
+    "receivedAt": "2026-10-21T19:02:50"
+  },
+  "expected": {
+    "provider": "mtn_momo", "type": "payment", "direction": "out",
+    "amountMinor": 25000, "feeMinor": 0, "taxMinor": 250, "currency": "GHS",
+    "counterpartyName": "ECG PREPAID",
+    "balanceAfterMinor": 87025, "externalRef": "41234567894",
+    "occurredAt": "2026-10-21T19:02:44"
+  }
+}

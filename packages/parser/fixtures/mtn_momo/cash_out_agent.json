@@ -1,0 +1,16 @@
+{
+  "description": "Cash-out at an agent with fee",
+  "synthetic": true,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash Out made for GHS 100.00 to AGENT KOJO STORES. Current Balance: GHS 20.50. Fee was GHS 1.00. Transaction Id: 41234567892.",
+    "receivedAt": "2026-10-19T17:45:10"
+  },
+  "expected": {
+    "provider": "mtn_momo", "type": "cash_out", "direction": "out",
+    "amountMinor": 10000, "feeMinor": 100, "taxMinor": 0, "currency": "GHS",
+    "counterpartyName": "AGENT KOJO STORES",
+    "balanceAfterMinor": 2050, "externalRef": "41234567892",
+    "occurredAt": "2026-10-19T17:45:10"
+  }
+}

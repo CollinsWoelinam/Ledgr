@@ -7,6 +7,8 @@ export type TransactionType =
   | 'airtime_data'
   | 'reversal';
 
+export type Direction = 'in' | 'out';
+
 export interface RawSms {
   sender: string;
   body: string;
@@ -17,7 +19,7 @@ export interface ParsedTransaction {
   provider: string;
   templateVersion: number;
   type: TransactionType;
-  direction: 'in' | 'out';
+  direction: Direction;
   amountMinor: number;
   feeMinor: number;
   taxMinor: number;
@@ -26,15 +28,22 @@ export interface ParsedTransaction {
   counterpartyNumber?: string;
   balanceAfterMinor?: number;
   externalRef?: string;
-  occurredAt: number; // epoch ms
+  reversesRef?: string; // reversals: the original transaction's ref (FR-2.4)
+  occurredAt: number; // epoch ms; falls back to receivedAt when the SMS has no date
 }
 
+/**
+ * A named-group regex for one message format. Supported groups:
+ * amount (required), currency, fee, tax, balance, name, number, ref, original_ref, date.
+ * `{amount}` in a pattern expands to a money matcher, `{cur}` to a currency code.
+ */
 export interface Template {
   provider: string;
   version: number;
   type: TransactionType;
-  pattern: string; // named-group regex
-  date_format?: string;
+  direction?: Direction; // overrides the type's default direction
+  pattern: string;
+  date_format?: string; // tokens: yyyy, yy, MM, dd, HH, mm, ss
 }
 
 export interface Provider {
@@ -44,6 +53,8 @@ export interface Provider {
   currency: string;
 }
 
+export type ParseFailure = 'unknown_sender' | 'no_template_match' | 'invalid';
+
 export type ParseResult =
   | { ok: true; transaction: ParsedTransaction }
-  | { ok: false; reason: 'unknown_sender' | 'no_template_match' | 'invalid' };
+  | { ok: false; reason: ParseFailure };

@@ -1,0 +1,16 @@
+{
+  "description": "Incoming transfer",
+  "synthetic": true,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment received for GHS 200.00 from AMA OWUSU 0551234567 Current Balance: GHS 320.50. Available Balance: GHS 320.50. Reference: allowance. Transaction ID: 41234567891. TRANSACTION FEE: 0.00",
+    "receivedAt": "2026-10-19T10:00:00"
+  },
+  "expected": {
+    "provider": "mtn_momo", "type": "transfer_in", "direction": "in",
+    "amountMinor": 20000, "feeMinor": 0, "taxMinor": 0, "currency": "GHS",
+    "counterpartyName": "AMA OWUSU", "counterpartyNumber": "0551234567",
+    "balanceAfterMinor": 32050, "externalRef": "41234567891",
+    "occurredAt": "2026-10-19T10:00:00"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Promotional message from the provider sender must not parse",
+  "synthetic": true,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Y'ello! Send money to any network this weekend and get 20% bonus. Dial *170# to start.",
+    "receivedAt": "2026-10-17T12:00:00"
+  },
+  "expected": null
+}

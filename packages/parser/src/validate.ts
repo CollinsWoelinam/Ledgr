@@ -1,6 +1,14 @@
 import type { ParsedTransaction } from './types';
 
-// Step 6: amount > 0; balance consistency is checked by the app against the previous transaction.
+// Step 6: amounts must be sane; balance consistency is checked by the app against the previous transaction.
 export function isValid(tx: ParsedTransaction): boolean {
-  return tx.amountMinor > 0 && tx.feeMinor >= 0 && tx.taxMinor >= 0;
+  const nonNegative = (n: number | undefined) => n === undefined || (Number.isInteger(n) && n >= 0);
+  return (
+    Number.isInteger(tx.amountMinor) &&
+    tx.amountMinor > 0 &&
+    nonNegative(tx.feeMinor) &&
+    nonNegative(tx.taxMinor) &&
+    nonNegative(tx.balanceAfterMinor) &&
+    Number.isFinite(tx.occurredAt)
+  );
 }
