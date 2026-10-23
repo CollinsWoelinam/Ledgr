@@ -20,7 +20,7 @@ test('money that left with no message shows as a negative gap between the two tr
     {
       key: `${a.id}>${b.id}`, provider: 'mtn_momo', amountMinor: -2120, from: a.occurredAt, to: b.occurredAt,
       // The working shown on the card: 100.00 − 10.00 explained = 90.00 expected, 68.80 reported.
-      startBalanceMinor: 10000, explainedMinor: -1000, expectedMinor: 9000, reportedMinor: 6880,
+      startBalanceMinor: 10000, explainedMinor: -1000, expectedMinor: 9000, reportedMinor: 6880, clues: [], likely: undefined,
     },
   ]);
 });
@@ -58,4 +58,36 @@ test('a recorded adjustment (no balance of its own) closes the gap', () => {
 test('demo data has no gaps', () => {
   const { transactions } = seedDemoData(new Date(2026, 9, 22, 12));
   expect(findBalanceGaps(transactions.map((t) => ({ ...t, categoryId: 'other' })))).toEqual([]);
+});
+
+const ev = (kind: 'airtime_topup' | 'login', at: number, extra: { amountMinor?: number } = {}) => ({ id: `ev${++n}`, provider: 'mtn_momo', kind, at, ...extra });
+
+test('an airtime notice matching the missing amount is the likely cause', () => {
+  const a = tx('in', 3000, 3000, 0);
+  const b = tx('out', 500, 2000, 7 * 24 * 60 * MIN); // 3000 − 500 = 2500 expected: 500 missing
+  const notice = ev('airtime_topup', 3 * 24 * 60 * MIN, { amountMinor: 500 });
+  const [gap] = findBalanceGaps([a, b], [notice]);
+  expect(gap?.likely).toEqual({ kind: 'airtime', amountMinor: 500, at: notice.at });
+  expect(gap?.clues).toEqual([notice]);
+});
+
+test('an airtime notice that does not match is a clue, not the likely cause', () => {
+  const [gap] = findBalanceGaps([tx('in', 3000, 3000, 0), tx('out', 500, 1000, 7 * 24 * 60 * MIN)], [ev('airtime_topup', 60 * MIN, { amountMinor: 500 })]);
+  expect(gap?.likely).toBeUndefined();
+  expect(gap?.clues).toHaveLength(1);
+});
+
+test('an airtime notice with its MoMo receipt is not a clue', () => {
+  const a = tx('in', 3000, 3000, 0);
+  const bought = tx('out', 500, 2500, 60 * MIN);
+  const b = tx('out', 500, 1500, 7 * 24 * 60 * MIN); // 500 missing
+  const [gap] = findBalanceGaps([a, bought, b], [ev('airtime_topup', 62 * MIN, { amountMinor: 500 })]);
+  expect(gap?.clues).toEqual([]);
+  expect(gap?.likely).toBeUndefined();
+});
+
+test('logins inside the window are clues', () => {
+  const login = ev('login', 2 * 60 * MIN);
+  const [gap] = findBalanceGaps([tx('in', 1000, 1000, 0), tx('in', 100, 900, 24 * 60 * MIN)], [login]);
+  expect(gap?.clues).toEqual([login]);
 });

@@ -1,4 +1,4 @@
-import type { ParsedTransaction } from '@ledgr/parser';
+import type { Evidence, ParsedTransaction } from '@ledgr/parser';
 
 // TypeScript mirrors of migrations/*.sql. All money is integer minor units.
 
@@ -39,4 +39,9 @@ export interface ReviewItem {
   sender: string;
   body: string;
   receivedAt: number;
+}
+
+// A clue from a non-transaction wallet message (see Evidence in the parser).
+export interface StoredEvidence extends Evidence {
+  id: string;
 }

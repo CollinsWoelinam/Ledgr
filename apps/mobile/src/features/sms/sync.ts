@@ -29,8 +29,8 @@ export async function syncInbox(onProgress?: (read: number, total: number) => vo
   for (;;) {
     const page = await LedgrSms.readInbox(senders, cursor, PAGE);
     if (page.length === 0) break;
-    const { transactions, review } = classify(page);
-    const { added, reviewAdded } = useLedger.getState().ingest(transactions, review);
+    const { transactions, review, evidence } = classify(page);
+    const { added, reviewAdded } = useLedger.getState().ingest(transactions, review, evidence);
     result.read += page.length;
     result.added += added;
     result.review += reviewAdded;

@@ -1,5 +1,5 @@
 import { bundledConfig, dedupeKey, parseSms, type EngineConfig, type ParsedTransaction } from '@ledgr/parser';
-import type { ReviewItem, Transaction } from '@/db/schema';
+import type { ReviewItem, StoredEvidence, Transaction } from '@/db/schema';
 import type { InboxSms } from '../../../modules/ledgr-sms';
 import { amountIn } from './reviewHint';
 
@@ -8,13 +8,14 @@ export type Incoming = Omit<Transaction, 'categoryId'>;
 export interface Classified {
   transactions: Incoming[];
   review: ReviewItem[];
+  evidence: StoredEvidence[];
   ignored: number;
 }
 
 // Steps 2–7: parse each message; known non-transactions are dropped, unknown wallet messages go to review (FR-2.5).
 // Categorizing and saving happen in the ledger, which also drops duplicates (FR-2.3).
 export function classify(messages: InboxSms[], config: EngineConfig = bundledConfig): Classified {
-  const out: Classified = { transactions: [], review: [], ignored: 0 };
+  const out: Classified = { transactions: [], review: [], evidence: [], ignored: 0 };
   for (const m of messages) {
     const result = parseSms({ sender: m.sender, body: m.body, receivedAt: m.receivedAt }, config);
     if (result.ok) {
@@ -23,6 +24,7 @@ export function classify(messages: InboxSms[], config: EngineConfig = bundledCon
       out.review.push({ id: `sms-${m.id}`, sender: m.sender, body: m.body, receivedAt: m.receivedAt });
     } else {
       out.ignored++;
+      if (result.evidence) out.evidence.push({ ...result.evidence, id: `ev-${m.id}` });
     }
   }
   return out;

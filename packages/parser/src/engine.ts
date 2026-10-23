@@ -2,7 +2,7 @@ import { parseDate } from './date';
 import { toMinorUnits } from './money';
 import { normalize } from './normalize';
 import { isValid } from './validate';
-import type { Direction, ParseResult, ParsedTransaction, Provider, RawSms, Template, TransactionType } from './types';
+import type { Direction, Evidence, ParseResult, ParsedTransaction, Provider, RawSms, Template, TransactionType } from './types';
 
 export interface EngineConfig {
   providers: Provider[];
@@ -27,10 +27,14 @@ const DEFAULT_DIRECTION: Record<TransactionType, Direction> = {
 
 const compiled = new WeakMap<Template, RegExp>();
 
+function expandMacros(pattern: string): string {
+  return Object.entries(MACROS).reduce((s, [macro, value]) => s.split(macro).join(value), pattern);
+}
+
 export function compileTemplate(template: Template): RegExp {
   let re = compiled.get(template);
   if (!re) {
-    const source = Object.entries(MACROS).reduce((s, [macro, value]) => s.split(macro).join(value), template.pattern);
+    const source = expandMacros(template.pattern);
     re = new RegExp(source, 'i');
     compiled.set(template, re);
   }
@@ -55,6 +59,8 @@ export function parseSms(sms: RawSms, config: EngineConfig): ParseResult {
     const transaction = mapGroups(groups, template, provider, sms);
     return isValid(transaction) ? { ok: true, transaction } : { ok: false, reason: 'invalid' };
   }
+  const evidence = findEvidence(body, provider, sms.receivedAt);
+  if (evidence) return { ok: false, reason: 'ignored', evidence };
   if (provider.failed?.some((pattern) => compilePattern(pattern).test(body))) return { ok: false, reason: 'ignored' };
   // Otherwise a message carrying a transaction ID is never ignored: if no template knows it, a person should see it.
   const looksLikeTransaction = TRANSACTION_ID.test(body);
@@ -96,4 +102,14 @@ function mapGroups(groups: Record<string, string | undefined>, template: Templat
     reversesRef: text('original_ref'),
     occurredAt,
   };
+}
+
+function findEvidence(body: string, provider: Provider, at: number): Evidence | undefined {
+  for (const rule of provider.evidence ?? []) {
+    const m = compilePattern(expandMacros(rule.pattern)).exec(body);
+    if (!m) continue;
+    const money = (v?: string) => (v ? toMinorUnits(v) : undefined);
+    return { provider: provider.id, kind: rule.kind, amountMinor: money(m.groups?.amount), at };
+  }
+  return undefined;
 }

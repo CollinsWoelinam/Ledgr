@@ -1,4 +1,4 @@
-import type { Transaction } from '@/db/schema';
+import type { StoredEvidence, Transaction } from '@/db/schema';
 
 // Money that moved without an SMS explaining it. Each wallet message reports the new balance, so walking a
 // wallet's transactions in order, every reported balance should equal the previous one plus what happened since.
@@ -15,12 +15,15 @@ export interface BalanceGap {
   explainedMinor: number; // what the messages in between account for (signed)
   expectedMinor: number; // startBalanceMinor + explainedMinor
   reportedMinor: number; // balance in the SMS after the gap
+  clues: StoredEvidence[]; // airtime notices and wallet logins inside the window
+  likely?: { kind: 'airtime'; amountMinor: number; at: number }; // airtime notices that add up to the gap exactly
 }
 
 const TOLERANCE_MINOR = 1; // a pesewa of rounding
 const NETTING_MS = 24 * 3600_000; // gaps that cancel out within a day are late SMS, not missing money
 const CLUSTER_MS = 30 * 60_000; // transactions this close together may have been texted out of order
 const MAX_PERMUTE = 6; // 720 orders; larger clusters keep their time order
+const RECEIPT_MS = 15 * 60_000; // an airtime notice and its MoMo receipt arrive within minutes of each other
 
 const delta = (t: Transaction) => (t.direction === 'in' ? t.amountMinor : -t.amountMinor) - t.feeMinor - t.taxMinor;
 
@@ -82,7 +85,7 @@ function runningAfter(seq: Transaction[], lastWithBalance: Transaction): number 
   return running;
 }
 
-export function findBalanceGaps(transactions: Transaction[]): BalanceGap[] {
+export function findBalanceGaps(transactions: Transaction[], evidence: StoredEvidence[] = []): BalanceGap[] {
   const byWallet = new Map<string, Transaction[]>();
   for (const t of transactions) byWallet.set(t.provider, [...(byWallet.get(t.provider) ?? []), t]);
 
@@ -106,6 +109,7 @@ export function findBalanceGaps(transactions: Transaction[]): BalanceGap[] {
             explainedMinor: running - anchor.balanceAfterMinor!,
             expectedMinor: running,
             reportedMinor: t.balanceAfterMinor,
+            clues: [],
           });
         }
         running = t.balanceAfterMinor;
@@ -113,9 +117,22 @@ export function findBalanceGaps(transactions: Transaction[]): BalanceGap[] {
       }
       last = t;
     }
-    gaps.push(...netOut(walletGaps));
+    gaps.push(...netOut(walletGaps).map((g) => withClues(g, evidence, list)));
   }
   return gaps.sort((a, b) => b.to - a.to);
+}
+
+// MTN sometimes sends only the network's airtime notice and not the MoMo receipt. Airtime notices inside a gap
+// that add up to exactly what's missing are almost certainly the explanation. A notice with a matching MoMo
+// purchase (same amount, minutes apart) is already accounted for, so it isn't a clue.
+function withClues(gap: BalanceGap, evidence: StoredEvidence[], wallet: Transaction[]): BalanceGap {
+  const receipted = (e: StoredEvidence) =>
+    e.kind === 'airtime_topup' && wallet.some((t) => t.direction === 'out' && t.amountMinor === e.amountMinor && Math.abs(t.occurredAt - e.at) <= RECEIPT_MS);
+  const clues = evidence.filter((e) => e.provider === gap.provider && e.at > gap.from && e.at <= gap.to && !receipted(e));
+  const airtime = clues.filter((e) => e.kind === 'airtime_topup' && e.amountMinor);
+  const total = airtime.reduce((s, e) => s + e.amountMinor!, 0);
+  const likely = airtime.length && gap.amountMinor < 0 && Math.abs(total + gap.amountMinor) <= TOLERANCE_MINOR ? { kind: 'airtime' as const, amountMinor: total, at: airtime[0]!.at } : undefined;
+  return { ...gap, clues, likely };
 }
 
 // SMS delivered hours late leave a run of gaps that add up to nothing (+302, −753, +451): no money is missing.

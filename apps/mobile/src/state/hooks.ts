@@ -45,10 +45,11 @@ export function useWalletTransactions(): { transactions: Transaction[]; wallet: 
 export function useBalanceGaps(): BalanceGap[] {
   const transactions = useLedger((s) => s.transactions);
   const dismissed = useLedger((s) => s.dismissedGaps);
+  const evidence = useLedger((s) => s.evidence);
   return useMemo(() => {
     const ignored = new Set(dismissed);
-    return findBalanceGaps(transactions).filter((g) => !ignored.has(g.key));
-  }, [transactions, dismissed]);
+    return findBalanceGaps(transactions, evidence).filter((g) => !ignored.has(g.key));
+  }, [transactions, evidence, dismissed]);
 }
 
 export interface ReviewCount {

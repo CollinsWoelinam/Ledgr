@@ -61,7 +61,7 @@ export default function ReviewQueueScreen() {
           gap={recording}
           onClose={() => setRecording(null)}
           onSave={(name, categoryId) => {
-            recordGap(recording, { name, categoryId });
+            recordGap(recording, { name, categoryId, at: recording.likely?.at });
             setRecording(null);
           }}
         />
@@ -82,6 +82,8 @@ function GapCard({ gap, onRecord, onIgnore }: { gap: BalanceGap; onRecord: () =>
   const money = (minor: number, signed = false) => `${signed ? (minor < 0 ? '−' : '+') : ''}${formatMoney(Math.abs(minor), 'GHS')}`;
   const day = (at: number) => new Date(at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const code = STATEMENT_CODE[gap.provider];
+  const logins = gap.clues.filter((e) => e.kind === 'login');
+  const airtime = out ? gap.clues.filter((e) => e.kind === 'airtime_topup') : []; // airtime can't explain money in
 
   const row = (label: string, value: string, strong = false) => (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
@@ -114,6 +116,30 @@ function GapCard({ gap, onRecord, onIgnore }: { gap: BalanceGap; onRecord: () =>
         {row(out ? 'Left with no SMS' : 'Arrived with no SMS', money(gap.amountMinor, true), true)}
       </View>
 
+      {gap.likely ? (
+        <View style={{ backgroundColor: c.okSoft, borderRadius: 14, padding: 12, gap: 2 }}>
+          <Text size={13} weight="semibold" color={c.okInk}>
+            Likely cause: airtime top-up of {money(gap.likely.amountMinor)}
+          </Text>
+          <Text size={13} muted style={{ lineHeight: 19 }}>
+            MTN texted “Airtime recharged” on {formatDateTime(gap.likely.at)}, but MoMo sent no receipt for it.
+          </Text>
+        </View>
+      ) : (
+        <>
+          {airtime.length > 0 && (
+            <Text size={13} muted style={{ lineHeight: 19 }}>
+              Airtime top-up{airtime.length > 1 ? 's' : ''} in this period: {airtime.map((e) => `${e.amountMinor ? money(e.amountMinor) : 'amount unknown'} on ${formatDateTime(e.at)}`).join(', ')}. {airtime.length > 1 ? 'They don’t' : 'It doesn’t'} add up to the full amount.
+            </Text>
+          )}
+          {logins.length > 0 && (
+            <Text size={13} muted style={{ lineHeight: 19 }}>
+              You signed in to your wallet on {formatDateTime(logins[0]!.at)}{logins.length > 1 ? ` (and ${logins.length - 1} more time${logins.length > 2 ? 's' : ''})` : ''}. Transactions made in the app don’t always get an SMS.
+            </Text>
+          )}
+        </>
+      )}
+
       <Text size={13} muted style={{ lineHeight: 19 }}>
         To see {out ? 'who it went to' : 'who sent it'}, check your {wallet} statement{code ? ` (dial ${code})` : ''} for {day(gap.from)} to {day(gap.to)}.
       </Text>
@@ -131,8 +157,8 @@ function RecordGapSheet({ gap, onSave, onClose }: { gap: BalanceGap; onSave: (na
   const c = useColors();
   const out = gap.amountMinor < 0;
   const categories = useLedger((s) => s.categories).filter((cat) => (out ? cat.kind === 'expense' : true));
-  const [name, setName] = useState('');
-  const [categoryId, setCategoryId] = useState(out ? 'other' : 'income');
+  const [name, setName] = useState(gap.likely ? 'MTN Airtime' : '');
+  const [categoryId, setCategoryId] = useState(gap.likely ? 'airtime' : out ? 'other' : 'income');
 
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>

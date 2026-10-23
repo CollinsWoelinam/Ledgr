@@ -57,6 +57,28 @@ export interface Provider {
   ignore?: string[];
   // Failed or declined transactions: no money moved, so they're dropped even though they carry a transaction ID.
   failed?: string[];
+  // Messages that aren't transactions but tell us something about the wallet (see Evidence).
+  evidence?: EvidenceRule[];
+}
+
+// Clues from non-transaction messages, used to explain balance gaps:
+// - airtime_topup: the network's own "airtime recharged" notice; alone, it means the MoMo receipt never came
+// - login: the wallet was opened (one-time code), so something may have been done without an SMS. The code itself
+//   is never kept.
+// Balance checks are deliberately not evidence: Telecel's can arrive an hour late, or count a transfer that later
+// failed, so they'd invent gaps rather than explain them.
+export type EvidenceKind = 'airtime_topup' | 'login';
+
+export interface EvidenceRule {
+  kind: EvidenceKind;
+  pattern: string; // named group: amount (airtime_topup)
+}
+
+export interface Evidence {
+  provider: string;
+  kind: EvidenceKind;
+  amountMinor?: number;
+  at: number; // epoch ms
 }
 
 // 'ignored': a known non-transaction message. 'no_template_match': looks unknown, goes to the review queue.
@@ -64,4 +86,4 @@ export type ParseFailure = 'unknown_sender' | 'ignored' | 'no_template_match' | 
 
 export type ParseResult =
   | { ok: true; transaction: ParsedTransaction }
-  | { ok: false; reason: ParseFailure };
+  | { ok: false; reason: ParseFailure; evidence?: Evidence };

@@ -35,6 +35,16 @@
       "^Failed\\b",
       "was unsuccessful",
       "^Transaction failed"
+    ],
+    "evidence": [
+      {
+        "kind": "airtime_topup",
+        "pattern": "^Airtime recharged received for {cur} ?(?<amount>{amount}) from"
+      },
+      {
+        "kind": "login",
+        "pattern": "^<#>"
+      }
     ]
   },
   {

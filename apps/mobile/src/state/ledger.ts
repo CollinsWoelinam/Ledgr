@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import * as budgetsRepo from '@/db/repositories/budgets';
 import * as categoriesRepo from '@/db/repositories/categories';
+import * as evidenceRepo from '@/db/repositories/evidence';
 import * as gapsRepo from '@/db/repositories/gaps';
 import { ensureDefaults, loadLedger, wipeLedger } from '@/db/repositories/ledger';
 import * as reviewRepo from '@/db/repositories/reviewQueue';
 import * as transactionsRepo from '@/db/repositories/transactions';
-import type { Budget, Category, CategoryRule, ReviewItem, Transaction } from '@/db/schema';
+import type { Budget, Category, CategoryRule, ReviewItem, StoredEvidence, Transaction } from '@/db/schema';
 import type { SqlDb } from '@/db/sql';
 import { seedDemoData } from '@/demo/seed';
 import { recheckReview, transactionIdIn, type Incoming } from '@/features/sms/pipeline';
@@ -21,14 +22,15 @@ export interface LedgerState {
   budgets: Budget[];
   reviewQueue: ReviewItem[];
   dismissedGaps: string[];
+  evidence: StoredEvidence[];
   ready: boolean;
   encrypted: boolean;
   attach: (db: SqlDb, encrypted: boolean) => Promise<void>;
   loadDemo: () => void;
-  ingest: (incoming: Incoming[], review: ReviewItem[]) => { added: number; reviewAdded: number };
+  ingest: (incoming: Incoming[], review: ReviewItem[], evidence?: StoredEvidence[]) => { added: number; reviewAdded: number };
   recheckReview: () => void;
   ignoreGap: (key: string) => void;
-  recordGap: (gap: BalanceGap, details?: { name?: string; categoryId?: string }) => void;
+  recordGap: (gap: BalanceGap, details?: { name?: string; categoryId?: string; at?: number }) => void;
   clearReview: () => void;
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
   setBudget: (categoryId: string | null, amountMinor: number | null) => void;
@@ -47,7 +49,7 @@ const DEMO_BUDGETS: Budget[] = [
   { categoryId: 'shopping', amountMinor: 50000 },
 ];
 
-const empty = { transactions: [], categories: DEFAULT_CATEGORIES, rules: SYSTEM_RULES, budgets: [], reviewQueue: [], dismissedGaps: [] as string[] };
+const empty = { transactions: [], categories: DEFAULT_CATEGORIES, rules: SYSTEM_RULES, budgets: [], reviewQueue: [], dismissedGaps: [] as string[], evidence: [] as StoredEvidence[] };
 
 let db: SqlDb | null = null;
 let writes: Promise<void> = Promise.resolve();
@@ -93,8 +95,14 @@ export const useLedger = create<LedgerState>()((set, get) => ({
   },
 
   // New SMS transactions: drop ones already stored (ids are dedupe keys, FR-2.3), categorize, save.
-  ingest: (incoming, review) => {
+  ingest: (incoming, review, evidence = []) => {
     const { transactions, rules, reviewQueue, categories } = get();
+    const knownEvidence = new Set(get().evidence.map((e) => e.id));
+    const newEvidence = evidence.filter((e) => !knownEvidence.has(e.id));
+    if (newEvidence.length) {
+      set({ evidence: [...get().evidence, ...newEvidence].sort((a, b) => a.at - b.at) });
+      persist((d) => evidenceRepo.addEvidence(d, newEvidence));
+    }
     const known = new Set(transactions.map((t) => t.id));
     // A rule or default can name a category the user has since deleted; those land in Other.
     const present = new Set(categories.map((c) => c.id));
@@ -164,7 +172,7 @@ export const useLedger = create<LedgerState>()((set, get) => ({
           taxMinor: 0,
           currency: 'GHS',
           counterpartyName: details.name?.trim() || 'Missing SMS',
-          occurredAt: Math.round((gap.from + gap.to) / 2),
+          occurredAt: details.at ?? Math.round((gap.from + gap.to) / 2),
           source: 'manual',
         },
       ],

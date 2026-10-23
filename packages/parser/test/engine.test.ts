@@ -73,3 +73,21 @@ test('templates revision changes when a template changes', () => {
   const edited = { ...bundledConfig, templates: [...bundledConfig.templates.slice(1)] };
   expect(templatesRevision(edited)).not.toBe(templatesRevision(bundledConfig));
 });
+
+describe('evidence from non-transaction messages', () => {
+  const at = 1_000;
+  test('MTN airtime notice carries its amount', () => {
+    expect(parseSms({ sender: 'MobileMoney', body: 'Airtime recharged received for GHS 5.00 from 233240000000. 50% Bonus value, is valid for 7 days.', receivedAt: at }, bundledConfig)).toEqual({
+      ok: false, reason: 'ignored', evidence: { provider: 'mtn_momo', kind: 'airtime_topup', amountMinor: 500, at },
+    });
+  });
+  test('a wallet login keeps only the time, never the code', () => {
+    const r = parseSms({ sender: 'MobileMoney', body: '<#> Please enter the following code:4239 to complete your login.', receivedAt: at }, bundledConfig);
+    expect(r).toEqual({ ok: false, reason: 'ignored', evidence: { provider: 'mtn_momo', kind: 'login', amountMinor: undefined, at } });
+    expect(JSON.stringify(r)).not.toContain('4239');
+  });
+  test('balance checks are not evidence (they can be stale)', () => {
+    const r = parseSms({ sender: 'T-CASH', body: '1234567890123456 Confirmed. Your Telecel Cash wallet balance is GHS9.86 . Stay alert.', receivedAt: at }, bundledConfig);
+    expect(r).toEqual({ ok: false, reason: 'ignored' });
+  });
+});

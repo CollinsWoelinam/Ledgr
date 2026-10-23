@@ -113,6 +113,19 @@ export const MIGRATIONS: Migration[] = [
     dismissed_at INTEGER NOT NULL
   );
   `,
+
+  // v4: evidence from non-transaction wallet messages (airtime notices, login times), used to
+  // explain balance gaps. Amounts and times only: no message text, and never a login code.
+  `
+  CREATE TABLE evidence (
+    id TEXT PRIMARY KEY,
+    provider TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK (kind IN ('airtime_topup', 'login')),
+    amount_minor INTEGER,
+    at INTEGER NOT NULL
+  );
+  CREATE INDEX idx_evidence_at ON evidence(provider, at);
+  `,
 ];
 
 // `target` exists for tests that need a database at an older version.
