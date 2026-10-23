@@ -47,7 +47,8 @@ The app runs on demo data in Expo Go, where the database is plain SQLite. Encryp
 | Categorization, budgets, insights | Logic done and tested |
 | SMS reading (Kotlin) | Done: inbox import (US-01) and live sync on launch, foreground and new SMS (US-02); verified on a Galaxy A32 |
 | Encrypted database | Done: expo-sqlite with SQLCipher, key in Android Keystore; encrypted file header confirmed on device. Expo Go has no SQLCipher |
-| App lock, export, backup | Not started (shown as "coming soon") |
+| App lock (US-08) | Done: fingerprint with the phone's PIN/pattern as fallback; locks on launch and after 0/1/5 min away; verified on device |
+| Export, backup | Not started (shown as "coming soon") |
 | Performance (release, Galaxy A32) | Cold start to dashboard 1.0–1.5 s with 1,914 transactions; import of 3,329 SMS ≈ 10 s |
 
 ## Build order

@@ -8,6 +8,8 @@ export interface PeriodSummary {
   count: number;
 }
 
+// Every outflow counts as spending, bank transfers and cash withdrawals included: once money leaves the wallet,
+// it's spent (decided 2026-10-23).
 export function summarize(transactions: Transaction[], period: Period): PeriodSummary {
   const s: PeriodSummary = { outMinor: 0, inMinor: 0, feesMinor: 0, count: 0 };
   for (const t of transactions) {

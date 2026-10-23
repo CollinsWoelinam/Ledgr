@@ -11,11 +11,15 @@ export interface SettingsState {
   monthStartDay: number;
   smsCursor: number; // received-at of the newest inbox SMS already processed
   wallet: string; // 'all', or a provider id to show one wallet's money only
+  appLock: boolean;
+  lockAfterMs: number; // how long the app may be in the background before it locks again
   setProviders: (providers: string[]) => void;
   completeOnboarding: (source: 'demo' | 'sms') => void;
   setMonthStartDay: (day: number) => void;
   setSmsCursor: (at: number) => void;
   setWallet: (wallet: string) => void;
+  setAppLock: (on: boolean) => void;
+  setLockAfterMs: (ms: number) => void;
   reset: () => void;
 }
 
@@ -27,6 +31,8 @@ const initial = {
   monthStartDay: 1,
   smsCursor: 0,
   wallet: 'all',
+  appLock: false,
+  lockAfterMs: 0,
 } satisfies Partial<SettingsState>;
 
 export const useSettings = create<SettingsState>()(
@@ -38,6 +44,8 @@ export const useSettings = create<SettingsState>()(
       setMonthStartDay: (monthStartDay) => set({ monthStartDay: Math.min(28, Math.max(1, monthStartDay)) }),
       setSmsCursor: (smsCursor) => set({ smsCursor }),
       setWallet: (wallet) => set({ wallet }),
+      setAppLock: (appLock) => set({ appLock }),
+      setLockAfterMs: (lockAfterMs) => set({ lockAfterMs }),
       reset: () => set(initial),
     }),
     { name: 'ledgr-settings', storage: createJSONStorage(() => AsyncStorage) },

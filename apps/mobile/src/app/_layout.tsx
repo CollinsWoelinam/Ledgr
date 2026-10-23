@@ -6,10 +6,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useColorScheme, View } from 'react-native';
 import { openLedgerDb } from '@/db/client';
+import { useAppLockLifecycle, useLockState } from '@/features/security/useAppLock';
 import { useSmsSync } from '@/features/sms/useSmsSync';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { EmptyState } from '@/ui/components';
+import { EmptyState, LockScreen } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 // Keep the native splash up until fonts, settings and the database are ready, instead of a blank screen.
@@ -26,6 +27,9 @@ export default function RootLayout() {
   const loadDemo = useLedger((s) => s.loadDemo);
   const dbError = useLedgerDatabase();
   useSmsSync();
+  // Until the lock has started, an enabled lock counts as locked, so data is never drawn uncovered for a frame.
+  const appLock = useSettings((s) => s.appLock);
+  const locked = useLockState((s) => s.locked || (appLock && !s.started));
 
   // Demo mode with an empty database (e.g. the first launch after an upgrade): seed it once.
   useEffect(() => {
@@ -33,6 +37,7 @@ export default function RootLayout() {
   }, [ledgerReady, dataSource, hasData, loadDemo]);
 
   const ready = hydrated && fontsLoaded && (ledgerReady || !!dbError);
+  useAppLockLifecycle(ready);
   useEffect(() => {
     if (ready) SplashScreen.hideAsync().catch(() => {});
   }, [ready]);
@@ -55,6 +60,7 @@ export default function RootLayout() {
     <ThemeProvider value={theme}>
       <StatusBar style="auto" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg } }} />
+      {locked && <LockScreen />}
     </ThemeProvider>
   );
 }

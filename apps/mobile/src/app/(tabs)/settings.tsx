@@ -3,15 +3,28 @@ import { bundledConfig } from '@ledgr/parser';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { Alert, Pressable, View } from 'react-native';
+import { phoneHasScreenLock } from '@/features/security/appLock';
+import { LOCK_AFTER_OPTIONS } from '@/features/security/lockPolicy';
+import { confirmWithLock } from '@/features/security/useAppLock';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { Button, Card, ListRow, Screen, ScreenHeader, Text, Toggle } from '@/ui/components';
+import { Button, Card, Chip, ListRow, Screen, ScreenHeader, Text, Toggle } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
-// FR-6: control. App lock, backup and export are shown but switched off until they exist.
+// FR-6: control. Backup and export are shown but switched off until they exist.
 export default function SettingsScreen() {
   const c = useColors();
-  const { monthStartDay, setMonthStartDay, currency, dataSource, providers } = useSettings();
+  const { monthStartDay, setMonthStartDay, currency, dataSource, providers, appLock, setAppLock, lockAfterMs, setLockAfterMs } = useSettings();
+
+  // Turning the lock on needs a phone screen lock and one successful unlock; turning it off needs an unlock too,
+  // so someone holding an unlocked phone can't just switch it off.
+  const toggleLock = async (on: boolean) => {
+    if (on && !(await phoneHasScreenLock())) {
+      Alert.alert('Set up a screen lock first', 'App lock uses your phone’s fingerprint or PIN. Add one in Android Settings › Security, then try again.');
+      return;
+    }
+    if (await confirmWithLock(on ? 'Turn on app lock' : 'Turn off app lock')) setAppLock(on);
+  };
   const resetSettings = useSettings((s) => s.reset);
   const { categories, reviewQueue, encrypted, reset: resetLedger, loadDemo } = useLedger();
   const wallets = bundledConfig.providers.filter((p) => providers.includes(p.id)).map((p) => p.name).join(', ') || 'None';
@@ -85,7 +98,19 @@ export default function SettingsScreen() {
       </Group>
 
       <Group title="Security">
-        <ListRow title="App lock" detail="Fingerprint or PIN · coming soon" right={<Toggle value={false} onChange={() => {}} label="App lock" disabled />} />
+        <ListRow title="App lock" detail="Fingerprint or your phone’s PIN" right={<Toggle value={appLock} onChange={toggleLock} label="App lock" />} />
+        {appLock && (
+          <View style={{ gap: 8, paddingBottom: 14 }}>
+            <Text variant="caption" muted>
+              Lock again when I leave the app
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+              {LOCK_AFTER_OPTIONS.map((o) => (
+                <Chip key={o.ms} label={o.label} selected={lockAfterMs === o.ms} onPress={() => setLockAfterMs(o.ms)} />
+              ))}
+            </View>
+          </View>
+        )}
         <ListRow title="Encrypted backup" detail="Locked with your passphrase · coming in v1.1" value="Off" divider disabled />
       </Group>
 

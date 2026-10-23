@@ -5,6 +5,7 @@ export { Chip } from './Chip';
 export { EmptyState } from './EmptyState';
 export { IconButton, type IconName } from './IconButton';
 export { ListRow } from './ListRow';
+export { LockScreen } from './LockScreen';
 export { Logo } from './Logo';
 export { ProgressBar } from './ProgressBar';
 export { Screen } from './Screen';
