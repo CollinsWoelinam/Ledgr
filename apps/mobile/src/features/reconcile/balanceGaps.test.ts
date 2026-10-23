@@ -1,6 +1,6 @@
 import type { Transaction } from '@/db/schema';
 import { seedDemoData } from '@/demo/seed';
-import { findBalanceGaps } from './balanceGaps';
+import { chargedMatch, findBalanceGaps } from './balanceGaps';
 
 const MIN = 60_000;
 let n = 0;
@@ -90,4 +90,36 @@ test('logins inside the window are clues', () => {
   const login = ev('login', 2 * 60 * MIN);
   const [gap] = findBalanceGaps([tx('in', 1000, 1000, 0), tx('in', 100, 900, 24 * 60 * MIN)], [login]);
   expect(gap?.clues).toEqual([login]);
+});
+
+describe('guessing a round amount plus charges', () => {
+  const DAY = 24 * 60 * MIN;
+  // Two GHS 60 cash-outs at 1%: an established tariff.
+  const history = () => [
+    tx('in', 50000, 50000, 0),
+    tx('out', 6000, 43940, 1 * DAY, { type: 'cash_out', feeMinor: 60 }),
+    tx('out', 6000, 37880, 2 * DAY, { type: 'cash_out', feeMinor: 60 }),
+  ];
+
+  test('GHS 121.20 missing reads as a GHS 120 cash-out at the 1% this wallet charged', () => {
+    const [gap] = findBalanceGaps([...history(), tx('out', 1000, 37880 - 1000 - 12120, 5 * DAY)]);
+    expect(gap?.amountMinor).toBe(-12120);
+    expect(gap?.likely).toMatchObject({ kind: 'charged', type: 'cash_out', amountMinor: 12000, chargesMinor: 120 });
+  });
+
+  test('no guess when nothing adds up exactly', () => {
+    const [gap] = findBalanceGaps([...history(), tx('out', 1000, 37880 - 1000 - 12137, 5 * DAY)]);
+    expect(gap?.likely).toBeUndefined();
+  });
+
+  test('a rate seen only once is not a tariff', () => {
+    const once = history().slice(0, 2);
+    const [gap] = findBalanceGaps([...once, tx('out', 1000, 43940 - 1000 - 12120, 5 * DAY)]);
+    expect(gap?.likely).toBeUndefined();
+  });
+
+  test('no guess for small gaps or charges from more than a year away', () => {
+    expect(chargedMatch({ amountMinor: -404, to: 3 * DAY }, history())).toBeUndefined(); // 4 + 1% would fit
+    expect(chargedMatch({ amountMinor: -12120, to: 400 * DAY }, history())).toBeUndefined();
+  });
 });

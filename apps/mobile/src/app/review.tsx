@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { bundledConfig } from '@ledgr/parser';
 import type { ReviewItem } from '@/db/schema';
 import type { BalanceGap } from '@/features/reconcile/balanceGaps';
+import { causeNoun, ratePercent, recordDefaults } from '@/features/reconcile/likelyCause';
 import { reviewHint } from '@/features/sms/reviewHint';
 import { formatDateTime, formatMoney } from '@/lib/format';
 import { useBalanceGaps } from '@/state/hooks';
@@ -61,7 +62,7 @@ export default function ReviewQueueScreen() {
           gap={recording}
           onClose={() => setRecording(null)}
           onSave={(name, categoryId) => {
-            recordGap(recording, { name, categoryId, at: recording.likely?.at });
+            recordGap(recording, { ...recordDefaults(recording), name, categoryId });
             setRecording(null);
           }}
         />
@@ -116,7 +117,16 @@ function GapCard({ gap, onRecord, onIgnore }: { gap: BalanceGap; onRecord: () =>
         {row(out ? 'Left with no SMS' : 'Arrived with no SMS', money(gap.amountMinor, true), true)}
       </View>
 
-      {gap.likely ? (
+      {gap.likely?.kind === 'charged' ? (
+        <View style={{ backgroundColor: c.bg, borderRadius: 14, padding: 12, gap: 2 }}>
+          <Text size={13} weight="semibold">
+            Could be: a {causeNoun(gap.likely.type)} of {money(gap.likely.amountMinor)} + {money(gap.likely.chargesMinor)} charges
+          </Text>
+          <Text size={13} muted style={{ lineHeight: 19 }}>
+            That’s the {ratePercent(gap.likely.chargesMinor, gap.likely.amountMinor)} {wallet} charged on your {causeNoun(gap.likely.type)}s at the time, like {money(gap.likely.example.amountMinor)} on {day(gap.likely.example.occurredAt)} (charges {money(gap.likely.example.feeMinor + gap.likely.example.taxMinor)}). A guess from the amount alone: check your statement to be sure.
+          </Text>
+        </View>
+      ) : gap.likely ? (
         <View style={{ backgroundColor: c.okSoft, borderRadius: 14, padding: 12, gap: 2 }}>
           <Text size={13} weight="semibold" color={c.okInk}>
             Likely cause: airtime top-up of {money(gap.likely.amountMinor)}
@@ -157,8 +167,9 @@ function RecordGapSheet({ gap, onSave, onClose }: { gap: BalanceGap; onSave: (na
   const c = useColors();
   const out = gap.amountMinor < 0;
   const categories = useLedger((s) => s.categories).filter((cat) => (out ? cat.kind === 'expense' : true));
-  const [name, setName] = useState(gap.likely ? 'MTN Airtime' : '');
-  const [categoryId, setCategoryId] = useState(gap.likely ? 'airtime' : out ? 'other' : 'income');
+  const defaults = recordDefaults(gap);
+  const [name, setName] = useState(defaults.name);
+  const [categoryId, setCategoryId] = useState(defaults.categoryId);
 
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
@@ -196,6 +207,11 @@ function RecordGapSheet({ gap, onSave, onClose }: { gap: BalanceGap; onSave: (na
                 ))}
               </View>
             </View>
+            {defaults.feeMinor ? (
+              <Text variant="caption" muted>
+                Saved as {formatMoney(Math.abs(gap.amountMinor) - defaults.feeMinor, 'GHS')} plus {formatMoney(defaults.feeMinor, 'GHS')} in charges, so the charges show under Fees.
+              </Text>
+            ) : null}
             <Button title="Record" onPress={() => onSave(name, categoryId)} />
           </View>
         </SafeAreaView>

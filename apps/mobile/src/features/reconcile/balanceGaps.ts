@@ -1,3 +1,4 @@
+import type { TransactionType } from '@ledgr/parser';
 import type { StoredEvidence, Transaction } from '@/db/schema';
 
 // Money that moved without an SMS explaining it. Each wallet message reports the new balance, so walking a
@@ -16,14 +17,22 @@ export interface BalanceGap {
   expectedMinor: number; // startBalanceMinor + explainedMinor
   reportedMinor: number; // balance in the SMS after the gap
   clues: StoredEvidence[]; // airtime notices and wallet logins inside the window
-  likely?: { kind: 'airtime'; amountMinor: number; at: number }; // airtime notices that add up to the gap exactly
+  likely?: LikelyCause;
 }
+
+export type LikelyCause =
+  // airtime notices inside the window that add up to the gap exactly
+  | { kind: 'airtime'; amountMinor: number; at: number }
+  // a whole-cedi amount plus the charges this wallet took on that kind of transaction at the time adds up to the gap
+  | { kind: 'charged'; type: TransactionType; amountMinor: number; chargesMinor: number; example: Transaction };
 
 const TOLERANCE_MINOR = 1; // a pesewa of rounding
 const NETTING_MS = 24 * 3600_000; // gaps that cancel out within a day are late SMS, not missing money
 const CLUSTER_MS = 30 * 60_000; // transactions this close together may have been texted out of order
 const MAX_PERMUTE = 6; // 720 orders; larger clusters keep their time order
 const RECEIPT_MS = 15 * 60_000; // an airtime notice and its MoMo receipt arrive within minutes of each other
+const TARIFF_MS = 365 * 24 * 3600_000; // charges change every year or so: only learn from transactions this close
+const MIN_GUESS_MINOR = 1000; // below GHS 10, too many amounts and charges add up by chance
 
 const delta = (t: Transaction) => (t.direction === 'in' ? t.amountMinor : -t.amountMinor) - t.feeMinor - t.taxMinor;
 
@@ -132,7 +141,31 @@ function withClues(gap: BalanceGap, evidence: StoredEvidence[], wallet: Transact
   const airtime = clues.filter((e) => e.kind === 'airtime_topup' && e.amountMinor);
   const total = airtime.reduce((s, e) => s + e.amountMinor!, 0);
   const likely = airtime.length && gap.amountMinor < 0 && Math.abs(total + gap.amountMinor) <= TOLERANCE_MINOR ? { kind: 'airtime' as const, amountMinor: total, at: airtime[0]!.at } : undefined;
-  return { ...gap, clues, likely };
+  return { ...gap, clues, likely: likely ?? chargedMatch(gap, wallet) };
+}
+
+// A gap like −121.20 is rarely random: it's usually a round amount plus charges (GHS 120 cash-out + 1% fee).
+// Charges vary by wallet, type, amount band and year, so they're learned from this wallet's own transactions
+// nearest in time, of a similar size. The guess must reproduce the gap to the pesewa, and is offered only once
+// it's above GHS 10.
+export function chargedMatch(gap: Pick<BalanceGap, 'amountMinor' | 'to'>, wallet: Transaction[]): LikelyCause | undefined {
+  const missing = -gap.amountMinor;
+  if (missing < MIN_GUESS_MINOR) return undefined;
+  const examples = wallet
+    .filter((t) => t.direction === 'out' && t.source === 'sms' && t.amountMinor > 0 && t.feeMinor + t.taxMinor > 0 && Math.abs(t.occurredAt - gap.to) <= TARIFF_MS)
+    .sort((a, b) => Math.abs(a.occurredAt - gap.to) - Math.abs(b.occurredAt - gap.to));
+  for (const t of examples) {
+    const rate = (t.feeMinor + t.taxMinor) / t.amountMinor;
+    const amount = Math.round(missing / (1 + rate) / 100) * 100; // whole cedis
+    const charges = Math.round(amount * rate);
+    const similar = amount >= t.amountMinor / 2 && amount <= t.amountMinor * 2; // fees have minimums and bands
+    // The same type at the same rate seen at least twice: an established tariff, not a one-off.
+    const seen = examples.filter((x) => x.type === t.type && Math.abs((x.feeMinor + x.taxMinor) / x.amountMinor - rate) < 0.0005).length;
+    if (amount > 0 && charges > 0 && similar && seen >= 2 && Math.abs(amount + charges - missing) <= TOLERANCE_MINOR) {
+      return { kind: 'charged', type: t.type, amountMinor: amount, chargesMinor: missing - amount, example: t };
+    }
+  }
+  return undefined;
 }
 
 // SMS delivered hours late leave a run of gaps that add up to nothing (+302, −753, +451): no money is missing.

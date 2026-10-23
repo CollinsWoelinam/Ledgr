@@ -1,3 +1,4 @@
+import type { TransactionType } from '@ledgr/parser';
 import { create } from 'zustand';
 import * as budgetsRepo from '@/db/repositories/budgets';
 import * as categoriesRepo from '@/db/repositories/categories';
@@ -30,7 +31,7 @@ export interface LedgerState {
   ingest: (incoming: Incoming[], review: ReviewItem[], evidence?: StoredEvidence[]) => { added: number; reviewAdded: number };
   recheckReview: () => void;
   ignoreGap: (key: string) => void;
-  recordGap: (gap: BalanceGap, details?: { name?: string; categoryId?: string; at?: number }) => void;
+  recordGap: (gap: BalanceGap, details?: { name?: string; categoryId?: string; at?: number; type?: TransactionType; feeMinor?: number }) => void;
   clearReview: () => void;
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
   setBudget: (categoryId: string | null, amountMinor: number | null) => void;
@@ -157,18 +158,20 @@ export const useLedger = create<LedgerState>()((set, get) => ({
 
   // Records the change as a transaction inside the gap (no balance of its own, so it closes the gap), named and
   // categorised by the user when they know what it was. Money out counts as spending like any other outflow.
+  // A guessed fee is split out so it shows under fees; amount + fee is always exactly the gap.
   recordGap: (gap, details = {}) => {
     const out = gap.amountMinor < 0;
     const id = `manual:gap:${gap.key}`;
+    const feeMinor = out ? Math.min(details.feeMinor ?? 0, Math.abs(gap.amountMinor)) : 0;
     get().ingest(
       [
         {
           id,
           provider: gap.provider,
-          type: out ? 'payment' : 'transfer_in',
+          type: details.type ?? (out ? 'payment' : 'transfer_in'),
           direction: out ? 'out' : 'in',
-          amountMinor: Math.abs(gap.amountMinor),
-          feeMinor: 0,
+          amountMinor: Math.abs(gap.amountMinor) - feeMinor,
+          feeMinor,
           taxMinor: 0,
           currency: 'GHS',
           counterpartyName: details.name?.trim() || 'Missing SMS',

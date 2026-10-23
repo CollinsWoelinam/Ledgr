@@ -60,3 +60,13 @@ test('recording without details names it "Missing SMS"', async () => {
   useLedger.getState().recordGap(gap!);
   expect(useLedger.getState().transactions.find((t) => t.source === 'manual')?.counterpartyName).toBe('Missing SMS');
 });
+
+test('recording a guessed cash-out splits out the charges, still closing the gap exactly', async () => {
+  const db = await ledgerWithGap();
+  const [gap] = findBalanceGaps(useLedger.getState().transactions);
+  useLedger.getState().recordGap(gap!, { name: 'Cash withdrawal', categoryId: 'cash', type: 'cash_out', feeMinor: 12 });
+  await flushLedgerWrites();
+  const stored = await loadLedger(db);
+  expect(stored.transactions.find((t) => t.source === 'manual')).toMatchObject({ type: 'cash_out', amountMinor: 1200, feeMinor: 12, categoryId: 'cash' });
+  expect(findBalanceGaps(stored.transactions)).toEqual([]);
+});
