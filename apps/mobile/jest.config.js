@@ -5,6 +5,6 @@ module.exports = {
   testMatch: ['<rootDir>/src/**/*.test.ts'],
   moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1', '^@ledgr/parser$': '<rootDir>/../../packages/parser/src' },
   transform: {
-    '^.+\\.ts$': ['ts-jest', { tsconfig: { module: 'commonjs', moduleResolution: 'node', esModuleInterop: true, resolveJsonModule: true, strict: true, jsx: 'react-native', types: ['jest'] } }],
+    '^.+\\.ts$': ['ts-jest', { tsconfig: { module: 'commonjs', moduleResolution: 'node', esModuleInterop: true, resolveJsonModule: true, strict: true, jsx: 'react-native', types: ['jest', 'node'] } }],
   },
 };

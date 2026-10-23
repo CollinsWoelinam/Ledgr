@@ -1,16 +1,25 @@
 import { create } from 'zustand';
+import * as budgetsRepo from '@/db/repositories/budgets';
+import * as categoriesRepo from '@/db/repositories/categories';
+import { ensureDefaults, loadLedger, wipeLedger } from '@/db/repositories/ledger';
+import * as reviewRepo from '@/db/repositories/reviewQueue';
+import * as transactionsRepo from '@/db/repositories/transactions';
 import type { Budget, Category, CategoryRule, ReviewItem, Transaction } from '@/db/schema';
+import type { SqlDb } from '@/db/sql';
+import { seedDemoData } from '@/demo/seed';
 import { categorize, counterpartyKey } from '@/features/categorization/categorize';
 import { DEFAULT_CATEGORIES, SYSTEM_RULES } from '@/features/categorization/defaultCategories';
-import { seedDemoData } from '@/demo/seed';
 
-// In-memory ledger. The actions are the seam where the SQLCipher repositories plug in later.
+// The UI reads this in-memory copy; every action also writes through to the database (when one is attached).
 export interface LedgerState {
   transactions: Transaction[];
   categories: Category[];
   rules: CategoryRule[];
   budgets: Budget[];
   reviewQueue: ReviewItem[];
+  ready: boolean;
+  encrypted: boolean;
+  attach: (db: SqlDb, encrypted: boolean) => Promise<void>;
   loadDemo: () => void;
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
   setBudget: (categoryId: string | null, amountMinor: number | null) => void;
@@ -31,18 +40,45 @@ const DEMO_BUDGETS: Budget[] = [
 
 const empty = { transactions: [], categories: DEFAULT_CATEGORIES, rules: SYSTEM_RULES, budgets: [], reviewQueue: [] };
 
+let db: SqlDb | null = null;
+let writes: Promise<void> = Promise.resolve();
+
+// Writes run one after another, in the order actions happened. A failed write is logged and doesn't block later ones.
+function persist(task: (db: SqlDb) => Promise<unknown>): void {
+  const target = db;
+  if (!target) return;
+  writes = writes.then(() => task(target)).then(
+    () => undefined,
+    (e) => console.error('[ledger] write failed', e),
+  );
+}
+
+// Resolves once every queued write has reached the database.
+export function flushLedgerWrites(): Promise<void> {
+  return writes;
+}
+
 export const useLedger = create<LedgerState>()((set, get) => ({
   ...empty,
+  ready: false,
+  encrypted: false,
+
+  attach: async (database, encrypted) => {
+    db = database;
+    await ensureDefaults(database);
+    set({ ...(await loadLedger(database)), encrypted, ready: true });
+  },
 
   loadDemo: () => {
     const { transactions, reviewQueue } = seedDemoData();
     const rules = SYSTEM_RULES;
-    set({
-      transactions: transactions.map((t) => ({ ...t, categoryId: categorize(t, rules) })),
-      categories: DEFAULT_CATEGORIES,
-      rules,
-      budgets: DEMO_BUDGETS,
-      reviewQueue,
+    const categorized = transactions.map((t) => ({ ...t, categoryId: categorize(t, rules) }));
+    set({ transactions: categorized, categories: DEFAULT_CATEGORIES, rules, budgets: DEMO_BUDGETS, reviewQueue });
+    persist(async (d) => {
+      await wipeLedger(d);
+      await transactionsRepo.insertTransactions(d, categorized);
+      await reviewRepo.addReviewItems(d, reviewQueue);
+      for (const b of DEMO_BUDGETS) await budgetsRepo.setBudget(d, b.categoryId, b.amountMinor);
     });
   },
 
@@ -55,37 +91,48 @@ export const useLedger = create<LedgerState>()((set, get) => ({
 
     if (!applyToCounterparty || !key) {
       set({ transactions: transactions.map((t) => (t.id === transactionId ? { ...t, categoryId } : t)) });
+      persist((d) => transactionsRepo.setTransactionCategory(d, [transactionId], categoryId));
       return 1;
     }
 
     const rule: CategoryRule = { id: `user-${key}`, matchType: 'counterparty', pattern: key, categoryId, priority: 0, createdBy: 'user' };
-    let changed = 0;
+    const changed: string[] = [];
     set({
       rules: [rule, ...rules.filter((r) => r.id !== rule.id)],
       transactions: transactions.map((t) => {
         if (counterpartyKey(t) !== key || t.categoryId === categoryId) return t;
-        changed += 1;
+        changed.push(t.id);
         return { ...t, categoryId };
       }),
     });
-    return changed;
+    persist(async (d) => {
+      await categoriesRepo.upsertRule(d, rule);
+      await transactionsRepo.setTransactionCategory(d, changed, categoryId);
+    });
+    return changed.length;
   },
 
   setBudget: (categoryId, amountMinor) => {
     const others = get().budgets.filter((b) => b.categoryId !== categoryId);
     set({ budgets: amountMinor && amountMinor > 0 ? [...others, { categoryId, amountMinor }] : others });
+    persist((d) => budgetsRepo.setBudget(d, categoryId, amountMinor));
   },
 
   addCategory: (category) => {
-    const id = `cat-${Date.now().toString(36)}`;
-    set({ categories: [...get().categories, { ...category, id, isDefault: false }] });
+    const created: Category = { ...category, id: `cat-${Date.now().toString(36)}`, isDefault: false };
+    const categories = [...get().categories, created];
+    set({ categories });
+    persist((d) => categoriesRepo.upsertCategory(d, created, categories.length - 1));
   },
 
   updateCategory: (id, patch) => {
-    set({ categories: get().categories.map((c) => (c.id === id ? { ...c, ...patch } : c)) });
+    const categories = get().categories.map((c) => (c.id === id ? { ...c, ...patch } : c));
+    set({ categories });
+    const index = categories.findIndex((c) => c.id === id);
+    if (index >= 0) persist((d) => categoriesRepo.upsertCategory(d, categories[index]!, index));
   },
 
-  // Transactions in a deleted category fall back to Other.
+  // Transactions in a deleted category fall back to Other; its rules and budget go with it.
   deleteCategory: (id) => {
     if (id === 'other') return;
     const { categories, transactions, rules, budgets } = get();
@@ -95,11 +142,22 @@ export const useLedger = create<LedgerState>()((set, get) => ({
       rules: rules.filter((r) => r.categoryId !== id),
       budgets: budgets.filter((b) => b.categoryId !== id),
     });
+    persist(async (d) => {
+      await transactionsRepo.moveCategory(d, id, 'other');
+      await categoriesRepo.deleteCategory(d, id);
+    });
   },
 
-  dismissReview: (id) => set({ reviewQueue: get().reviewQueue.filter((r) => r.id !== id) }),
+  dismissReview: (id) => {
+    set({ reviewQueue: get().reviewQueue.filter((r) => r.id !== id) });
+    persist((d) => reviewRepo.removeReviewItem(d, id));
+  },
 
-  reset: () => set(empty),
+  // FR-6.3: delete all data.
+  reset: () => {
+    set(empty);
+    persist((d) => wipeLedger(d));
+  },
 }));
 
 export function useCategory(id: string | null | undefined): Category | undefined {

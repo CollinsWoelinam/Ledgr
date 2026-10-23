@@ -10,7 +10,7 @@ See [the PRD](./MoMo%20Expense%20Tracker%20—%20PRD.md) and [docs/architecture.
 apps/mobile/            React Native (Expo dev build) app
   src/app/              Screens (expo-router): onboarding flow + 5 tabs, transaction detail, review, categories
   src/features/         Feature logic: sms, categorization, budgets, insights, security, backup, export
-  src/db/               SQLite schema and migrations (encrypted storage not wired up yet)
+  src/db/               SQLCipher database: migrations, repositories, Keystore-held key
   src/state/            Zustand stores
   src/ui/               Theme, shared components, floating tab bar
   src/demo/             Seeded demo data, including the SMS each transaction came from
@@ -36,17 +36,17 @@ cd apps/mobile
 npx expo start --go    # open in Expo Go on an Android device or emulator
 ```
 
-The app runs on demo data in Expo Go. Reading real SMS needs the Kotlin module and a dev build (`npx expo run:android`).
+The app runs on demo data in Expo Go, where the database is plain SQLite. Encryption (SQLCipher) and reading real SMS need a dev build (`npx expo run:android`).
 
 ## Status
 
 | Area | State |
 | --- | --- |
 | Parser | Engine, tests and accuracy gate done; MTN templates are synthetic until real samples are collected |
-| Screens | All MVP screens built to the redesign, on in-memory demo data |
+| Screens | All MVP screens built to the redesign, on demo data |
 | Categorization, budgets, insights | Logic done and tested |
 | SMS reading (Kotlin) | Not started |
-| Encrypted database | Not started; ledger lives in memory |
+| Encrypted database | Done: expo-sqlite with SQLCipher, key in Android Keystore. Expo Go has no SQLCipher, so it's only encrypted in a dev or release build |
 | App lock, export, backup | Not started (shown as "coming soon") |
 
 ## Build order

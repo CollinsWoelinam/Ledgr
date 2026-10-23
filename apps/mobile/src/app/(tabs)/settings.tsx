@@ -13,7 +13,7 @@ export default function SettingsScreen() {
   const c = useColors();
   const { monthStartDay, setMonthStartDay, currency, dataSource, providers } = useSettings();
   const resetSettings = useSettings((s) => s.reset);
-  const { categories, reviewQueue, reset: resetLedger, loadDemo } = useLedger();
+  const { categories, reviewQueue, encrypted, reset: resetLedger, loadDemo } = useLedger();
   const wallets = bundledConfig.providers.filter((p) => providers.includes(p.id)).map((p) => p.name).join(', ') || 'None';
 
   // FR-6.3: delete all data in one action.
@@ -45,7 +45,7 @@ export default function SettingsScreen() {
           </Text>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-          {['SMS read on-device', 'Nothing uploaded', 'No ads or trackers'].map((label) => (
+          {['SMS read on-device', ...(encrypted ? ['Encrypted database'] : []), 'Nothing uploaded', 'No ads or trackers'].map((label) => (
             <View key={label} style={{ backgroundColor: c.heroAlt, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 }}>
               <Text variant="caption" color="#D4E3DC">
                 {label}
