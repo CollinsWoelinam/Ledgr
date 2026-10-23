@@ -7,10 +7,10 @@ import { dailyAllowance, daysLeft, elapsedRatio } from '@/features/budgets/pace'
 import { budgetProgress, type BudgetProgress } from '@/features/budgets/progress';
 import { latestBalance, summarize } from '@/features/insights/queries';
 import { formatAmount, formatMoney } from '@/lib/format';
-import { usePeriod } from '@/state/hooks';
+import { usePeriod, useWalletTransactions } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { Button, Card, CategoryIcon, EmptyState, IconButton, ProgressBar, Screen, Text, TransactionRow } from '@/ui/components';
+import { Button, Card, CategoryIcon, EmptyState, IconButton, ProgressBar, Screen, Text, TransactionRow, WalletSwitcher } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 // FR-5.1: the month at a glance.
@@ -18,12 +18,14 @@ export default function HomeScreen() {
   const c = useColors();
   const period = usePeriod();
   const currency = useSettings((s) => s.currency);
-  const { transactions, budgets, categories, reviewQueue } = useLedger();
+  const { transactions: allTransactions, budgets, categories, reviewQueue } = useLedger();
+  // Totals follow the wallet switcher; budgets are limits on all spending, so they always use every wallet.
+  const { transactions, wallet } = useWalletTransactions();
   const [now] = useState(Date.now); // read once per mount; render must stay pure
 
   const summary = useMemo(() => summarize(transactions, period), [transactions, period]);
   const balance = useMemo(() => latestBalance(transactions), [transactions]);
-  const progress = useMemo(() => budgetProgress(budgets, transactions, period), [budgets, transactions, period]);
+  const progress = useMemo(() => budgetProgress(budgets, allTransactions, period), [budgets, allTransactions, period]);
   const overall = progress.find((p) => p.categoryId === null);
   const watched = progress.filter((p) => p.categoryId !== null).sort((a, b) => b.ratio - a.ratio).slice(0, 2);
   const today = transactions.filter((t) => new Date(t.occurredAt).toDateString() === new Date(now).toDateString());
@@ -53,16 +55,24 @@ export default function HomeScreen() {
         <IconButton icon="notifications-outline" label={reviewCount(reviewQueue.length) ?? 'Nothing to review'} badge={reviewQueue.length > 0} onPress={() => router.push('/review')} />
       </View>
 
+      <WalletSwitcher />
+
       <Card tone="hero" style={{ borderRadius: 28, padding: 22, gap: 16 }}>
         <View style={{ gap: 4 }}>
           <Text variant="caption" size={13} color={c.heroMuted}>
-            Spent this month
+            Spent this month{wallet ? ` · ${wallet.name}` : ''}
           </Text>
           <Text variant="display" size={42} color={c.heroText} adjustsFontSizeToFit numberOfLines={1}>
             {formatMoney(summary.outMinor, currency)}
           </Text>
         </View>
-        {overall ? (
+        {wallet ? (
+          <Pressable accessibilityRole="button" onPress={() => router.push('/budgets')}>
+            <Text size={13} color={c.heroMuted}>
+              Budgets cover all wallets →
+            </Text>
+          </Pressable>
+        ) : overall ? (
           <View style={{ gap: 8 }}>
             <ProgressBar ratio={overall.ratio} height={10} color={overall.ratio >= 1 ? c.over : c.accent} trackColor={c.heroTrack} />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
@@ -105,19 +115,21 @@ export default function HomeScreen() {
         </Card>
       )}
 
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        {watched.map((p) => (
-          <BudgetTile key={p.categoryId} progress={p} category={categories.find((cat) => cat.id === p.categoryId)} elapsed={elapsedRatio(period, now)} />
-        ))}
-        {watched.length < 2 && (
-          <Pressable accessibilityRole="button" onPress={() => router.push('/budgets')} style={{ flex: 1, minHeight: 130, borderRadius: 22, borderWidth: 1, borderStyle: 'dashed', borderColor: c.muted, alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            <Ionicons name="add" size={22} color={c.ink} />
-            <Text variant="label" size={13}>
-              Add a category budget
-            </Text>
-          </Pressable>
-        )}
-      </View>
+      {!wallet && (
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          {watched.map((p) => (
+            <BudgetTile key={p.categoryId} progress={p} category={categories.find((cat) => cat.id === p.categoryId)} elapsed={elapsedRatio(period, now)} />
+          ))}
+          {watched.length < 2 && (
+            <Pressable accessibilityRole="button" onPress={() => router.push('/budgets')} style={{ flex: 1, minHeight: 130, borderRadius: 22, borderWidth: 1, borderStyle: 'dashed', borderColor: c.muted, alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <Ionicons name="add" size={22} color={c.ink} />
+              <Text variant="label" size={13}>
+                Add a category budget
+              </Text>
+            </Pressable>
+          )}
+        </View>
+      )}
 
       <Card style={{ borderRadius: 24, paddingVertical: 6 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, paddingBottom: 4 }}>

@@ -3,9 +3,10 @@ import { Pressable, View } from 'react-native';
 import { periodContaining } from '@/features/budgets/period';
 import { dailySpend, spendByCategory, summarize, topCounterparties } from '@/features/insights/queries';
 import { formatAmount, formatMoney } from '@/lib/format';
+import { useWalletTransactions } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { Card, EmptyState, Screen, ScreenHeader, Text, titleCase } from '@/ui/components';
+import { Card, EmptyState, Screen, ScreenHeader, Text, titleCase, WalletSwitcher } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 const OFFSETS = [0, -1, -2];
@@ -14,7 +15,8 @@ const OFFSETS = [0, -1, -2];
 export default function InsightsScreen() {
   const c = useColors();
   const [offset, setOffset] = useState(0);
-  const { transactions, categories } = useLedger();
+  const categories = useLedger((s) => s.categories);
+  const { transactions } = useWalletTransactions();
   const { currency, monthStartDay } = useSettings();
   const [now] = useState(Date.now); // fixed per visit so memoised periods stay stable
   const periods = useMemo(() => OFFSETS.map((o) => periodContaining(new Date(now), monthStartDay, o)), [monthStartDay, now]);
@@ -57,6 +59,7 @@ export default function InsightsScreen() {
           </View>
         }
       />
+      <WalletSwitcher />
 
       {total === 0 ? (
         <EmptyState icon="pie-chart-outline" title="Nothing spent" body="No money went out in this month." />

@@ -6,10 +6,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Transaction } from '@/db/schema';
 import { summarize } from '@/features/insights/queries';
 import { formatAmount, formatDay } from '@/lib/format';
-import { usePeriod } from '@/state/hooks';
+import { usePeriod, useWalletTransactions } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { Card, Chip, EmptyState, ScreenHeader, Text, TransactionRow } from '@/ui/components';
+import { Card, Chip, EmptyState, ScreenHeader, Text, TransactionRow, WalletSwitcher } from '@/ui/components';
 import { fonts, space, TAB_BAR_CLEARANCE, useColors } from '@/ui/theme';
 
 type Direction = 'all' | 'out' | 'in';
@@ -26,7 +26,8 @@ export default function ActivityScreen() {
   const c = useColors();
   const period = usePeriod();
   const currency = useSettings((s) => s.currency);
-  const { transactions, categories, reviewQueue } = useLedger();
+  const { categories, reviewQueue } = useLedger();
+  const { transactions } = useWalletTransactions();
   const [query, setQuery] = useState('');
   const [direction, setDirection] = useState<Direction>('all');
   const [categoryId, setCategoryId] = useState<string | null>(null);
@@ -57,6 +58,7 @@ export default function ActivityScreen() {
   const header = (
     <View style={{ gap: 14, paddingBottom: 6 }}>
       <ScreenHeader title="Activity" />
+      <WalletSwitcher />
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 48, paddingHorizontal: 16, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line, borderRadius: 16 }}>
         <Ionicons name="search" size={18} color={c.muted} />

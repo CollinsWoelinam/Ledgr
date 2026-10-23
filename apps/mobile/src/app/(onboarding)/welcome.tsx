@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Text } from '@/ui/components';
+import { Button, Logo, Text } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 const BG = '#0B221C';
@@ -16,9 +16,7 @@ export default function WelcomeScreen() {
       <StatusBar style="light" />
       <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 12, paddingBottom: 16, gap: 24 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-          <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: c.accent, alignItems: 'center', justifyContent: 'center' }}>
-            <Ionicons name="reader-outline" size={18} color={c.onAccent} />
-          </View>
+          <Logo size={36} />
           <Text variant="heading" size={20} weight="bold" color={c.heroText}>
             Ledgr
           </Text>

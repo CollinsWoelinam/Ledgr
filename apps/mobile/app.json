@@ -11,7 +11,12 @@
         "RECEIVE_SMS",
         "USE_BIOMETRIC",
         "POST_NOTIFICATIONS"
-      ]
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/monochrome-icon.png",
+        "backgroundColor": "#0E2A22"
+      }
     },
     "plugins": [
       "expo-router",
@@ -20,7 +25,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0B221C"
+          "backgroundColor": "#0B221C",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 160
         }
       ],
       [
@@ -30,6 +37,10 @@
         }
       ],
       "expo-secure-store"
-    ]
+    ],
+    "icon": "./assets/icon.png",
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
   }
 }
