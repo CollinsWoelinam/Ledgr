@@ -4,12 +4,17 @@ import type { Transaction } from '@/db/schema';
 // wallet's transactions in order, every reported balance should equal the previous one plus what happened since.
 // When it doesn't, something moved that no message accounts for: that difference is a gap.
 
+// Every figure comes from balances the wallet itself reported: nothing is estimated.
 export interface BalanceGap {
   key: string; // stable: the two transactions it sits between
   provider: string;
   amountMinor: number; // signed: positive means unexplained money in, negative unexplained money out
-  from: number; // the transaction before the gap (epoch ms)
-  to: number; // the transaction that revealed it
+  from: number; // the SMS that reported startBalanceMinor (epoch ms)
+  to: number; // the SMS that reported reportedMinor and revealed the gap
+  startBalanceMinor: number; // balance in the SMS before the gap
+  explainedMinor: number; // what the messages in between account for (signed)
+  expectedMinor: number; // startBalanceMinor + explainedMinor
+  reportedMinor: number; // balance in the SMS after the gap
 }
 
 const TOLERANCE_MINOR = 1; // a pesewa of rounding
@@ -86,19 +91,25 @@ export function findBalanceGaps(transactions: Transaction[]): BalanceGap[] {
     const walletGaps: BalanceGap[] = [];
     let running: number | undefined;
     let last: Transaction | undefined;
+    let anchor: Transaction | undefined; // the last transaction that reported a balance
     for (const t of orderByBalance(list)) {
       if (running !== undefined) running += delta(t);
       if (t.balanceAfterMinor !== undefined) {
-        if (running !== undefined && last && Math.abs(running - t.balanceAfterMinor) > TOLERANCE_MINOR) {
+        if (running !== undefined && last && anchor && Math.abs(running - t.balanceAfterMinor) > TOLERANCE_MINOR) {
           walletGaps.push({
             key: `${last.id}>${t.id}`,
             provider,
             amountMinor: t.balanceAfterMinor - running,
-            from: Math.min(last.occurredAt, t.occurredAt),
-            to: Math.max(last.occurredAt, t.occurredAt),
+            from: Math.min(anchor.occurredAt, t.occurredAt),
+            to: Math.max(anchor.occurredAt, t.occurredAt),
+            startBalanceMinor: anchor.balanceAfterMinor!,
+            explainedMinor: running - anchor.balanceAfterMinor!,
+            expectedMinor: running,
+            reportedMinor: t.balanceAfterMinor,
           });
         }
         running = t.balanceAfterMinor;
+        anchor = t;
       }
       last = t;
     }

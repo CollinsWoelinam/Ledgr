@@ -55,13 +55,13 @@ export interface ReviewCount {
   total: number;
   sms: number;
   gaps: number;
-  summary: string; // e.g. "2 SMS we couldn’t read and 3 balance changes" — for banners
+  summary: string; // e.g. "2 SMS we couldn’t read and 3 money movements with no SMS", for banners
 }
 
 export function useReviewCount(): ReviewCount {
   const sms = useLedger((s) => s.reviewQueue.length);
   const gaps = useBalanceGaps().length;
   const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
-  const parts = [sms ? plural(sms, 'SMS we couldn’t read', 'SMS we couldn’t read') : '', gaps ? plural(gaps, 'unexplained balance change', 'unexplained balance changes') : ''].filter(Boolean);
+  const parts = [sms ? plural(sms, 'SMS we couldn’t read', 'SMS we couldn’t read') : '', gaps ? plural(gaps, 'money movement with no SMS', 'money movements with no SMS') : ''].filter(Boolean);
   return { total: sms + gaps, sms, gaps, summary: parts.join(' and ') };
 }

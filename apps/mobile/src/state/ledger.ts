@@ -28,7 +28,7 @@ export interface LedgerState {
   ingest: (incoming: Incoming[], review: ReviewItem[]) => { added: number; reviewAdded: number };
   recheckReview: () => void;
   ignoreGap: (key: string) => void;
-  recordGap: (gap: BalanceGap) => void;
+  recordGap: (gap: BalanceGap, details?: { name?: string; categoryId?: string }) => void;
   clearReview: () => void;
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
   setBudget: (categoryId: string | null, amountMinor: number | null) => void;
@@ -147,14 +147,15 @@ export const useLedger = create<LedgerState>()((set, get) => ({
     persist((d) => gapsRepo.dismissGap(d, key));
   },
 
-  // Records the unexplained change as a transaction inside the gap (no balance of its own, so it closes the gap).
-  // Money out counts as spending like any other outflow.
-  recordGap: (gap) => {
+  // Records the change as a transaction inside the gap (no balance of its own, so it closes the gap), named and
+  // categorised by the user when they know what it was. Money out counts as spending like any other outflow.
+  recordGap: (gap, details = {}) => {
     const out = gap.amountMinor < 0;
+    const id = `manual:gap:${gap.key}`;
     get().ingest(
       [
         {
-          id: `manual:gap:${gap.key}`,
+          id,
           provider: gap.provider,
           type: out ? 'payment' : 'transfer_in',
           direction: out ? 'out' : 'in',
@@ -162,13 +163,14 @@ export const useLedger = create<LedgerState>()((set, get) => ({
           feeMinor: 0,
           taxMinor: 0,
           currency: 'GHS',
-          counterpartyName: out ? 'Unexplained balance drop' : 'Unexplained money in',
+          counterpartyName: details.name?.trim() || 'Missing SMS',
           occurredAt: Math.round((gap.from + gap.to) / 2),
           source: 'manual',
         },
       ],
       [],
     );
+    if (details.categoryId) get().setCategory(id, details.categoryId, false);
   },
 
   clearReview: () => {

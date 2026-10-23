@@ -16,7 +16,13 @@ test('a consistent chain has no gaps (fees and taxes included)', () => {
 test('money that left with no message shows as a negative gap between the two transactions', () => {
   const a = tx('in', 10000, 10000, 0);
   const b = tx('out', 1000, 6880, 24 * 60 * MIN); // 10000 − 1000 should be 9000: 2,120 went missing
-  expect(findBalanceGaps([a, b])).toEqual([{ key: `${a.id}>${b.id}`, provider: 'mtn_momo', amountMinor: -2120, from: a.occurredAt, to: b.occurredAt }]);
+  expect(findBalanceGaps([a, b])).toEqual([
+    {
+      key: `${a.id}>${b.id}`, provider: 'mtn_momo', amountMinor: -2120, from: a.occurredAt, to: b.occurredAt,
+      // The working shown on the card: 100.00 − 10.00 explained = 90.00 expected, 68.80 reported.
+      startBalanceMinor: 10000, explainedMinor: -1000, expectedMinor: 9000, reportedMinor: 6880,
+    },
+  ]);
 });
 
 test('messages texted out of order within a burst are reordered, not flagged', () => {

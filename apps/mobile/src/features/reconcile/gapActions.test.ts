@@ -26,11 +26,11 @@ test('recording a gap adds an unexplained transaction that closes it and counts 
   const [gap] = findBalanceGaps(useLedger.getState().transactions);
   expect(gap?.amountMinor).toBe(-1212);
 
-  useLedger.getState().recordGap(gap!);
+  useLedger.getState().recordGap(gap!, { name: 'Rent via MoMo app', categoryId: 'bills' });
   await flushLedgerWrites();
   const stored = await loadLedger(db);
   const fix = stored.transactions.find((t) => t.source === 'manual')!;
-  expect(fix).toMatchObject({ direction: 'out', amountMinor: 1212, counterpartyName: 'Unexplained balance drop', provider: 'mtn_momo' });
+  expect(fix).toMatchObject({ direction: 'out', amountMinor: 1212, counterpartyName: 'Rent via MoMo app', categoryId: 'bills', provider: 'mtn_momo' });
   expect(fix.occurredAt).toBeGreaterThan(0);
   expect(fix.occurredAt).toBeLessThan(2 * DAY);
   expect(findBalanceGaps(stored.transactions)).toEqual([]);
@@ -52,4 +52,11 @@ test('ignoring a gap is remembered across launches, and Delete all data clears i
   useLedger.getState().reset();
   await flushLedgerWrites();
   expect((await loadLedger(db)).dismissedGaps).toEqual([]);
+});
+
+test('recording without details names it "Missing SMS"', async () => {
+  await ledgerWithGap();
+  const [gap] = findBalanceGaps(useLedger.getState().transactions);
+  useLedger.getState().recordGap(gap!);
+  expect(useLedger.getState().transactions.find((t) => t.source === 'manual')?.counterpartyName).toBe('Missing SMS');
 });
