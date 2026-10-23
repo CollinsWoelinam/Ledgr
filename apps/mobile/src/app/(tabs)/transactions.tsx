@@ -115,7 +115,7 @@ export default function ActivityScreen() {
         <Pressable accessibilityRole="button" onPress={() => router.push('/review')}>
           <Card tone="notice" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 18 }}>
             <View style={{ minWidth: 24, height: 24, borderRadius: 12, backgroundColor: c.noticeInk, alignItems: 'center', justifyContent: 'center' }}>
-              <Text variant="caption" weight="bold" color="#FFFFFF">
+              <Text variant="caption" weight="bold" color={c.onNotice}>
                 {reviewQueue.length}
               </Text>
             </View>

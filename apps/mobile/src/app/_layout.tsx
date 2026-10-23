@@ -1,13 +1,16 @@
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import { SpaceGrotesk_500Medium, SpaceGrotesk_600SemiBold, SpaceGrotesk_700Bold } from '@expo-google-fonts/space-grotesk';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, SplashScreen, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
 import { useColors } from '@/ui/theme';
+
+// Keep the native splash up until fonts and settings are ready, instead of a blank screen.
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   const scheme = useColorScheme();
@@ -23,7 +26,12 @@ export default function RootLayout() {
     if (hydrated && dataSource === 'demo' && !hasData) loadDemo();
   }, [hydrated, dataSource, hasData, loadDemo]);
 
-  if (!hydrated || !fontsLoaded) return null;
+  const ready = hydrated && fontsLoaded;
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync().catch(() => {});
+  }, [ready]);
+
+  if (!ready) return null;
 
   const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
   const theme = { ...base, colors: { ...base.colors, background: c.bg, card: c.surface, text: c.ink, border: c.line, primary: c.okInk } };

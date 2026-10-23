@@ -71,7 +71,7 @@ export default function SettingsScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               {reviewQueue.length > 0 && (
                 <View style={{ minWidth: 22, height: 22, borderRadius: 11, backgroundColor: c.noticeInk, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 }}>
-                  <Text variant="caption" weight="bold" color="#FFFFFF">
+                  <Text variant="caption" weight="bold" color={c.onNotice}>
                     {reviewQueue.length}
                   </Text>
                 </View>

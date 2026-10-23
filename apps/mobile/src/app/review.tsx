@@ -18,7 +18,7 @@ export default function ReviewQueueScreen() {
       ) : (
         <>
           <Text muted style={{ lineHeight: 22 }}>
-            These came from your wallet but didn't match a format Ledgr knows yet. Dismissing deletes the message text from Ledgr.
+            These came from your wallet but didn’t match a format Ledgr knows yet. Dismissing deletes the message text from Ledgr.
           </Text>
           {reviewQueue.map((item) => (
             <Card key={item.id} style={{ borderRadius: 22, gap: 12 }}>

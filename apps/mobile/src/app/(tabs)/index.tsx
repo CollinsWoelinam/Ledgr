@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import type { Category } from '@/db/schema';
 import { dailyAllowance, daysLeft, elapsedRatio } from '@/features/budgets/pace';
@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const period = usePeriod();
   const currency = useSettings((s) => s.currency);
   const { transactions, budgets, categories, reviewQueue } = useLedger();
-  const now = Date.now();
+  const [now] = useState(Date.now); // read once per mount; render must stay pure
 
   const summary = useMemo(() => summarize(transactions, period), [transactions, period]);
   const balance = useMemo(() => latestBalance(transactions), [transactions]);
@@ -99,7 +99,7 @@ export default function HomeScreen() {
         <Card tone="notice" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingRight: 12, borderRadius: 20 }}>
           <Ionicons name="chatbox-ellipses-outline" size={20} color={c.noticeInk} />
           <Text style={{ flex: 1 }}>
-            {reviewQueue.length} SMS we couldn't read yet
+            {reviewQueue.length} SMS we couldn’t read yet
           </Text>
           <Button title="Review" small onPress={() => router.push('/review')} />
         </Card>

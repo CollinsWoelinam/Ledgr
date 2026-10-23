@@ -27,6 +27,7 @@ const light = {
 
   positive: '#157347',
   over: '#C2410C',
+  onOver: '#FFFFFF',
   overSoft: '#F2C9B5',
   warnBar: '#E9A23B',
   warnSoft: '#FCE9C6',
@@ -36,6 +37,7 @@ const light = {
   noticeBg: '#FFF4E6',
   noticeBorder: '#F6D3A8',
   noticeInk: '#B4480A',
+  onNotice: '#FFFFFF',
   dangerBg: '#FFF6F1',
   dangerBorder: '#F0C9B8',
   danger: '#B4360A',
@@ -71,6 +73,7 @@ const dark: typeof light = {
 
   positive: '#5CCB8E',
   over: '#F08A5D',
+  onOver: '#2A1208',
   overSoft: '#4A2A1E',
   warnBar: '#E9A23B',
   warnSoft: '#3D2E12',
@@ -80,6 +83,7 @@ const dark: typeof light = {
   noticeBg: '#2A2114',
   noticeBorder: '#4A3820',
   noticeInk: '#F0A35E',
+  onNotice: '#2A1A0A',
   dangerBg: '#2A1712',
   dangerBorder: '#4A2A1E',
   danger: '#F08A5D',

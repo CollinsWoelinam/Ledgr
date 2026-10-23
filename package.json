@@ -1,11 +1,18 @@
 {
   "name": "ledgr",
   "private": true,
-  "workspaces": ["apps/*", "packages/*", "services/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
   "scripts": {
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "test:parser": "npm run test -w @ledgr/parser"
+  },
+  "overrides": {
+    "react": "19.3.0"
   }
 }
