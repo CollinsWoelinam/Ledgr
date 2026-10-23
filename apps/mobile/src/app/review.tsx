@@ -117,9 +117,10 @@ function GapCard({ gap, onRecord, onIgnore }: { gap: BalanceGap; onRecord: () =>
         {row(out ? 'Left with no SMS' : 'Arrived with no SMS', money(gap.amountMinor, true), true)}
       </View>
 
+      {/* Grey is the working, green is confirmed by a message, amber is a guess to check. */}
       {gap.likely?.kind === 'charged' ? (
-        <View style={{ backgroundColor: c.bg, borderRadius: 14, padding: 12, gap: 2 }}>
-          <Text size={13} weight="semibold">
+        <View style={{ backgroundColor: c.warnSoft, borderRadius: 14, padding: 12, gap: 2 }}>
+          <Text size={13} weight="semibold" color={c.warnInk}>
             Could be: a {causeNoun(gap.likely.type)} of {money(gap.likely.amountMinor)} + {money(gap.likely.chargesMinor)} charges
           </Text>
           <Text size={13} muted style={{ lineHeight: 19 }}>
