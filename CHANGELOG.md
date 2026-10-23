@@ -8,3 +8,4 @@
 - Demo transactions carry the SMS they came from, verified to round-trip through the parser.
 - ESLint (eslint-config-expo); single pinned React version.
 - Encrypted local database: expo-sqlite + SQLCipher, random key in Android Keystore, versioned migrations; ledger writes through so changes survive restarts. Repository tests run against real SQLite (node:sqlite).
+- Real SMS: Kotlin inbox reader and live sync; real MTN/Telecel templates with anonymized fixtures. Verified on a Galaxy A32 release build: live capture, encrypted database, 1.0–1.5 s cold start.
