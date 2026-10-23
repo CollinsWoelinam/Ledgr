@@ -29,3 +29,14 @@ test('changes survive a reload from the database', async () => {
   await flushLedgerWrites();
   expect((await loadLedger(db)).transactions).toEqual([]);
 });
+
+test('a new transaction whose default category was deleted lands in Other, and saves', async () => {
+  const db = await openTestDb();
+  await useLedger.getState().attach(db, false);
+  useLedger.getState().deleteCategory('cash');
+  const cashOut = { id: 'mtn_momo:ref:1', provider: 'mtn_momo', type: 'cash_out', direction: 'out', amountMinor: 5000, feeMinor: 0, taxMinor: 0, currency: 'GHS', counterpartyName: 'AGENT', externalRef: '1', occurredAt: 1, source: 'sms' } as const;
+  useLedger.getState().ingest([cashOut], []);
+  await flushLedgerWrites();
+  expect(useLedger.getState().transactions[0]?.categoryId).toBe('other');
+  expect((await loadLedger(db)).transactions.map((t) => t.categoryId)).toEqual(['other']);
+});

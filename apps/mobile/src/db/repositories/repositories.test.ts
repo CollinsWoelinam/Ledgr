@@ -33,7 +33,7 @@ test('system rules are refreshed on launch without touching user rules', async (
 
 test('defaults are installed once', async () => {
   await ensureDefaults(db);
-  expect(await listCategories(db)).toHaveLength(10);
+  expect(await listCategories(db)).toHaveLength(12);
   expect(await listRules(db)).toHaveLength(SYSTEM_RULES.length);
 });
 
@@ -97,5 +97,5 @@ test('wipe removes everything and restores defaults (FR-6.3)', async () => {
   const snapshot = await loadLedger(db);
   expect(snapshot.transactions).toEqual([]);
   expect(snapshot.budgets).toEqual([]);
-  expect(snapshot.categories).toHaveLength(10);
+  expect(snapshot.categories).toHaveLength(12);
 });

@@ -6,7 +6,7 @@ const TYPE_DEFAULTS: Record<TransactionType, string> = {
   cash_in: 'income',
   transfer_out: 'transfers',
   payment: 'other',
-  cash_out: 'other',
+  cash_out: 'cash',
   airtime_data: 'airtime',
   reversal: 'other',
 };

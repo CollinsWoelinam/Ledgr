@@ -1,8 +1,14 @@
+import { categorize } from '@/features/categorization/categorize';
+import { DEFAULT_CATEGORIES, SYSTEM_RULES } from '@/features/categorization/defaultCategories';
+import { listRules } from './repositories/categories';
 import type { SqlDb } from './sql';
 
+type Migration = string | ((db: SqlDb) => Promise<void>);
+
 // Append-only: each entry upgrades the schema by one version (tracked in PRAGMA user_version).
-// All money columns are integer minor units.
-export const MIGRATIONS: string[] = [
+// SQL for schema changes, a function when data has to move. Functions run inside the migration's transaction,
+// so they must not open one of their own. All money columns are integer minor units.
+export const MIGRATIONS: Migration[] = [
   `
   CREATE TABLE categories (
     id TEXT PRIMARY KEY,
@@ -78,16 +84,40 @@ export const MIGRATIONS: string[] = [
     pending_changes INTEGER NOT NULL DEFAULT 0
   );
   `,
+
+  // v2: Cash withdrawals and Bank transfers. Existing installs get the categories, and transactions still in Other
+  // are re-sorted with the current rules (cash-outs, bank pushes, and anything an improved keyword rule now knows). A fresh install has no categories yet and gets them
+  // with the other defaults.
+  async (db) => {
+    const existing = await db.get<{ n: number }>('SELECT COUNT(*) AS n FROM categories');
+    if (!existing?.n) return;
+    for (const [i, c] of DEFAULT_CATEGORIES.filter((d) => d.id === 'cash' || d.id === 'bank').entries()) {
+      await db.run('INSERT OR IGNORE INTO categories (id, name, icon, color, kind, is_default, sort) VALUES (?, ?, ?, ?, ?, 1, ?)', [c.id, c.name, c.icon, c.color, c.kind, 10 + i]);
+    }
+    await db.run("UPDATE categories SET sort = 99 WHERE id = 'other'");
+
+    const rules = [...(await listRules(db)).filter((r) => r.createdBy === 'user'), ...SYSTEM_RULES];
+    const rows = await db.all<{ id: string; type: never; counterparty_name: string | null; counterparty_number: string | null }>(
+      "SELECT id, type, counterparty_name, counterparty_number FROM transactions WHERE category_id = 'other'",
+    );
+    for (const r of rows) {
+      const next = categorize({ type: r.type, counterpartyName: r.counterparty_name ?? undefined, counterpartyNumber: r.counterparty_number ?? undefined }, rules);
+      if (next !== 'other') await db.run('UPDATE transactions SET category_id = ?, updated_at = ? WHERE id = ?', [next, Date.now(), r.id]);
+    }
+  },
 ];
 
-export async function migrate(db: SqlDb): Promise<number> {
+// `target` exists for tests that need a database at an older version.
+export async function migrate(db: SqlDb, target = MIGRATIONS.length): Promise<number> {
   const row = await db.get<{ user_version: number }>('PRAGMA user_version');
   const from = row?.user_version ?? 0;
-  for (let v = from; v < MIGRATIONS.length; v++) {
+  for (let v = from; v < target; v++) {
     await db.transaction(async () => {
-      await db.exec(MIGRATIONS[v]!);
+      const step = MIGRATIONS[v]!;
+      if (typeof step === 'string') await db.exec(step);
+      else await step(db);
       await db.exec(`PRAGMA user_version = ${v + 1}`);
     });
   }
-  return MIGRATIONS.length;
+  return target;
 }

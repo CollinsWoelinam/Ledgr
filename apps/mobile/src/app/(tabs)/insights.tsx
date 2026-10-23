@@ -90,16 +90,20 @@ export default function InsightsScreen() {
                 />
               ))}
             </View>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 18, rowGap: 10 }}>
+            {/* One row per category: real names ("Bank transfers", "Bills & Utilities") don't fit two columns. */}
+            <View style={{ gap: 10 }}>
               {byCategory.map((x) => {
                 const cat = categoryOf(x.categoryId);
                 return (
-                  <View key={x.categoryId} style={{ width: '46%', flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <View key={x.categoryId} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                     <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: cat?.color ?? c.muted }} />
-                    <Text size={13} style={{ flex: 1 }} numberOfLines={1}>
+                    <Text size={14} style={{ flex: 1 }} numberOfLines={1}>
                       {cat?.name ?? 'Unknown'}
                     </Text>
-                    <Text numeric weight="semibold" size={13}>
+                    <Text variant="caption" muted style={{ width: 36, textAlign: 'right' }}>
+                      {sharePercent(x.amountMinor, total)}
+                    </Text>
+                    <Text numeric weight="semibold" size={14} style={{ minWidth: 76, textAlign: 'right' }}>
                       {formatAmount(x.amountMinor)}
                     </Text>
                   </View>
@@ -195,4 +199,10 @@ export default function InsightsScreen() {
       )}
     </Screen>
   );
+}
+
+// "<1%" rather than "0%" for a small but real share.
+function sharePercent(part: number, total: number): string {
+  const pct = (part / total) * 100;
+  return pct > 0 && pct < 1 ? '<1%' : `${Math.round(pct)}%`;
 }

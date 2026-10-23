@@ -26,3 +26,12 @@ test('counterparty rules match on number when there is one', () => {
   expect(categorize(tx('transfer_out', 'AUNTIE AKOS', '0241110321'), rules)).toBe('food');
   expect(categorize(tx('transfer_out', 'AUNTIE AKOS', '0200000000'), rules)).toBe('transfers');
 });
+
+test('cash-outs go to Cash withdrawals, bank moves to Bank transfers in either direction', () => {
+  expect(categorize({ type: 'cash_out', counterpartyName: "TONY'S FASHION HOME" }, SYSTEM_RULES)).toBe('cash');
+  expect(categorize({ type: 'payment', counterpartyName: 'BANKPUSH' }, SYSTEM_RULES)).toBe('bank');
+  expect(categorize({ type: 'transfer_in', counterpartyName: 'ADB Bank Pull' }, SYSTEM_RULES)).toBe('bank');
+  expect(categorize({ type: 'transfer_in', counterpartyName: 'GT Bank' }, SYSTEM_RULES)).toBe('bank');
+  // Not every name containing the letters is a bank.
+  expect(categorize({ type: 'transfer_out', counterpartyName: 'KOFI BANKOLE' }, SYSTEM_RULES)).toBe('transfers');
+});

@@ -3,7 +3,7 @@ import { migrate } from '../migrations';
 import type { SqlDb, SqlValue } from '../sql';
 
 // In-memory SQLite for tests, behind the same SqlDb interface the app uses.
-export async function openTestDb(): Promise<SqlDb> {
+export async function openTestDb(version?: number): Promise<SqlDb> {
   const native = new DatabaseSync(':memory:');
   native.exec('PRAGMA foreign_keys = ON');
   let inTransaction = false;
@@ -28,6 +28,6 @@ export async function openTestDb(): Promise<SqlDb> {
       }
     },
   };
-  await migrate(db);
+  await migrate(db, version);
   return db;
 }

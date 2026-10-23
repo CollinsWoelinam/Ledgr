@@ -86,13 +86,16 @@ export const useLedger = create<LedgerState>()((set, get) => ({
 
   // New SMS transactions: drop ones already stored (ids are dedupe keys, FR-2.3), categorize, save.
   ingest: (incoming, review) => {
-    const { transactions, rules, reviewQueue } = get();
+    const { transactions, rules, reviewQueue, categories } = get();
     const known = new Set(transactions.map((t) => t.id));
+    // A rule or default can name a category the user has since deleted; those land in Other.
+    const present = new Set(categories.map((c) => c.id));
     const fresh: Transaction[] = [];
     for (const t of incoming) {
       if (known.has(t.id)) continue;
       known.add(t.id);
-      fresh.push({ ...t, categoryId: categorize(t, rules) });
+      const categoryId = categorize(t, rules);
+      fresh.push({ ...t, categoryId: present.has(categoryId) ? categoryId : 'other' });
     }
     const knownReview = new Set(reviewQueue.map((r) => r.id));
     const newReview = review.filter((r) => !knownReview.has(r.id));
