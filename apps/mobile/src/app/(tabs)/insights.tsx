@@ -1,15 +1,14 @@
 import { useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { periodContaining } from '@/features/budgets/period';
+import { monthsWithData } from '@/features/insights/months';
 import { dailySpend, spendByCategory, summarize, topCounterparties } from '@/features/insights/queries';
 import { formatAmount, formatMoney } from '@/lib/format';
 import { useWalletTransactions } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { Card, EmptyState, Screen, ScreenHeader, Text, titleCase, WalletSwitcher } from '@/ui/components';
+import { Card, EmptyState, MonthNavigator, Screen, ScreenHeader, Text, titleCase, WalletSwitcher } from '@/ui/components';
 import { useColors } from '@/ui/theme';
-
-const OFFSETS = [0, -1, -2];
 
 // FR-5.2, FR-5.4: where the money went, daily rhythm, top recipients, fees.
 export default function InsightsScreen() {
@@ -19,8 +18,12 @@ export default function InsightsScreen() {
   const { transactions } = useWalletTransactions();
   const { currency, monthStartDay } = useSettings();
   const [now] = useState(Date.now); // fixed per visit so memoised periods stay stable
-  const periods = useMemo(() => OFFSETS.map((o) => periodContaining(new Date(now), monthStartDay, o)), [monthStartDay, now]);
-  const period = periods[OFFSETS.indexOf(offset)]!;
+  // Any month back to the oldest transaction (for the selected wallet).
+  const months = useMemo(() => monthsWithData(transactions, now, monthStartDay), [transactions, now, monthStartDay]);
+  const currentStart = useMemo(() => periodContaining(new Date(now), monthStartDay).start, [now, monthStartDay]);
+  // A wallet with a shorter history can't show an older month: clamp, so the header and the data agree.
+  const shown = Math.max(offset, months.oldest);
+  const period = useMemo(() => periodContaining(new Date(now), monthStartDay, shown), [now, monthStartDay, shown]);
 
   const byCategory = useMemo(() => spendByCategory(transactions, period), [transactions, period]);
   const daily = useMemo(() => dailySpend(transactions, period), [transactions, period]);
@@ -38,31 +41,12 @@ export default function InsightsScreen() {
     <Screen tab>
       <ScreenHeader
         title="Insights"
-        right={
-          <View accessibilityRole="radiogroup" accessibilityLabel="Month" style={{ flexDirection: 'row', backgroundColor: c.surfaceAlt, borderRadius: 14, padding: 3 }}>
-            {OFFSETS.map((o, i) => {
-              const selected = o === offset;
-              return (
-                <Pressable
-                  key={o}
-                  accessibilityRole="radio"
-                  accessibilityState={{ selected }}
-                  onPress={() => setOffset(o)}
-                  style={{ height: 32, paddingHorizontal: 12, borderRadius: 11, justifyContent: 'center', backgroundColor: selected ? c.surface : 'transparent' }}
-                >
-                  <Text variant="label" size={13} weight={selected ? 'semibold' : 'medium'} color={selected ? c.ink : c.muted}>
-                    {new Date(periods[i]!.start).toLocaleDateString('en-GB', { month: 'short' }).slice(0, 3)}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-        }
+        right={<MonthNavigator offset={shown} onChange={setOffset} months={months} currentStart={currentStart} />}
       />
       <WalletSwitcher />
 
       {total === 0 ? (
-        <EmptyState icon="pie-chart-outline" title="Nothing spent" body="No money went out in this month." />
+        <EmptyState icon="pie-chart-outline" title="Nothing spent" body="No money went out this month. Use ‹ to look at earlier months." />
       ) : (
         <>
           <Card style={{ borderRadius: 24, padding: 18, gap: 14 }}>
@@ -103,7 +87,7 @@ export default function InsightsScreen() {
                     <Text size={14} style={{ flex: 1 }} numberOfLines={1}>
                       {cat?.name ?? 'Unknown'}
                     </Text>
-                    <Text variant="caption" muted style={{ width: 36, textAlign: 'right' }}>
+                    <Text variant="caption" muted style={{ width: 44, textAlign: 'right' }}>
                       {sharePercent(x.amountMinor, total)}
                     </Text>
                     <Text numeric weight="semibold" size={14} style={{ minWidth: 76, textAlign: 'right' }}>
@@ -153,7 +137,7 @@ export default function InsightsScreen() {
               <Text variant="caption" size={11} color={c.heroMuted}>
                 {new Date(period.start).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
               </Text>
-              {offset === 0 && (
+              {shown === 0 && (
                 <Text variant="caption" size={11} color={c.heroMuted}>
                   Today
                 </Text>

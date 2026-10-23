@@ -7,6 +7,7 @@ export { IconButton, type IconName } from './IconButton';
 export { ListRow } from './ListRow';
 export { LockScreen } from './LockScreen';
 export { Logo } from './Logo';
+export { MonthNavigator } from './MonthNavigator';
 export { ProgressBar } from './ProgressBar';
 export { Screen } from './Screen';
 export { ScreenHeader } from './ScreenHeader';
