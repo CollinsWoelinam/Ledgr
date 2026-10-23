@@ -105,6 +105,14 @@ export const MIGRATIONS: Migration[] = [
       if (next !== 'other') await db.run('UPDATE transactions SET category_id = ?, updated_at = ? WHERE id = ?', [next, Date.now(), r.id]);
     }
   },
+
+  // v3: balance gaps the user chose to ignore (key = the two transactions the gap sits between).
+  `
+  CREATE TABLE dismissed_gaps (
+    key TEXT PRIMARY KEY,
+    dismissed_at INTEGER NOT NULL
+  );
+  `,
 ];
 
 // `target` exists for tests that need a database at an older version.

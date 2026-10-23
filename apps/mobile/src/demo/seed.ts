@@ -68,15 +68,20 @@ export function seedDemoData(now = new Date()): { transactions: Transaction[]; r
     }
   }
 
-  // Running balance, oldest first.
+  // Running balance, oldest first. A purchase the wallet can't afford is left out (a real wallet would decline it),
+  // so every reported balance follows exactly from the one before: the demo has no balance gaps.
   transactions.sort((a, b) => a.occurredAt - b.occurredAt);
   let balance = 80000;
+  const affordable: typeof transactions = [];
   for (const t of transactions) {
-    balance += t.direction === 'in' ? t.amountMinor : -(t.amountMinor + t.feeMinor + t.taxMinor);
-    balance = Math.max(balance, 0);
+    const change = t.direction === 'in' ? t.amountMinor : -(t.amountMinor + t.feeMinor + t.taxMinor);
+    if (balance + change < 0) continue;
+    balance += change;
     t.balanceAfterMinor = balance;
     t.smsBody = smsFor(t);
+    affordable.push(t);
   }
+  transactions.splice(0, transactions.length, ...affordable);
 
   const reviewQueue: ReviewItem[] = [
     {

@@ -7,7 +7,7 @@ import { dailyAllowance, daysLeft, elapsedRatio } from '@/features/budgets/pace'
 import { budgetProgress, type BudgetProgress } from '@/features/budgets/progress';
 import { latestBalance, summarize } from '@/features/insights/queries';
 import { formatAmount, formatMoney } from '@/lib/format';
-import { usePeriod, useWalletTransactions } from '@/state/hooks';
+import { usePeriod, useReviewCount, useWalletTransactions } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
 import { Button, Card, CategoryIcon, EmptyState, IconButton, ProgressBar, Screen, Text, TransactionRow, WalletSwitcher } from '@/ui/components';
@@ -18,7 +18,8 @@ export default function HomeScreen() {
   const c = useColors();
   const period = usePeriod();
   const currency = useSettings((s) => s.currency);
-  const { transactions: allTransactions, budgets, categories, reviewQueue } = useLedger();
+  const { transactions: allTransactions, budgets, categories } = useLedger();
+  const review = useReviewCount();
   // Totals follow the wallet switcher; budgets are limits on all spending, so they always use every wallet.
   const { transactions, wallet } = useWalletTransactions();
   const [now] = useState(Date.now); // read once per mount; render must stay pure
@@ -52,7 +53,7 @@ export default function HomeScreen() {
             {greeting(new Date(now).getHours())}
           </Text>
         </View>
-        <IconButton icon="notifications-outline" label={reviewCount(reviewQueue.length) ?? 'Nothing to review'} badge={reviewQueue.length > 0} onPress={() => router.push('/review')} />
+        <IconButton icon="notifications-outline" label={review.total ? `To review: ${review.summary}` : 'Nothing to review'} badge={review.total > 0} onPress={() => router.push('/review')} />
       </View>
 
       <WalletSwitcher />
@@ -105,11 +106,11 @@ export default function HomeScreen() {
         </View>
       </Card>
 
-      {reviewQueue.length > 0 && (
+      {review.total > 0 && (
         <Card tone="notice" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingRight: 12, borderRadius: 20 }}>
           <Ionicons name="chatbox-ellipses-outline" size={20} color={c.noticeInk} />
           <Text style={{ flex: 1 }}>
-            {reviewQueue.length} SMS we couldn’t read yet
+            {review.summary}
           </Text>
           <Button title="Review" small onPress={() => router.push('/review')} />
         </Card>
@@ -191,8 +192,4 @@ function BudgetTile({ progress, category, elapsed }: { progress: BudgetProgress;
 
 function greeting(hour: number): string {
   return hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-}
-
-function reviewCount(n: number): string | undefined {
-  return n ? `${n} message${n > 1 ? 's' : ''} to review` : undefined;
 }

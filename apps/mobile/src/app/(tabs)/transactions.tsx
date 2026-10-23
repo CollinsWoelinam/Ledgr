@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Transaction } from '@/db/schema';
 import { summarize } from '@/features/insights/queries';
 import { formatAmount, formatDay } from '@/lib/format';
-import { usePeriod, useWalletTransactions } from '@/state/hooks';
+import { usePeriod, useReviewCount, useWalletTransactions } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
 import { Card, Chip, EmptyState, ScreenHeader, Text, TransactionRow, WalletSwitcher } from '@/ui/components';
@@ -26,7 +26,8 @@ export default function ActivityScreen() {
   const c = useColors();
   const period = usePeriod();
   const currency = useSettings((s) => s.currency);
-  const { categories, reviewQueue } = useLedger();
+  const categories = useLedger((s) => s.categories);
+  const review = useReviewCount();
   const { transactions } = useWalletTransactions();
   const [query, setQuery] = useState('');
   const [direction, setDirection] = useState<Direction>('all');
@@ -113,15 +114,15 @@ export default function ActivityScreen() {
         </Card>
       </View>
 
-      {reviewQueue.length > 0 && (
+      {review.total > 0 && (
         <Pressable accessibilityRole="button" onPress={() => router.push('/review')}>
           <Card tone="notice" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 18 }}>
             <View style={{ minWidth: 24, height: 24, borderRadius: 12, backgroundColor: c.noticeInk, alignItems: 'center', justifyContent: 'center' }}>
               <Text variant="caption" weight="bold" color={c.onNotice}>
-                {reviewQueue.length}
+                {review.total}
               </Text>
             </View>
-            <Text style={{ flex: 1 }}>Unrecognised SMS to review</Text>
+            <Text style={{ flex: 1 }}>To review: {review.summary}</Text>
             <Ionicons name="chevron-forward" size={18} color={c.muted} />
           </Card>
         </Pressable>

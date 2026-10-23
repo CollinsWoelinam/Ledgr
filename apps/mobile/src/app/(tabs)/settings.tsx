@@ -7,6 +7,7 @@ import { phoneHasScreenLock } from '@/features/security/appLock';
 import { LOCK_AFTER_OPTIONS } from '@/features/security/lockPolicy';
 import { confirmWithLock } from '@/features/security/useAppLock';
 import { useLedger } from '@/state/ledger';
+import { useReviewCount } from '@/state/hooks';
 import { useSettings } from '@/state/settings';
 import { Button, Card, Chip, ListRow, Screen, ScreenHeader, Text, ThemeToggle, Toggle } from '@/ui/components';
 import { useColors } from '@/ui/theme';
@@ -26,7 +27,8 @@ export default function SettingsScreen() {
     if (await confirmWithLock(on ? 'Turn on app lock' : 'Turn off app lock')) setAppLock(on);
   };
   const resetSettings = useSettings((s) => s.reset);
-  const { categories, reviewQueue, encrypted, reset: resetLedger, loadDemo } = useLedger();
+  const { categories, encrypted, reset: resetLedger, loadDemo } = useLedger();
+  const review = useReviewCount();
   const wallets = bundledConfig.providers.filter((p) => providers.includes(p.id)).map((p) => p.name).join(', ') || 'None';
 
   // FR-6.3: delete all data in one action.
@@ -86,10 +88,10 @@ export default function SettingsScreen() {
           onPress={() => router.push('/review')}
           right={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              {reviewQueue.length > 0 && (
+              {review.total > 0 && (
                 <View style={{ minWidth: 22, height: 22, borderRadius: 11, backgroundColor: c.noticeInk, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 }}>
                   <Text variant="caption" weight="bold" color={c.onNotice}>
-                    {reviewQueue.length}
+                    {review.total}
                   </Text>
                 </View>
               )}

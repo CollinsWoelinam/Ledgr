@@ -10,3 +10,4 @@
 - Encrypted local database: expo-sqlite + SQLCipher, random key in Android Keystore, versioned migrations; ledger writes through so changes survive restarts. Repository tests run against real SQLite (node:sqlite).
 - Real SMS: Kotlin inbox reader and live sync; real MTN/Telecel templates with anonymized fixtures. Verified on a Galaxy A32 release build: live capture, encrypted database, 1.0–1.5 s cold start.
 - App lock (US-08): fingerprint or phone screen lock, re-locks after a chosen time away; wallet filter; Ledgr logo and icons; Cash withdrawals and Bank transfers categories.
+- Balance gaps: each wallet's reported balances are reconciled against its transactions; unexplained changes are flagged for review, to record (as spending or money in) or ignore.

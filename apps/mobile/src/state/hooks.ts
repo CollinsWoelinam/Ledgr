@@ -2,6 +2,7 @@ import { bundledConfig } from '@ledgr/parser';
 import { useMemo } from 'react';
 import type { Transaction } from '@/db/schema';
 import { periodContaining, type Period } from '@/features/budgets/period';
+import { findBalanceGaps, type BalanceGap } from '@/features/reconcile/balanceGaps';
 import { useLedger } from './ledger';
 import { useSettings } from './settings';
 
@@ -38,4 +39,29 @@ export function useWalletTransactions(): { transactions: Transaction[]; wallet: 
   const selected = useSettings((s) => s.wallet);
   const wallets = useWallets();
   return useMemo(() => selectWallet(all, wallets, selected), [all, selected, wallets]);
+}
+
+// Unexplained balance changes the user hasn't ignored or recorded, newest first.
+export function useBalanceGaps(): BalanceGap[] {
+  const transactions = useLedger((s) => s.transactions);
+  const dismissed = useLedger((s) => s.dismissedGaps);
+  return useMemo(() => {
+    const ignored = new Set(dismissed);
+    return findBalanceGaps(transactions).filter((g) => !ignored.has(g.key));
+  }, [transactions, dismissed]);
+}
+
+export interface ReviewCount {
+  total: number;
+  sms: number;
+  gaps: number;
+  summary: string; // e.g. "2 SMS we couldn’t read and 3 balance changes" — for banners
+}
+
+export function useReviewCount(): ReviewCount {
+  const sms = useLedger((s) => s.reviewQueue.length);
+  const gaps = useBalanceGaps().length;
+  const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+  const parts = [sms ? plural(sms, 'SMS we couldn’t read', 'SMS we couldn’t read') : '', gaps ? plural(gaps, 'unexplained balance change', 'unexplained balance changes') : ''].filter(Boolean);
+  return { total: sms + gaps, sms, gaps, summary: parts.join(' and ') };
 }

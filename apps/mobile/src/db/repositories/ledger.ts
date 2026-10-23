@@ -2,6 +2,7 @@ import { DEFAULT_CATEGORIES, SYSTEM_RULES } from '@/features/categorization/defa
 import type { Budget, Category, CategoryRule, ReviewItem, Transaction } from '../schema';
 import type { SqlDb } from '../sql';
 import { listBudgets } from './budgets';
+import { listDismissedGaps } from './gaps';
 import { listCategories, listRules, upsertCategory, upsertRule } from './categories';
 import { listReviewItems } from './reviewQueue';
 import { listTransactions } from './transactions';
@@ -12,6 +13,7 @@ export interface LedgerSnapshot {
   rules: CategoryRule[];
   budgets: Budget[];
   reviewQueue: ReviewItem[];
+  dismissedGaps: string[];
 }
 
 // First run installs the default categories. System rules are the app's, not the user's, so they're refreshed on
@@ -27,20 +29,21 @@ export async function ensureDefaults(db: SqlDb): Promise<void> {
 }
 
 export async function loadLedger(db: SqlDb): Promise<LedgerSnapshot> {
-  const [transactions, categories, rules, budgets, reviewQueue] = await Promise.all([
+  const [transactions, categories, rules, budgets, reviewQueue, dismissedGaps] = await Promise.all([
     listTransactions(db),
     listCategories(db),
     listRules(db),
     listBudgets(db),
     listReviewItems(db),
+    listDismissedGaps(db),
   ]);
-  return { transactions, categories, rules, budgets, reviewQueue };
+  return { transactions, categories, rules, budgets, reviewQueue, dismissedGaps };
 }
 
 // FR-6.3: everything the user has, gone, then defaults back so the app still works.
 export async function wipeLedger(db: SqlDb): Promise<void> {
   await db.transaction(async () => {
-    for (const table of ['transactions', 'budgets', 'category_rules', 'review_queue', 'categories', 'parser_templates', 'sync_state']) {
+    for (const table of ['transactions', 'budgets', 'category_rules', 'review_queue', 'categories', 'parser_templates', 'sync_state', 'dismissed_gaps']) {
       await db.run(`DELETE FROM ${table}`);
     }
   });

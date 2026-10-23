@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import * as budgetsRepo from '@/db/repositories/budgets';
 import * as categoriesRepo from '@/db/repositories/categories';
+import * as gapsRepo from '@/db/repositories/gaps';
 import { ensureDefaults, loadLedger, wipeLedger } from '@/db/repositories/ledger';
 import * as reviewRepo from '@/db/repositories/reviewQueue';
 import * as transactionsRepo from '@/db/repositories/transactions';
@@ -9,6 +10,7 @@ import type { SqlDb } from '@/db/sql';
 import { seedDemoData } from '@/demo/seed';
 import { recheckReview, transactionIdIn, type Incoming } from '@/features/sms/pipeline';
 import { categorize, counterpartyKey } from '@/features/categorization/categorize';
+import type { BalanceGap } from '@/features/reconcile/balanceGaps';
 import { DEFAULT_CATEGORIES, SYSTEM_RULES } from '@/features/categorization/defaultCategories';
 
 // The UI reads this in-memory copy; every action also writes through to the database (when one is attached).
@@ -18,12 +20,15 @@ export interface LedgerState {
   rules: CategoryRule[];
   budgets: Budget[];
   reviewQueue: ReviewItem[];
+  dismissedGaps: string[];
   ready: boolean;
   encrypted: boolean;
   attach: (db: SqlDb, encrypted: boolean) => Promise<void>;
   loadDemo: () => void;
   ingest: (incoming: Incoming[], review: ReviewItem[]) => { added: number; reviewAdded: number };
   recheckReview: () => void;
+  ignoreGap: (key: string) => void;
+  recordGap: (gap: BalanceGap) => void;
   clearReview: () => void;
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
   setBudget: (categoryId: string | null, amountMinor: number | null) => void;
@@ -42,7 +47,7 @@ const DEMO_BUDGETS: Budget[] = [
   { categoryId: 'shopping', amountMinor: 50000 },
 ];
 
-const empty = { transactions: [], categories: DEFAULT_CATEGORIES, rules: SYSTEM_RULES, budgets: [], reviewQueue: [] };
+const empty = { transactions: [], categories: DEFAULT_CATEGORIES, rules: SYSTEM_RULES, budgets: [], reviewQueue: [], dismissedGaps: [] as string[] };
 
 let db: SqlDb | null = null;
 let writes: Promise<void> = Promise.resolve();
@@ -134,6 +139,36 @@ export const useLedger = create<LedgerState>()((set, get) => ({
       for (const r of dropped) await reviewRepo.removeReviewItem(d, r.id);
     });
     if (parsed.length) get().ingest(parsed, []);
+  },
+
+  ignoreGap: (key) => {
+    if (get().dismissedGaps.includes(key)) return;
+    set({ dismissedGaps: [...get().dismissedGaps, key] });
+    persist((d) => gapsRepo.dismissGap(d, key));
+  },
+
+  // Records the unexplained change as a transaction inside the gap (no balance of its own, so it closes the gap).
+  // Money out counts as spending like any other outflow.
+  recordGap: (gap) => {
+    const out = gap.amountMinor < 0;
+    get().ingest(
+      [
+        {
+          id: `manual:gap:${gap.key}`,
+          provider: gap.provider,
+          type: out ? 'payment' : 'transfer_in',
+          direction: out ? 'out' : 'in',
+          amountMinor: Math.abs(gap.amountMinor),
+          feeMinor: 0,
+          taxMinor: 0,
+          currency: 'GHS',
+          counterpartyName: out ? 'Unexplained balance drop' : 'Unexplained money in',
+          occurredAt: Math.round((gap.from + gap.to) / 2),
+          source: 'manual',
+        },
+      ],
+      [],
+    );
   },
 
   clearReview: () => {

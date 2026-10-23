@@ -1,16 +1,20 @@
 import { useState } from 'react';
 import { Alert, Pressable, View } from 'react-native';
+import { bundledConfig } from '@ledgr/parser';
 import type { ReviewItem } from '@/db/schema';
+import type { BalanceGap } from '@/features/reconcile/balanceGaps';
 import { reviewHint } from '@/features/sms/reviewHint';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, formatMoney } from '@/lib/format';
+import { useBalanceGaps } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { Button, Card, EmptyState, Screen, ScreenHeader, Text } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
-// FR-2.5: wallet messages Ledgr couldn't read. Each card leads with what matters (what, how much, when);
-// the SMS itself stays collapsed until asked for. Clearing deletes the stored text.
+// Two kinds of things to review: balance changes no SMS explains (so every cedi is accounted for), and wallet
+// messages Ledgr couldn't read (FR-2.5). Cards lead with what matters; an SMS stays collapsed until asked for.
 export default function ReviewQueueScreen() {
-  const { reviewQueue, dismissReview, clearReview } = useLedger();
+  const { reviewQueue, dismissReview, clearReview, ignoreGap, recordGap } = useLedger();
+  const gaps = useBalanceGaps();
 
   const clearAll = () =>
     Alert.alert(`Clear all ${reviewQueue.length}?`, 'Their message text will be deleted from Ledgr. Your SMS inbox is not touched.', [
@@ -20,11 +24,27 @@ export default function ReviewQueueScreen() {
 
   return (
     <Screen>
-      <ScreenHeader title="Needs review" back right={reviewQueue.length > 1 ? <Button title="Clear all" kind="dashed" small onPress={clearAll} /> : undefined} />
-      {reviewQueue.length === 0 ? (
-        <EmptyState icon="checkmark-done-outline" title="All caught up" body="Every message from your wallets was read." />
-      ) : (
+      <ScreenHeader title="Needs review" back right={reviewQueue.length > 1 ? <Button title={gaps.length ? 'Clear messages' : 'Clear all'} kind="dashed" small onPress={clearAll} /> : undefined} />
+      {reviewQueue.length === 0 && gaps.length === 0 ? (
+        <EmptyState icon="checkmark-done-outline" title="All caught up" body="Every message was read and every balance adds up." />
+      ) : null}
+
+      {gaps.length > 0 && (
         <>
+          <Text variant="overline" muted style={{ paddingHorizontal: 4 }}>
+            Unexplained balance changes
+          </Text>
+          {gaps.map((g) => (
+            <GapCard key={g.key} gap={g} onRecord={() => recordGap(g)} onIgnore={() => ignoreGap(g.key)} />
+          ))}
+        </>
+      )}
+
+      {reviewQueue.length > 0 && (
+        <>
+          <Text variant="overline" muted style={{ paddingHorizontal: 4, marginTop: gaps.length ? 8 : 0 }}>
+            Unread messages
+          </Text>
           <Text muted>
             {reviewQueue.length === 1 ? 'Ledgr couldn’t read this message.' : `Ledgr couldn’t read these ${reviewQueue.length} messages.`}
           </Text>
@@ -34,6 +54,38 @@ export default function ReviewQueueScreen() {
         </>
       )}
     </Screen>
+  );
+}
+
+function GapCard({ gap, onRecord, onIgnore }: { gap: BalanceGap; onRecord: () => void; onIgnore: () => void }) {
+  const c = useColors();
+  const out = gap.amountMinor < 0;
+  const wallet = bundledConfig.providers.find((p) => p.id === gap.provider)?.name ?? gap.provider;
+  const amount = formatMoney(Math.abs(gap.amountMinor), 'GHS');
+  return (
+    <Card style={{ borderRadius: 22, gap: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 12 }}>
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text variant="label" weight="semibold">
+            {out ? 'Balance dropped' : 'Balance rose'} with no SMS
+          </Text>
+          <Text variant="caption" muted>
+            {wallet}
+          </Text>
+        </View>
+        <Text numeric weight="semibold" size={16} color={out ? c.ink : c.positive}>
+          {out ? '−' : '+'}
+          {amount}
+        </Text>
+      </View>
+      <Text size={13} muted style={{ lineHeight: 19 }}>
+        Between {formatDateTime(gap.from)} and {formatDateTime(gap.to)}, your {wallet} balance changed by {amount} more than your messages explain.
+      </Text>
+      <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+        <Button title={out ? 'Record as spending' : 'Record as money in'} small onPress={onRecord} />
+        <Button title="Ignore" kind="dashed" small onPress={onIgnore} />
+      </View>
+    </Card>
   );
 }
 

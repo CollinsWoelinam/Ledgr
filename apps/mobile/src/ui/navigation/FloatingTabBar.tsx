@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 import type { BottomTabBarProps } from 'expo-router/tabs';
 import { Pressable, View } from 'react-native';
-import { useLedger } from '@/state/ledger';
+import { useReviewCount } from '@/state/hooks';
 import { useColors } from '../theme';
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -18,7 +18,7 @@ const ICONS: Record<string, IconName> = {
 // The dark floating pill from the redesign. The active tab sits in an accent circle.
 export function FloatingTabBar({ state, descriptors, navigateToTab, insets }: BottomTabBarProps) {
   const c = useColors();
-  const reviewCount = useLedger((s) => s.reviewQueue.length);
+  const reviewCount = useReviewCount().total;
 
   return (
     <View
