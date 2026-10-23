@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "3130908798942644 Confirmed. You have received GHS856.39 from MTN MOBILE MONEY with transaction reference: Transfer From: 233708347318-YAW DARKO DARKO on 2026-03-14 at 07:83:45. Your Telecel Cash balance is GHS874.77. Ref: data. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-19T19:09:00"
+    "body": "7523287314249942 Confirmed. You have received GHS132.98 from MTN MOBILE MONEY with transaction reference: Transfer From: 233766155989-KWAME AMOAH ADDO on 2026-03-14 at 08:57:29. Your Telecel Cash balance is GHS919.26. Ref: school. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-21T17:24:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 85639,
+    "amountMinor": 13298,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "YAW DARKO DARKO",
-    "counterpartyNumber": "233708347318",
-    "balanceAfterMinor": 87477,
-    "externalRef": "3130908798942644",
-    "occurredAt": "2026-03-14T08:23:45"
+    "counterpartyName": "KWAME AMOAH ADDO",
+    "counterpartyNumber": "233766155989",
+    "balanceAfterMinor": 91926,
+    "externalRef": "7523287314249942",
+    "occurredAt": "2026-03-14T08:57:29"
   }
 }

@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "5044167525426817 Confirmed. GHS2.92 sent to 0384551377 - KOJO BOATENG on MTN MOBILE MONEY on 2026-03-06 at 13:95:48. Your Telecel Cash balance is GHS16.63. You were charged GHS7.81. Your E-levy charge is GHS8.10. Do more with Telecel Cash! Reference: transport. Sendi k3k3!",
-    "receivedAt": "2026-03-07T13:19:00"
+    "body": "6070992571239918 Confirmed. GHS6.73 sent to 0496246568 - ADJOA ANSAH on MTN MOBILE MONEY on 2026-03-06 at 19:55:55. Your Telecel Cash balance is GHS24.85. You were charged GHS2.53. Your E-levy charge is GHS8.57. Do more with Telecel Cash! Reference: school. Sendi k3k3!",
+    "receivedAt": "2026-03-21T10:06:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_out",
     "direction": "out",
-    "amountMinor": 292,
-    "feeMinor": 781,
-    "taxMinor": 810,
+    "amountMinor": 673,
+    "feeMinor": 253,
+    "taxMinor": 857,
     "currency": "GHS",
-    "counterpartyName": "KOJO BOATENG",
-    "counterpartyNumber": "0384551377",
-    "balanceAfterMinor": 1663,
-    "externalRef": "5044167525426817",
-    "occurredAt": "2026-03-06T14:35:48"
+    "counterpartyName": "ADJOA ANSAH",
+    "counterpartyNumber": "0496246568",
+    "balanceAfterMinor": 2485,
+    "externalRef": "6070992571239918",
+    "occurredAt": "2026-03-06T19:55:55"
   }
 }

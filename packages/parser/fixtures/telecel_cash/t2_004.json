@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "2396661288051653 Confirmed. You have received GHS733.15 from MTN MOBILE MONEY with transaction reference: Transfer From: 233320247480-EFUA TETTEH ANSAH on 2026-03-01 at 16:52:31. Your Telecel Cash balance is GHS352.65. Ref: gift. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-15T19:07:00"
+    "body": "4259700655578501 Confirmed. You have received GHS240.57 from MTN MOBILE MONEY with transaction reference: Transfer From: 233183621059-FIIFI ASANTE DARKO on 2026-03-01 at 10:29:55. Your Telecel Cash balance is GHS906.91. Ref: lunch. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-23T15:13:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 73315,
+    "amountMinor": 24057,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "EFUA TETTEH ANSAH",
-    "counterpartyNumber": "233320247480",
-    "balanceAfterMinor": 35265,
-    "externalRef": "2396661288051653",
-    "occurredAt": "2026-03-01T16:52:31"
+    "counterpartyName": "FIIFI ASANTE DARKO",
+    "counterpartyNumber": "233183621059",
+    "balanceAfterMinor": 90691,
+    "externalRef": "4259700655578501",
+    "occurredAt": "2026-03-01T10:29:55"
   }
 }

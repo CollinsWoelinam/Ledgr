@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "9357766155989098 Confirmed. GHS475.73 paid to 492615 - Inv.Debit on 2026-03-25 at 13:97:36. Your new Telecel Cash balance is GHS93.40. You were charged GHS9.77. Your E-levy charge is GHS9.14. Reference: data.. Sendi k3k3!",
-    "receivedAt": "2026-03-16T10:19:00"
+    "body": "4314643385689360 Confirmed. GHS815.90 paid to 477671 - Inv.Debit on 2026-03-25 at 15:77:48. Your new Telecel Cash balance is GHS75.41. You were charged GHS6.28. Your E-levy charge is GHS2.90. Reference: data.. Sendi k3k3!",
+    "receivedAt": "2026-03-15T13:18:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "payment",
     "direction": "out",
-    "amountMinor": 47573,
-    "feeMinor": 977,
-    "taxMinor": 914,
+    "amountMinor": 81590,
+    "feeMinor": 628,
+    "taxMinor": 290,
     "currency": "GHS",
     "counterpartyName": "Inv.Debit",
-    "counterpartyNumber": "492615",
-    "balanceAfterMinor": 9340,
-    "externalRef": "9357766155989098",
-    "occurredAt": "2026-03-25T14:37:36"
+    "counterpartyNumber": "477671",
+    "balanceAfterMinor": 7541,
+    "externalRef": "4314643385689360",
+    "occurredAt": "2026-03-25T16:17:48"
   }
 }

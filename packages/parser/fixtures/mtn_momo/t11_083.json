@@ -1,0 +1,22 @@
+{
+  "description": "transfer_out, mtn_momo template 11",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Transfer made for GHS 9.22 Token: 870540641992 Current Balance: GHS 5.15 Transaction ID: 53484007364. Fee charged GHS8.46 Tax charged: GHS7. Remember to send Token ID and secret code to the receiver.",
+    "receivedAt": "2026-03-21T10:22:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 922,
+    "feeMinor": 846,
+    "taxMinor": 700,
+    "currency": "GHS",
+    "counterpartyName": "Token transfer",
+    "balanceAfterMinor": 515,
+    "externalRef": "53484007364",
+    "occurredAt": "2026-03-21T10:22:00"
+  }
+}

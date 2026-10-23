@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "7531161468770680 Confirmed. You have received GHS271.18 from MTN MOBILE MONEY with transaction reference: Transfer From: 233263810826-KWAME OWUSU QUAYE on 2026-03-06 at 10:32:55. Your Telecel Cash balance is GHS7,295.99. Ref: groceries. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-14T07:15:00"
+    "body": "6522563984174516 Confirmed. You have received GHS562.71 from MTN MOBILE MONEY with transaction reference: Transfer From: 233166881191-ESI OWUSU QUAYE on 2026-03-06 at 20:94:10. Your Telecel Cash balance is GHS3,441.71. Ref: lunch. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-16T12:37:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 27118,
+    "amountMinor": 56271,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "KWAME OWUSU QUAYE",
-    "counterpartyNumber": "233263810826",
-    "balanceAfterMinor": 729599,
-    "externalRef": "7531161468770680",
-    "occurredAt": "2026-03-06T10:32:55"
+    "counterpartyName": "ESI OWUSU QUAYE",
+    "counterpartyNumber": "233166881191",
+    "balanceAfterMinor": 344171,
+    "externalRef": "6522563984174516",
+    "occurredAt": "2026-03-06T21:34:10"
   }
 }

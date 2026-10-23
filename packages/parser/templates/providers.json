@@ -27,7 +27,8 @@
       "^MoMo is giving",
       "pincode",
       "^You have successfully purchased",
-      "welcome to MTN MobileMoney"
+      "welcome to MTN MobileMoney",
+      "has not been used as yet"
     ],
     "failed": [
       "has failed at",

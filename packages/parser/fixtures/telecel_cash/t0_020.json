@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "3047775000161074 Confirmed. GHS79.52 sent to 233834062707 - AMA ANSAH ADDO on 2026-03-11 at 19:96:30. Your Telecel Cash balance is GHS21.92. You were charged GHS4.87. Your E-levy charge is GHS8.66. Do more with Telecel Cash! Reference: lunch. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Sendi k3k3!",
-    "receivedAt": "2026-03-06T17:14:00"
+    "body": "6817124327011938 Confirmed. GHS60.52 sent to 233504416752 - YAW ANSAH OWUSU on 2026-03-11 at 14:63:47. Your Telecel Cash balance is GHS39.84. You were charged GHS8.61. Your E-levy charge is GHS2.58. Do more with Telecel Cash! Reference: lunch. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Sendi k3k3!",
+    "receivedAt": "2026-03-26T19:48:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_out",
     "direction": "out",
-    "amountMinor": 7952,
-    "feeMinor": 487,
-    "taxMinor": 866,
+    "amountMinor": 6052,
+    "feeMinor": 861,
+    "taxMinor": 258,
     "currency": "GHS",
-    "counterpartyName": "AMA ANSAH ADDO",
-    "counterpartyNumber": "233834062707",
-    "balanceAfterMinor": 2192,
-    "externalRef": "3047775000161074",
-    "occurredAt": "2026-03-11T20:36:30"
+    "counterpartyName": "YAW ANSAH OWUSU",
+    "counterpartyNumber": "233504416752",
+    "balanceAfterMinor": 3984,
+    "externalRef": "6817124327011938",
+    "occurredAt": "2026-03-11T15:03:47"
   }
 }

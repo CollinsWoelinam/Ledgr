@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "2032706688119157 Confirmed. You have received GHS94.94 from MTN MOBILE MONEY with transaction reference: Transfer From: 233108302719-AFIA ASANTE ASANTE on 2026-03-28 at 20:66:12. Your Telecel Cash balance is GHS732.81. Ref: transport. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-18T14:17:00"
+    "body": "8634547312512932 Confirmed. You have received GHS83.79 from MTN MOBILE MONEY with transaction reference: Transfer From: 233686716398-ESI OWUSU OWUSU on 2026-03-28 at 14:80:01. Your Telecel Cash balance is GHS564.64. Ref: lunch. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-15T19:19:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 9494,
+    "amountMinor": 8379,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "AFIA ASANTE ASANTE",
-    "counterpartyNumber": "233108302719",
-    "balanceAfterMinor": 73281,
-    "externalRef": "2032706688119157",
-    "occurredAt": "2026-03-28T21:06:12"
+    "counterpartyName": "ESI OWUSU OWUSU",
+    "counterpartyNumber": "233686716398",
+    "balanceAfterMinor": 56464,
+    "externalRef": "8634547312512932",
+    "occurredAt": "2026-03-28T15:20:01"
   }
 }

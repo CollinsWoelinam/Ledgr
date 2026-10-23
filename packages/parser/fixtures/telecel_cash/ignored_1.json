@@ -3,7 +3,7 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "Congratulations! You have successfully purchased 3GB of internet bundle. Check your data balance by dialing *531#.",
+    "body": "Congratulations! You have successfully purchased 3GB of internet bundle. Check your data balance by dialing *563#.",
     "receivedAt": "2026-03-10T09:00:00"
   },
   "expected": null

@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "4014087516317283 Confirmed. You have received GHS78.16 from MTN MOBILE MONEY with transaction reference: Transfer From: 233526276749-AFIA OWUSU on 2026-03-04 at 09:52:50. Your Telecel Cash balance is GHS558.55. Ref: rent. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-03T20:21:00"
+    "body": "2105033141769757 Confirmed. You have received GHS45.14 from MTN MOBILE MONEY with transaction reference: Transfer From: 233808929669-YAW MENSAH on 2026-03-04 at 19:64:14. Your Telecel Cash balance is GHS439.94. Ref: groceries. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-25T15:03:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 7816,
+    "amountMinor": 4514,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "AFIA OWUSU",
-    "counterpartyNumber": "233526276749",
-    "balanceAfterMinor": 55855,
-    "externalRef": "4014087516317283",
-    "occurredAt": "2026-03-04T09:52:50"
+    "counterpartyName": "YAW MENSAH",
+    "counterpartyNumber": "233808929669",
+    "balanceAfterMinor": 43994,
+    "externalRef": "2105033141769757",
+    "occurredAt": "2026-03-04T20:04:14"
   }
 }

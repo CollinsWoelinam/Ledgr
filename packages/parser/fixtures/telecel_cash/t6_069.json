@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "1604123219356662 confirmed. Your data bundle purchase request of GHS6.29 to 233514126694 on 2024-08-05 has been received at 19:01:50. Kindly wait for confirmation. Your Telecel Cash balance is GHS70.85.",
-    "receivedAt": "2026-03-20T13:45:00"
+    "body": "2025517840311384 confirmed. Your data bundle purchase request of GHS4.70 to 233667705950 on 2024-08-05 has been received at 19:01:50. Kindly wait for confirmation. Your Telecel Cash balance is GHS91.93.",
+    "receivedAt": "2026-03-06T16:53:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "airtime_data",
     "direction": "out",
-    "amountMinor": 629,
+    "amountMinor": 470,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
     "counterpartyName": "Telecel bundle",
-    "counterpartyNumber": "233514126694",
-    "balanceAfterMinor": 7085,
-    "externalRef": "1604123219356662",
-    "occurredAt": "2026-03-20T13:45:00"
+    "counterpartyNumber": "233667705950",
+    "balanceAfterMinor": 9193,
+    "externalRef": "2025517840311384",
+    "occurredAt": "2026-03-06T16:53:00"
   }
 }

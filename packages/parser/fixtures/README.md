@@ -29,6 +29,7 @@ adb shell "content query --uri content://sms/inbox --projection date:body --wher
 npx tsx scripts/raw-to-json.ts MobileMoney   # adb text → JSON
 npx tsx scripts/real-corpus.ts     # match rate, unmatched shapes, balance-chain check
 npx tsx scripts/make-fixtures.ts   # regenerate anonymized fixtures
+npx tsx scripts/check-fixture-leaks.ts   # must report 0 leaks before committing
 ```
 
 `real-corpus.ts` also checks the balance chain (previous balance ± amount − fees = reported balance), which measures

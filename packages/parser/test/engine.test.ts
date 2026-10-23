@@ -1,4 +1,4 @@
-import { dedupeKey, parseSms, type EngineConfig } from '../src';
+import { bundledConfig, dedupeKey, parseSms, templatesRevision, type EngineConfig } from '../src';
 
 const config: EngineConfig = {
   providers: [{ id: 'p', name: 'P', senderIds: ['PayCo'], currency: 'GHS' }],
@@ -66,4 +66,10 @@ test('curly apostrophes are straightened before matching', () => {
 test('failed transactions are dropped even though they carry a transaction ID', () => {
   const withFailed: EngineConfig = { ...config, providers: [{ ...config.providers[0]!, failed: ['has failed'] }] };
   expect(parseSms(sms('PayCo', 'Your payment of GHS 80.00 has failed. Financial Transaction Id: 76550405509.'), withFailed)).toEqual({ ok: false, reason: 'ignored' });
+});
+
+test('templates revision changes when a template changes', () => {
+  expect(templatesRevision(bundledConfig)).toBe(templatesRevision(bundledConfig));
+  const edited = { ...bundledConfig, templates: [...bundledConfig.templates.slice(1)] };
+  expect(templatesRevision(edited)).not.toBe(templatesRevision(bundledConfig));
 });

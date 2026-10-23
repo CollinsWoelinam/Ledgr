@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "2515939496242410 Confirmed. You have received GHS53.28 from MTN MOBILE MONEY with transaction reference: Transfer From: 233149184588-ESI OWUSU ASANTE on 2026-03-28 at 12:16:21. Your Telecel Cash balance is GHS138.57. Ref: gift. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-01T18:56:00"
+    "body": "7229802880259679 Confirmed. You have received GHS99.46 from MTN MOBILE MONEY with transaction reference: Transfer From: 233507579321-KOFI AMOAH QUAYE on 2026-03-28 at 16:80:13. Your Telecel Cash balance is GHS897.28. Ref: data. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-13T17:19:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 5328,
+    "amountMinor": 9946,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "ESI OWUSU ASANTE",
-    "counterpartyNumber": "233149184588",
-    "balanceAfterMinor": 13857,
-    "externalRef": "2515939496242410",
-    "occurredAt": "2026-03-28T12:16:21"
+    "counterpartyName": "KOFI AMOAH QUAYE",
+    "counterpartyNumber": "233507579321",
+    "balanceAfterMinor": 89728,
+    "externalRef": "7229802880259679",
+    "occurredAt": "2026-03-28T17:20:13"
   }
 }

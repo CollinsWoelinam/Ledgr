@@ -50,15 +50,20 @@ export function transactionIdIn(body: string): string | undefined {
 export function recheckReview(items: ReviewItem[], knownRefs: Set<string>, config: EngineConfig = bundledConfig): { keep: ReviewItem[]; transactions: Incoming[] } {
   const keep: ReviewItem[] = [];
   const transactions: Incoming[] = [];
+  const pending: ReviewItem[] = [];
   const seen = new Set(knownRefs);
-  const informative = (r: ReviewItem) => (amountIn(r.body) ? 1 : 0);
-  for (const item of [...items].sort((a, b) => informative(b) - informative(a) || b.receivedAt - a.receivedAt)) {
+  // First pass: what the parser can now read becomes a transaction, so its companions can be recognised below.
+  for (const item of items) {
     const result = parseSms({ sender: item.sender, body: item.body, receivedAt: item.receivedAt }, config);
     if (result.ok) {
       transactions.push(toIncoming(result.transaction, item.body));
-      continue;
+      if (result.transaction.externalRef) seen.add(result.transaction.externalRef);
+    } else if (result.reason !== 'ignored') {
+      pending.push(item);
     }
-    if (result.reason === 'ignored') continue;
+  }
+  const informative = (r: ReviewItem) => (amountIn(r.body) ? 1 : 0);
+  for (const item of pending.sort((a, b) => informative(b) - informative(a) || b.receivedAt - a.receivedAt)) {
     const id = transactionIdIn(item.body);
     if (id && seen.has(id)) continue;
     if (id) seen.add(id);

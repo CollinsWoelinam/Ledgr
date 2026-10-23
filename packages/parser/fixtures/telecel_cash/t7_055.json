@@ -3,19 +3,19 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "Dear customer, you have received GHS8.81 from Telecel Cash as interest earned on your mobile money wallet for the period April 2025 to June 2025. Your new balance is GHS23.10.",
-    "receivedAt": "2026-03-08T17:58:00"
+    "body": "Dear customer, you have received GHS8.45 from Telecel Cash as interest earned on your mobile money wallet for the period April 2025 to June 2025. Your new balance is GHS65.82.",
+    "receivedAt": "2026-03-10T09:58:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 881,
+    "amountMinor": 845,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
     "counterpartyName": "Telecel Cash interest",
-    "balanceAfterMinor": 2310,
-    "occurredAt": "2026-03-08T17:58:00"
+    "balanceAfterMinor": 6582,
+    "occurredAt": "2026-03-10T09:58:00"
   }
 }

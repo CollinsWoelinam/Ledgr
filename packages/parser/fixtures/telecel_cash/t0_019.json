@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "3555933952588658 Confirmed. GHS22.42 sent to 0860061657 - KWAKU ASANTE ANSAH on MTN MOBILE MONEY on 2026-03-12 at 19:14:19. Your Telecel Cash balance is GHS24.50. You were charged GHS4.78. Your E-levy charge is GHS7.72. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: data. Sendi k3k3!",
-    "receivedAt": "2026-03-02T19:21:00"
+    "body": "7303831088007810 Confirmed. GHS18.19 sent to 0630344065 - YAW APPIAH QUAYE on MTN MOBILE MONEY on 2026-03-12 at 12:24:45. Your Telecel Cash balance is GHS75.33. You were charged GHS6.46. Your E-levy charge is GHS7.73. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: data. Sendi k3k3!",
+    "receivedAt": "2026-03-11T13:53:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_out",
     "direction": "out",
-    "amountMinor": 2242,
-    "feeMinor": 478,
-    "taxMinor": 772,
+    "amountMinor": 1819,
+    "feeMinor": 646,
+    "taxMinor": 773,
     "currency": "GHS",
-    "counterpartyName": "KWAKU ASANTE ANSAH",
-    "counterpartyNumber": "0860061657",
-    "balanceAfterMinor": 2450,
-    "externalRef": "3555933952588658",
-    "occurredAt": "2026-03-12T19:14:19"
+    "counterpartyName": "YAW APPIAH QUAYE",
+    "counterpartyNumber": "0630344065",
+    "balanceAfterMinor": 7533,
+    "externalRef": "7303831088007810",
+    "occurredAt": "2026-03-12T12:24:45"
   }
 }

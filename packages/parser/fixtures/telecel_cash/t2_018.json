@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "7621422453829613 Confirmed. You have received GHS98.91 from MTN MOBILE MONEY with transaction reference: Transfer From: 233676626618-KWESI BOATENG on 2026-03-12 at 16:68:28. Your Telecel Cash balance is GHS39.79. Ref: fuel. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-17T18:52:00"
+    "body": "8893567079897845 Confirmed. You have received GHS97.43 from MTN MOBILE MONEY with transaction reference: Transfer From: 233193775637-AMA TETTEH on 2026-03-12 at 11:21:55. Your Telecel Cash balance is GHS55.85. Ref: fuel. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-19T10:19:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 9891,
+    "amountMinor": 9743,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "KWESI BOATENG",
-    "counterpartyNumber": "233676626618",
-    "balanceAfterMinor": 3979,
-    "externalRef": "7621422453829613",
-    "occurredAt": "2026-03-12T17:08:28"
+    "counterpartyName": "AMA TETTEH",
+    "counterpartyNumber": "233193775637",
+    "balanceAfterMinor": 5585,
+    "externalRef": "8893567079897845",
+    "occurredAt": "2026-03-12T11:21:55"
   }
 }

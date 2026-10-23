@@ -1,0 +1,22 @@
+{
+  "description": "reversal, mtn_momo template 12",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your voucher 579245644063 with GHS 1.34 has expired. Your new balance is GHS 28.69. Financial Transaction Id: 61777378132. TRANSACTION FEE IS 0",
+    "receivedAt": "2026-03-11T09:03:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "reversal",
+    "direction": "in",
+    "amountMinor": 134,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "Expired voucher refund",
+    "balanceAfterMinor": 2869,
+    "externalRef": "61777378132",
+    "occurredAt": "2026-03-11T09:03:00"
+  }
+}

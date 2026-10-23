@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "4099674276884846 Confirmed. GHS3.60 sent to 0927805191 - ESI APPIAH on MTN MOBILE MONEY on 2026-03-28 at 16:94:51. Your Telecel Cash balance is GHS67.12. You were charged GHS9.41. Your E-levy charge is GHS2.69. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: school. Sendi k3k3!",
-    "receivedAt": "2026-03-01T12:00:00"
+    "body": "8498105010944713 Confirmed. GHS3.52 sent to 0846973379 - YAW DARKO on MTN MOBILE MONEY on 2026-03-28 at 18:88:15. Your Telecel Cash balance is GHS58.79. You were charged GHS7.46. Your E-levy charge is GHS5.21. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: lunch. Sendi k3k3!",
+    "receivedAt": "2026-03-09T20:19:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_out",
     "direction": "out",
-    "amountMinor": 360,
-    "feeMinor": 941,
-    "taxMinor": 269,
+    "amountMinor": 352,
+    "feeMinor": 746,
+    "taxMinor": 521,
     "currency": "GHS",
-    "counterpartyName": "ESI APPIAH",
-    "counterpartyNumber": "0927805191",
-    "balanceAfterMinor": 6712,
-    "externalRef": "4099674276884846",
-    "occurredAt": "2026-03-28T17:34:51"
+    "counterpartyName": "YAW DARKO",
+    "counterpartyNumber": "0846973379",
+    "balanceAfterMinor": 5879,
+    "externalRef": "8498105010944713",
+    "occurredAt": "2026-03-28T19:28:15"
   }
 }

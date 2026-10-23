@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "3898830641904902 Confirmed. GHS8.10 sent to 0760210225 - AFIA MENSAH on MTN MOBILE MONEY on 2026-03-22 at 17:29:03. Your Telecel Cash balance is GHS13.23. You were charged GHS2.39. Your E-levy charge is GHS2.40. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: gift. Sendi k3k3!",
-    "receivedAt": "2026-03-24T20:51:00"
+    "body": "1856604950592116 Confirmed. GHS3.57 sent to 0100471027 - KOFI ANSAH on MTN MOBILE MONEY on 2026-03-22 at 15:73:02. Your Telecel Cash balance is GHS31.18. You were charged GHS5.73. Your E-levy charge is GHS1.47. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: groceries. Sendi k3k3!",
+    "receivedAt": "2026-03-05T09:50:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_out",
     "direction": "out",
-    "amountMinor": 810,
-    "feeMinor": 239,
-    "taxMinor": 240,
+    "amountMinor": 357,
+    "feeMinor": 573,
+    "taxMinor": 147,
     "currency": "GHS",
-    "counterpartyName": "AFIA MENSAH",
-    "counterpartyNumber": "0760210225",
-    "balanceAfterMinor": 1323,
-    "externalRef": "3898830641904902",
-    "occurredAt": "2026-03-22T17:29:03"
+    "counterpartyName": "KOFI ANSAH",
+    "counterpartyNumber": "0100471027",
+    "balanceAfterMinor": 3118,
+    "externalRef": "1856604950592116",
+    "occurredAt": "2026-03-22T16:13:02"
   }
 }

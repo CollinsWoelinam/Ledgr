@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "8877192457163420 Confirmed. GHS4.33 sent to 233121222870 - ABENA BOATENG ADDO on MTN MOBILE MONEY on 2026-03-13 at 20:66:04. Your Telecel Cash balance is GHS51.59. You were charged GHS2.87. Your E-levy charge is GHS7.61. Do more with Telecel Cash! Reference: data. Sendi k3k3!",
-    "receivedAt": "2026-03-10T15:59:00"
+    "body": "8500016107402728 Confirmed. GHS5.87 sent to 233270775230 - KWESI MENSAH ADDO on MTN MOBILE MONEY on 2026-03-13 at 07:16:43. Your Telecel Cash balance is GHS60.65. You were charged GHS3.98. Your E-levy charge is GHS7.29. Do more with Telecel Cash! Reference: fuel. Sendi k3k3!",
+    "receivedAt": "2026-03-01T13:16:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_out",
     "direction": "out",
-    "amountMinor": 433,
-    "feeMinor": 287,
-    "taxMinor": 761,
+    "amountMinor": 587,
+    "feeMinor": 398,
+    "taxMinor": 729,
     "currency": "GHS",
-    "counterpartyName": "ABENA BOATENG ADDO",
-    "counterpartyNumber": "233121222870",
-    "balanceAfterMinor": 5159,
-    "externalRef": "8877192457163420",
-    "occurredAt": "2026-03-13T21:06:04"
+    "counterpartyName": "KWESI MENSAH ADDO",
+    "counterpartyNumber": "233270775230",
+    "balanceAfterMinor": 6065,
+    "externalRef": "8500016107402728",
+    "occurredAt": "2026-03-13T07:16:43"
   }
 }

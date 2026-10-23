@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "9121718357563851 Confirmed. You have received GHS620.42 from ********2609-AFIA APPIAH ASANTE on 2026-03-17 at 07:62:10. Your Telecel Cash balance is GHS639.33. Ref: lunch",
-    "receivedAt": "2026-03-08T15:44:00"
+    "body": "4983945861489469 Confirmed. You have received GHS909.27 from ********5466-KWESI OWUSU AMOAH on 2026-03-17 at 08:89:49. Your Telecel Cash balance is GHS420.19. Ref: lunch",
+    "receivedAt": "2026-03-03T20:25:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 62042,
+    "amountMinor": 90927,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "AFIA APPIAH ASANTE",
-    "counterpartyNumber": "2609",
-    "balanceAfterMinor": 63933,
-    "externalRef": "9121718357563851",
-    "occurredAt": "2026-03-17T08:02:10"
+    "counterpartyName": "KWESI OWUSU AMOAH",
+    "counterpartyNumber": "5466",
+    "balanceAfterMinor": 42019,
+    "externalRef": "4983945861489469",
+    "occurredAt": "2026-03-17T09:29:49"
   }
 }

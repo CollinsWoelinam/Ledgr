@@ -82,13 +82,13 @@ export function seedDemoData(now = new Date()): { transactions: Transaction[]; r
     {
       id: 'rv-1',
       sender: 'MobileMoney',
-      body: 'You have received GHS 75.00 from ADB Bank Pull on your mobile money account at 2026-10-21 09:12:44. Message: savings. Your new balance: GHS 410.20. Financial Transaction Id: 72015583921.',
+      body: 'Money Transfer Deposit received for GHS 20.00 from KOFI MENSAH Token: 557201948833 Transaction ID: 72015583921. TRANSACTION FEE IS 0',
       receivedAt: now.getTime() - 3 * 3600_000,
     },
     {
       id: 'rv-2',
       sender: 'MobileMoney',
-      body: 'Your voucher 4471902 with GHS 20.00 has expired. Your new balance is GHS 430.20 Financial Transaction Id: 72015583955.',
+      body: 'Withdrawal made from your bank account number: ****2231. Your Bank Balance:GHS 1,204.10. Your MM Balance: GHS 430.20. Transaction ID: 72015583955.',
       receivedAt: now.getTime() - 26 * 3600_000,
     },
   ];

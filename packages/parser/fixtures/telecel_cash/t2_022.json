@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "4034406500963038 Confirmed. You have received GHS564.76 from MTN MOBILE MONEY with transaction reference: Transfer From: 233333194852-KOJO QUAYE on 2026-03-07 at 11:73:33. Your Telecel Cash balance is GHS992.72. Ref: rent. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-06T07:53:00"
+    "body": "8857719625833482 Confirmed. You have received GHS458.65 from MTN MOBILE MONEY with transaction reference: Transfer From: 233639029538-ABENA AMOAH on 2026-03-07 at 17:81:14. Your Telecel Cash balance is GHS757.87. Ref: transport. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-14T08:51:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 56476,
+    "amountMinor": 45865,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "KOJO QUAYE",
-    "counterpartyNumber": "233333194852",
-    "balanceAfterMinor": 99272,
-    "externalRef": "4034406500963038",
-    "occurredAt": "2026-03-07T12:13:33"
+    "counterpartyName": "ABENA AMOAH",
+    "counterpartyNumber": "233639029538",
+    "balanceAfterMinor": 75787,
+    "externalRef": "8857719625833482",
+    "occurredAt": "2026-03-07T18:21:14"
   }
 }

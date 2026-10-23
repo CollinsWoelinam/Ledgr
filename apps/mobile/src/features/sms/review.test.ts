@@ -19,15 +19,16 @@ test('finds the transaction ID a message quotes', () => {
   expect(transactionIdIn('no id here')).toBeUndefined();
 });
 
-test('recheck: one card per transaction ID (newest kept), failed dropped, readable ones become transactions', () => {
+test('recheck: readable ones become transactions, their companions and failed ones leave', () => {
   const { keep, transactions } = recheckReview([withdrawal, bankPull, failed, voucher, readable], new Set());
-  expect(keep.map((r) => r.id)).toEqual(['v', 'b']);
-  expect(transactions.map((t) => t.externalRef)).toEqual(['41234567893']);
+  expect(keep).toEqual([]); // the withdrawal notice restates the bank pull, now a transaction
+  expect(transactions.map((t) => t.externalRef).sort()).toEqual(['41234567893', '52991824765', '72015583955']);
 });
 
-test('recheck: of two messages about one transaction, the one stating an amount is kept, even if older', () => {
-  const laterWithdrawal = { ...withdrawal, receivedAt: 5000 };
-  expect(recheckReview([laterWithdrawal, bankPull], new Set()).keep.map((r) => r.id)).toEqual(['b']);
+test('recheck: of two unreadable messages about one transaction, the one stating an amount is kept, even if older', () => {
+  const deposit = item('d', 'Money Transfer Deposit received for GHS 5.00 from KOFI MENSAH Token: 975087195225 Transaction ID: 99000000001. TRANSACTION FEE IS 0', 1000);
+  const notice = item('n', 'Withdrawal made from your bank account number: ****3401. Your Bank Balance:GHS 0.00. Transaction ID: 99000000001.', 5000);
+  expect(recheckReview([notice, deposit], new Set()).keep.map((r) => r.id)).toEqual(['d']);
 });
 
 test('recheck: a message about an already stored transaction is dropped', () => {
@@ -42,13 +43,13 @@ test('the ledger re-checks the stored queue on launch and saves the result', asy
   await useLedger.getState().attach(db, false);
   await flushLedgerWrites();
   const stored = await loadLedger(db);
-  expect(stored.reviewQueue.map((r) => r.id).sort()).toEqual(['b', 'v']);
-  expect(stored.transactions.map((t) => t.externalRef)).toEqual(['41234567893']);
+  expect(stored.reviewQueue).toEqual([]);
+  expect(stored.transactions.map((t) => t.externalRef).sort()).toEqual(['41234567893', '52991824765', '72015583955']);
 });
 
 test('clear all empties the queue', async () => {
   const db = await openTestDb();
-  await addReviewItems(db, [voucher, bankPull]);
+  await addReviewItems(db, [withdrawal, item('t', 'Token: 975087195225 of 5.00 GHS for 233550013743 with expiry date 2023/09/15 has not been used.', 7, 'T-CASH')]);
   await useLedger.getState().attach(db, false);
   useLedger.getState().clearReview();
   await flushLedgerWrites();

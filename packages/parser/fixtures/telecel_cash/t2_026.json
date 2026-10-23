@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "6857360709925712 Confirmed. You have received GHS51.65 from MTN MOBILE MONEY with transaction reference: Transfer From: 233595693962-AKOSUA BOATENG on 2026-03-28 at 13:47:38. Your Telecel Cash balance is GHS558.71. . Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
-    "receivedAt": "2026-03-11T20:59:00"
+    "body": "9318984604871890 Confirmed. You have received GHS16.31 from MTN MOBILE MONEY with transaction reference: Transfer From: 233673975316-AKOSUA ANSAH on 2026-03-28 at 16:96:15. Your Telecel Cash balance is GHS134.65. . Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-11T18:00:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 5165,
+    "amountMinor": 1631,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
-    "counterpartyName": "AKOSUA BOATENG",
-    "counterpartyNumber": "233595693962",
-    "balanceAfterMinor": 55871,
-    "externalRef": "6857360709925712",
-    "occurredAt": "2026-03-28T13:47:38"
+    "counterpartyName": "AKOSUA ANSAH",
+    "counterpartyNumber": "233673975316",
+    "balanceAfterMinor": 13465,
+    "externalRef": "9318984604871890",
+    "occurredAt": "2026-03-28T17:36:15"
   }
 }

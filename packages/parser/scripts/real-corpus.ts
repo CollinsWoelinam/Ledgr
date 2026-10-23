@@ -18,6 +18,7 @@ for (const sender of SENDERS) {
   const reasons: Record<string, number> = {};
   const byTemplate: Record<string, number> = {};
   const unmatched = new Map<string, number>();
+  const unmatchedBodies: string[] = [];
   const parsed: (ParsedTransaction & { receivedAt: number })[] = [];
   const seen = new Set<string>();
   let duplicates = 0;
@@ -38,6 +39,7 @@ for (const sender of SENDERS) {
       byTemplate[label] = (byTemplate[label] ?? 0) + 1;
     } else {
       reasons[result.reason] = (reasons[result.reason] ?? 0) + 1;
+      if (result.reason !== 'ignored') unmatchedBodies.push(m.body);
       if (result.reason !== 'ignored') unmatched.set(`${result.reason}: ${shape(m.body)}`, (unmatched.get(`${result.reason}: ${shape(m.body)}`) ?? 0) + 1);
     }
   }
@@ -59,6 +61,12 @@ for (const sender of SENDERS) {
   console.log(`parsed ${parsed.length} (+${duplicates} duplicate SMS dropped)`, reasons);
   console.log('by template:', byTemplate);
   console.log(`balance chain: ${consistent}/${checked} consecutive pairs consistent (${((consistent / Math.max(checked, 1)) * 100).toFixed(1)}%)`);
-  console.log('unmatched shapes:');
-  for (const [k, n] of [...unmatched].sort((a, b) => b[1] - a[1]).slice(0, 25)) console.log(`  ${String(n).padStart(4)}  ${k}`);
+  // An unmatched message quoting the ID of a recorded transaction restates it (MTN sends companions such as the
+  // bank side of a bank pull); the app drops those. Only the rest is genuinely unrecorded.
+  const refs = new Set(parsed.map((t) => t.externalRef).filter(Boolean));
+  const idOf = (b: string) => /Transaction I[dD]:? ?(\d{6,})/.exec(b)?.[1];
+  const companions = unmatchedBodies.filter((b) => refs.has(idOf(b) ?? ''));
+  const rest = unmatchedBodies.filter((b) => !refs.has(idOf(b) ?? ''));
+  console.log(`unmatched: ${unmatchedBodies.length} (${companions.length} restate a recorded transaction, ${rest.length} unrecorded)`);
+  for (const b of rest) console.log(`  UNRECORDED  ${shape(b)}`);
 }

@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "7964347235158811 Confirmed. GHS17.37 sent to 0152646212 - EFUA OWUSU BOATENG on MTN MOBILE MONEY on 2026-03-21 at 16:94:24. Your Telecel Cash balance is GHS25.62. You were charged GHS2.42. Your E-levy charge is GHS4.42. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: data. Sendi k3k3!",
-    "receivedAt": "2026-03-01T14:44:00"
+    "body": "9245716342063693 Confirmed. GHS74.81 sent to 0387032388 - YAW ASANTE ASANTE on MTN MOBILE MONEY on 2026-03-21 at 13:36:02. Your Telecel Cash balance is GHS51.61. You were charged GHS9.95. Your E-levy charge is GHS7.55. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: gift. Sendi k3k3!",
+    "receivedAt": "2026-03-26T16:35:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_out",
     "direction": "out",
-    "amountMinor": 1737,
-    "feeMinor": 242,
-    "taxMinor": 442,
+    "amountMinor": 7481,
+    "feeMinor": 995,
+    "taxMinor": 755,
     "currency": "GHS",
-    "counterpartyName": "EFUA OWUSU BOATENG",
-    "counterpartyNumber": "0152646212",
-    "balanceAfterMinor": 2562,
-    "externalRef": "7964347235158811",
-    "occurredAt": "2026-03-21T17:34:24"
+    "counterpartyName": "YAW ASANTE ASANTE",
+    "counterpartyNumber": "0387032388",
+    "balanceAfterMinor": 5161,
+    "externalRef": "9245716342063693",
+    "occurredAt": "2026-03-21T13:36:02"
   }
 }

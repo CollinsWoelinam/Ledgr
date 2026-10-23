@@ -1,0 +1,22 @@
+{
+  "description": "transfer_in, mtn_momo template 13",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "You have received GHS 22.29 from Kofi Amoah Tetteh on your mobile money account at 2026-03-25 13:57:45. Message from sender: school. Your new balance:GHS 515.87. Financial Transaction Id: 24120444311.",
+    "receivedAt": "2026-03-26T19:14:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 2229,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "Kofi Amoah Tetteh",
+    "balanceAfterMinor": 51587,
+    "externalRef": "24120444311",
+    "occurredAt": "2026-03-25T13:57:45"
+  }
+}

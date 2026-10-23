@@ -12,6 +12,7 @@ export interface SettingsState {
   currency: string;
   monthStartDay: number;
   smsCursor: number; // received-at of the newest inbox SMS already processed
+  parsedWith: string | null; // templates revision the inbox was last read with
   wallet: string; // 'all', or a provider id to show one wallet's money only
   theme: ThemeChoice | null; // null until the user picks: the app follows the phone's light/dark mode
   appLock: boolean;
@@ -20,6 +21,7 @@ export interface SettingsState {
   completeOnboarding: (source: 'demo' | 'sms') => void;
   setMonthStartDay: (day: number) => void;
   setSmsCursor: (at: number) => void;
+  setParsedWith: (revision: string) => void;
   setWallet: (wallet: string) => void;
   setTheme: (theme: ThemeChoice) => void;
   setAppLock: (on: boolean) => void;
@@ -34,6 +36,7 @@ const initial = {
   currency: 'GHS',
   monthStartDay: 1,
   smsCursor: 0,
+  parsedWith: null,
   wallet: 'all',
   theme: null,
   appLock: false,
@@ -48,6 +51,7 @@ export const useSettings = create<SettingsState>()(
       completeOnboarding: (dataSource) => set({ onboarded: true, dataSource }),
       setMonthStartDay: (monthStartDay) => set({ monthStartDay: Math.min(28, Math.max(1, monthStartDay)) }),
       setSmsCursor: (smsCursor) => set({ smsCursor }),
+      setParsedWith: (parsedWith) => set({ parsedWith }),
       setWallet: (wallet) => set({ wallet }),
       setTheme: (theme) => set({ theme }),
       setAppLock: (appLock) => set({ appLock }),

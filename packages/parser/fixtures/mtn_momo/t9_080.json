@@ -3,20 +3,20 @@
   "synthetic": false,
   "sms": {
     "sender": "MobileMoney",
-    "body": "An amount of GHS 9.83 has been credited to your mobile money account. Message: rent. Your new balance: GHS 662.59. Financial Transaction Id: 21200440485.",
-    "receivedAt": "2026-03-24T11:38:00"
+    "body": "An amount of GHS 9.22 has been credited to your mobile money account. Message: transport. Your new balance: GHS 67.99. Financial Transaction Id: 85649983383.",
+    "receivedAt": "2026-03-23T18:25:00"
   },
   "expected": {
     "provider": "mtn_momo",
     "type": "transfer_in",
     "direction": "in",
-    "amountMinor": 983,
+    "amountMinor": 922,
     "feeMinor": 0,
     "taxMinor": 0,
     "currency": "GHS",
     "counterpartyName": "MTN MoMo credit",
-    "balanceAfterMinor": 66259,
-    "externalRef": "21200440485",
-    "occurredAt": "2026-03-24T11:38:00"
+    "balanceAfterMinor": 6799,
+    "externalRef": "85649983383",
+    "occurredAt": "2026-03-23T18:25:00"
   }
 }

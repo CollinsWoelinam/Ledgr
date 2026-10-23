@@ -21,9 +21,9 @@
   },
   {
     "provider": "mtn_momo",
-    "version": 2,
+    "version": 3,
     "type": "transfer_out",
-    "pattern": "Payment made for {cur} ?(?<amount>{amount}) to (?<name>.+?)(?: \\((?<number>\\d+) ?\\))?\\.? Current Balance: {cur} ?(?<balance>{amount}) ?\\..*? Transaction ID: (?<ref>\\d+)\\.(?: Fee charged: {cur} ?(?<fee>{amount}))?(?: Tax charged: (?:{cur} ?)?(?<tax>{amount}))?"
+    "pattern": "Payment made for {cur} ?(?<amount>{amount}) to (?:- )?(?<name>.+?)(?: \\((?<number>\\d+) ?\\))?\\.? Current Balance: (?:- )?{cur} ?(?<balance>{amount}) ?\\..*? Transaction ID: (?<ref>\\d+)\\.(?: Fee charged: {cur} ?(?<fee>{amount}))?(?: Tax charged: (?:{cur} ?)?(?<tax>{amount}))?"
   },
   {
     "provider": "mtn_momo",
@@ -67,6 +67,27 @@
     "version": 2,
     "type": "reversal",
     "pattern": "the transfer of {cur} ?(?<amount>{amount}) to (?<name>.+?) ?\\.? has been reversed on (?<date>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) with transaction ID: (?<original_ref>\\d+)\\. Your new balance is {cur} ?(?<balance>{amount})",
+    "date_format": "yyyy-MM-dd HH:mm:ss"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 3,
+    "type": "transfer_out",
+    "counterparty": "Token transfer",
+    "pattern": "Transfer made for {cur} ?(?<amount>{amount}) Token: \\d+ Current Balance: {cur} ?(?<balance>{amount}) Transaction ID: (?<ref>\\d+)\\.(?: Fee charged:? {cur} ?(?<fee>{amount}))?(?: Tax charged:? (?:{cur} ?)?(?<tax>{amount}))?"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 3,
+    "type": "reversal",
+    "counterparty": "Expired voucher refund",
+    "pattern": "Your voucher \\d+ with {cur} ?(?<amount>{amount}) has expired\\. Your new balance is {cur} ?(?<balance>{amount})\\.? Financial Transaction Id: (?<ref>\\d+)"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 3,
+    "type": "transfer_in",
+    "pattern": "You have received {cur} ?(?<amount>{amount}) from (?<name>.+?) on your mobile money account at (?<date>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\..*?new balance: ?{cur} ?(?<balance>{amount})\\. Financial Transaction Id: (?<ref>\\d+)",
     "date_format": "yyyy-MM-dd HH:mm:ss"
   }
 ]

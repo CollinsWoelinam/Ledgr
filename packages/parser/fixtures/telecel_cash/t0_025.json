@@ -3,21 +3,21 @@
   "synthetic": false,
   "sms": {
     "sender": "T-CASH",
-    "body": "8577196258334821 Confirmed. GHS60.68 sent to 233490295383 - ABENA AMOAH AMOAH on MTN MOBILE MONEY on 2026-03-06 at 17:81:14. Your Telecel Cash balance is GHS75.87. You were charged GHS1.77. Your E-levy charge is GHS3.32. Do more with Telecel Cash! Reference: groceries. Sendi k3k3!",
-    "receivedAt": "2026-03-02T19:50:00"
+    "body": "7319759123501947 Confirmed. GHS98.49 sent to 233853086673 - KWAKU ADDO QUAYE on MTN MOBILE MONEY on 2026-03-06 at 08:79:19. Your Telecel Cash balance is GHS69.38. You were charged GHS9.95. Your E-levy charge is GHS2.27. Do more with Telecel Cash! Reference: groceries. Sendi k3k3!",
+    "receivedAt": "2026-03-12T19:35:00"
   },
   "expected": {
     "provider": "telecel_cash",
     "type": "transfer_out",
     "direction": "out",
-    "amountMinor": 6068,
-    "feeMinor": 177,
-    "taxMinor": 332,
+    "amountMinor": 9849,
+    "feeMinor": 995,
+    "taxMinor": 227,
     "currency": "GHS",
-    "counterpartyName": "ABENA AMOAH AMOAH",
-    "counterpartyNumber": "233490295383",
-    "balanceAfterMinor": 7587,
-    "externalRef": "8577196258334821",
-    "occurredAt": "2026-03-06T18:21:14"
+    "counterpartyName": "KWAKU ADDO QUAYE",
+    "counterpartyNumber": "233853086673",
+    "balanceAfterMinor": 6938,
+    "externalRef": "7319759123501947",
+    "occurredAt": "2026-03-06T09:19:19"
   }
 }
