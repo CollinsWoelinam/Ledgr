@@ -28,10 +28,10 @@ export default function RootLayout() {
   const dbError = useLedgerDatabase();
   const themeChoice = useSettings((s) => s.theme);
 
-  // The Theme setting overrides the phone's light/dark mode app-wide (screens, alerts, keyboard, status bar).
-  // 'system' removes the override. Applied once settings load, before the splash hides.
+  // A chosen theme overrides the phone's light/dark mode app-wide (screens, alerts, keyboard, status bar).
+  // Until the user picks one, 'auto' follows the phone. Applied once settings load, before the splash hides.
   useEffect(() => {
-    if (hydrated) Appearance.setColorScheme(themeChoice === 'system' ? 'auto' : themeChoice);
+    if (hydrated) Appearance.setColorScheme(themeChoice ?? 'auto');
   }, [hydrated, themeChoice]);
   useSmsSync();
   // Until the lock has started, an enabled lock counts as locked, so data is never drawn uncovered for a frame.

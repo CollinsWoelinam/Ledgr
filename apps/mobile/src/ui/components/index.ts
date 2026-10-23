@@ -12,6 +12,7 @@ export { Screen } from './Screen';
 export { ScreenHeader } from './ScreenHeader';
 export { StatusPill, type PillTone } from './StatusPill';
 export { Text } from './Text';
+export { ThemeToggle } from './ThemeToggle';
 export { Toggle } from './Toggle';
 export { TransactionRow, titleCase } from './TransactionRow';
 export { WalletSwitcher } from './WalletSwitcher';

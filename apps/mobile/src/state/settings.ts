@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 // Preferences only. Financial data never goes into AsyncStorage; it belongs in the encrypted database.
-export type ThemeChoice = 'system' | 'light' | 'dark';
+export type ThemeChoice = 'light' | 'dark';
 
 export interface SettingsState {
   onboarded: boolean;
@@ -13,7 +13,7 @@ export interface SettingsState {
   monthStartDay: number;
   smsCursor: number; // received-at of the newest inbox SMS already processed
   wallet: string; // 'all', or a provider id to show one wallet's money only
-  theme: ThemeChoice; // 'system' follows the phone's light/dark setting
+  theme: ThemeChoice | null; // null until the user picks: the app follows the phone's light/dark mode
   appLock: boolean;
   lockAfterMs: number; // how long the app may be in the background before it locks again
   setProviders: (providers: string[]) => void;
@@ -35,7 +35,7 @@ const initial = {
   monthStartDay: 1,
   smsCursor: 0,
   wallet: 'all',
-  theme: 'system',
+  theme: null,
   appLock: false,
   lockAfterMs: 0,
 } satisfies Partial<SettingsState>;
@@ -54,6 +54,16 @@ export const useSettings = create<SettingsState>()(
       setLockAfterMs: (lockAfterMs) => set({ lockAfterMs }),
       reset: () => set(initial),
     }),
-    { name: 'ledgr-settings', storage: createJSONStorage(() => AsyncStorage) },
+    {
+      name: 'ledgr-settings',
+      storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      // v0 stored theme 'system'; that now means no choice yet.
+      migrate: (persisted, version) => {
+        const state = persisted as Omit<Partial<SettingsState>, 'theme'> & { theme?: string | null };
+        if (version < 1 && state.theme === 'system') state.theme = null;
+        return state as SettingsState;
+      },
+    },
   ),
 );

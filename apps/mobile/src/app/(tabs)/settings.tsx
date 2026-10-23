@@ -7,14 +7,14 @@ import { phoneHasScreenLock } from '@/features/security/appLock';
 import { LOCK_AFTER_OPTIONS } from '@/features/security/lockPolicy';
 import { confirmWithLock } from '@/features/security/useAppLock';
 import { useLedger } from '@/state/ledger';
-import { useSettings, type ThemeChoice } from '@/state/settings';
-import { Button, Card, Chip, ListRow, Screen, ScreenHeader, Text, Toggle } from '@/ui/components';
+import { useSettings } from '@/state/settings';
+import { Button, Card, Chip, ListRow, Screen, ScreenHeader, Text, ThemeToggle, Toggle } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 // FR-6: control. Backup and export are shown but switched off until they exist.
 export default function SettingsScreen() {
   const c = useColors();
-  const { monthStartDay, setMonthStartDay, currency, dataSource, providers, appLock, setAppLock, lockAfterMs, setLockAfterMs, theme, setTheme } = useSettings();
+  const { monthStartDay, setMonthStartDay, currency, dataSource, providers, appLock, setAppLock, lockAfterMs, setLockAfterMs } = useSettings();
 
   // Turning the lock on needs a phone screen lock and one successful unlock; turning it off needs an unlock too,
   // so someone holding an unlocked phone can't just switch it off.
@@ -75,17 +75,7 @@ export default function SettingsScreen() {
       </Group>
 
       <Group title="Appearance">
-        <View style={{ gap: 8, paddingVertical: 14 }}>
-          <Text variant="label">Theme</Text>
-          <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }} accessibilityRole="radiogroup" accessibilityLabel="Theme">
-            {THEMES.map((t) => (
-              <Chip key={t.value} label={t.label} selected={theme === t.value} onPress={() => setTheme(t.value)} />
-            ))}
-          </View>
-          <Text variant="caption" muted>
-            {theme === 'system' ? 'Follows your phone’s light or dark mode.' : `Always ${theme}, whatever your phone is set to.`}
-          </Text>
-        </View>
+        <ListRow title="Theme" right={<ThemeToggle />} />
       </Group>
 
       <Group title="Data">
@@ -136,12 +126,6 @@ export default function SettingsScreen() {
     </Screen>
   );
 }
-
-const THEMES: { value: ThemeChoice; label: string }[] = [
-  { value: 'system', label: 'System' },
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-];
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
