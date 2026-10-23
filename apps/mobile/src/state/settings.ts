@@ -3,6 +3,8 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 // Preferences only. Financial data never goes into AsyncStorage; it belongs in the encrypted database.
+export type ThemeChoice = 'system' | 'light' | 'dark';
+
 export interface SettingsState {
   onboarded: boolean;
   dataSource: 'demo' | 'sms' | null;
@@ -11,6 +13,7 @@ export interface SettingsState {
   monthStartDay: number;
   smsCursor: number; // received-at of the newest inbox SMS already processed
   wallet: string; // 'all', or a provider id to show one wallet's money only
+  theme: ThemeChoice; // 'system' follows the phone's light/dark setting
   appLock: boolean;
   lockAfterMs: number; // how long the app may be in the background before it locks again
   setProviders: (providers: string[]) => void;
@@ -18,6 +21,7 @@ export interface SettingsState {
   setMonthStartDay: (day: number) => void;
   setSmsCursor: (at: number) => void;
   setWallet: (wallet: string) => void;
+  setTheme: (theme: ThemeChoice) => void;
   setAppLock: (on: boolean) => void;
   setLockAfterMs: (ms: number) => void;
   reset: () => void;
@@ -31,6 +35,7 @@ const initial = {
   monthStartDay: 1,
   smsCursor: 0,
   wallet: 'all',
+  theme: 'system',
   appLock: false,
   lockAfterMs: 0,
 } satisfies Partial<SettingsState>;
@@ -44,6 +49,7 @@ export const useSettings = create<SettingsState>()(
       setMonthStartDay: (monthStartDay) => set({ monthStartDay: Math.min(28, Math.max(1, monthStartDay)) }),
       setSmsCursor: (smsCursor) => set({ smsCursor }),
       setWallet: (wallet) => set({ wallet }),
+      setTheme: (theme) => set({ theme }),
       setAppLock: (appLock) => set({ appLock }),
       setLockAfterMs: (lockAfterMs) => set({ lockAfterMs }),
       reset: () => set(initial),

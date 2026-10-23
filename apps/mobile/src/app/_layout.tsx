@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, SplashScreen, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { useColorScheme, View } from 'react-native';
+import { Appearance, useColorScheme, View } from 'react-native';
 import { openLedgerDb } from '@/db/client';
 import { useAppLockLifecycle, useLockState } from '@/features/security/useAppLock';
 import { useSmsSync } from '@/features/sms/useSmsSync';
@@ -26,6 +26,13 @@ export default function RootLayout() {
   const hasData = useLedger((s) => s.transactions.length > 0);
   const loadDemo = useLedger((s) => s.loadDemo);
   const dbError = useLedgerDatabase();
+  const themeChoice = useSettings((s) => s.theme);
+
+  // The Theme setting overrides the phone's light/dark mode app-wide (screens, alerts, keyboard, status bar).
+  // 'system' removes the override. Applied once settings load, before the splash hides.
+  useEffect(() => {
+    if (hydrated) Appearance.setColorScheme(themeChoice === 'system' ? 'auto' : themeChoice);
+  }, [hydrated, themeChoice]);
   useSmsSync();
   // Until the lock has started, an enabled lock counts as locked, so data is never drawn uncovered for a frame.
   const appLock = useSettings((s) => s.appLock);
