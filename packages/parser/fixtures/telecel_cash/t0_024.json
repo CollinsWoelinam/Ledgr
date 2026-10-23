@@ -1,0 +1,23 @@
+{
+  "description": "transfer_out, telecel_cash template 0",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "5453245908266252 Confirmed. GHS2.77 sent to 0861258471 - KWAKU DARKO ASANTE on MTN MOBILE MONEY on 2026-03-06 at 20:98:25. Your Telecel Cash balance is GHS40.80. You were charged GHS2.29. Your E-levy charge is GHS3.70. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: gift. Sendi k3k3!",
+    "receivedAt": "2026-03-16T18:22:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 277,
+    "feeMinor": 229,
+    "taxMinor": 370,
+    "currency": "GHS",
+    "counterpartyName": "KWAKU DARKO ASANTE",
+    "counterpartyNumber": "0861258471",
+    "balanceAfterMinor": 4080,
+    "externalRef": "5453245908266252",
+    "occurredAt": "2026-03-06T21:38:25"
+  }
+}

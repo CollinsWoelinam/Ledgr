@@ -1,0 +1,22 @@
+{
+  "description": "transfer_in, mtn_momo template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment received for GHS 501.45 from KWAME APPIAH Current Balance: GHS 184.10 . Available Balance: GHS 184.10. Reference: lunch. Transaction ID: 92931406829. TRANSACTION FEE: 7.25",
+    "receivedAt": "2026-03-13T19:17:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 50145,
+    "feeMinor": 725,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "KWAME APPIAH",
+    "balanceAfterMinor": 18410,
+    "externalRef": "92931406829",
+    "occurredAt": "2026-03-13T19:17:00"
+  }
+}

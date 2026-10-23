@@ -1,0 +1,22 @@
+{
+  "description": "transfer_in, mtn_momo template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment received for GHS 972.42 from YAW TETTEH Current Balance: GHS 153.70 . Available Balance: GHS 153.70. Reference: groceries. Transaction ID: 33579466108. TRANSACTION FEE: 8.31",
+    "receivedAt": "2026-03-07T16:09:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 97242,
+    "feeMinor": 831,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "YAW TETTEH",
+    "balanceAfterMinor": 15370,
+    "externalRef": "33579466108",
+    "occurredAt": "2026-03-07T16:09:00"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "description": "cash_in, mtn_momo template 4",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash In received for GHS 808.21 from ROYAL FASHION HOME. Current Balance GHS 251.97 Available Balance GHS 251.97. Transaction ID: 25873024493. Fee charged: GHS 1. Cash in (Deposit) is a free transaction on MTN Mobile Money. Please do not pay any fees for it.",
+    "receivedAt": "2026-03-08T10:18:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_in",
+    "direction": "in",
+    "amountMinor": 80821,
+    "feeMinor": 100,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "ROYAL FASHION HOME",
+    "balanceAfterMinor": 25197,
+    "externalRef": "25873024493",
+    "occurredAt": "2026-03-08T10:18:00"
+  }
+}

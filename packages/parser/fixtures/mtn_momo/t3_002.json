@@ -1,0 +1,22 @@
+{
+  "description": "transfer_out, mtn_momo template 3",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment made for GHS 23.12 to EFUA OWUSU DARKO Current Balance: GHS 3.94 . Available Balance: GHS 3.94. Reference: school. Transaction ID: 94589242397. Fee charged: GHS4.40 Tax charged: 4. Download the MoMo App for a Faster & Easier Experience. Click here: https://example.com/app",
+    "receivedAt": "2026-03-01T08:53:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 2312,
+    "feeMinor": 440,
+    "taxMinor": 400,
+    "currency": "GHS",
+    "counterpartyName": "EFUA OWUSU DARKO",
+    "balanceAfterMinor": 394,
+    "externalRef": "94589242397",
+    "occurredAt": "2026-03-01T08:53:00"
+  }
+}

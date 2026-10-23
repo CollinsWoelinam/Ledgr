@@ -1,0 +1,22 @@
+{
+  "description": "transfer_in, mtn_momo template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment received for GHS 76.86 from KOJO APPIAH OWUSU Current Balance: GHS 55.52 . Available Balance: GHS 55.52. Reference: gift. Transaction ID: 65622290393. TRANSACTION FEE: 6.14",
+    "receivedAt": "2026-03-26T12:35:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 7686,
+    "feeMinor": 614,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "KOJO APPIAH OWUSU",
+    "balanceAfterMinor": 5552,
+    "externalRef": "65622290393",
+    "occurredAt": "2026-03-26T12:35:00"
+  }
+}

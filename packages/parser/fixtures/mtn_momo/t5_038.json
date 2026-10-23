@@ -1,0 +1,22 @@
+{
+  "description": "cash_out, mtn_momo template 5",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash Out made for GHS48.45 to ROYAL FASHION HOME. Current Balance: GHS6.43 Financial Transaction Id: 71358102190. Cash-out fee is charged automatically from your MTN MoMo wallet. Please do not pay any fees to the Agent. Thank you for using MTN MobileMoney. Fee charged: GHS2.47.",
+    "receivedAt": "2026-03-19T13:31:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_out",
+    "direction": "out",
+    "amountMinor": 4845,
+    "feeMinor": 247,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "ROYAL FASHION HOME",
+    "balanceAfterMinor": 643,
+    "externalRef": "71358102190",
+    "occurredAt": "2026-03-19T13:31:00"
+  }
+}

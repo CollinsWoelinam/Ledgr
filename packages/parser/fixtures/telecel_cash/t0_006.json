@@ -1,0 +1,23 @@
+{
+  "description": "transfer_out, telecel_cash template 0",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "8205115622872536 Confirmed. GHS1.30 sent to 0759908444 - EFUA ANSAH on MTN MOBILE MONEY on 2026-03-25 at 17:37:00. Your Telecel Cash balance is GHS79.16. You were charged GHS8.72. Your E-levy charge is GHS9.35. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: transport. Sendi k3k3!",
+    "receivedAt": "2026-03-15T20:54:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 130,
+    "feeMinor": 872,
+    "taxMinor": 935,
+    "currency": "GHS",
+    "counterpartyName": "EFUA ANSAH",
+    "counterpartyNumber": "0759908444",
+    "balanceAfterMinor": 7916,
+    "externalRef": "8205115622872536",
+    "occurredAt": "2026-03-25T17:37:00"
+  }
+}

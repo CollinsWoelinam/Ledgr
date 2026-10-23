@@ -1,6 +1,6 @@
 import type { TransactionType } from '@ledgr/parser';
 import type { ReviewItem, Transaction } from '@/db/schema';
-import { formatMoney } from '@/lib/format';
+import { formatAmount, formatMoney } from '@/lib/format';
 
 // Demo mode: realistic fake data so the app can be tried without real SMS. Every name and number is invented.
 
@@ -82,13 +82,13 @@ export function seedDemoData(now = new Date()): { transactions: Transaction[]; r
     {
       id: 'rv-1',
       sender: 'MobileMoney',
-      body: 'You have received GHS 75.00 via MoMoPay merchant settlement. Ref 99812. Bal GHS 410.20',
+      body: 'You have received GHS 75.00 from ADB Bank Pull on your mobile money account at 2026-10-21 09:12:44. Message: savings. Your new balance: GHS 410.20. Financial Transaction Id: 72015583921.',
       receivedAt: now.getTime() - 3 * 3600_000,
     },
     {
       id: 'rv-2',
       sender: 'MobileMoney',
-      body: 'Bank transfer of GHS 500.00 to GCB A/C ****231 successful. Txn 88123001.',
+      body: 'Your voucher 4471902 with GHS 20.00 has expired. Your new balance is GHS 430.20 Financial Transaction Id: 72015583955.',
       receivedAt: now.getTime() - 26 * 3600_000,
     },
   ];
@@ -115,23 +115,24 @@ export function seedDemoData(now = new Date()): { transactions: Transaction[]; r
   }
 }
 
-// The SMS each demo transaction would have come from, in the same wording as the parser's MTN templates.
+// The SMS each demo transaction would have come from, in MTN MoMo's real wording (see the parser's templates).
 function smsFor(t: Omit<Transaction, 'categoryId'>): string {
   const ghs = (minor = 0) => formatMoney(minor, 'GHS');
-  const who = [t.counterpartyName, t.counterpartyNumber].filter(Boolean).join(' ');
+  const tight = (minor = 0) => `GHS${formatAmount(minor)}`;
   const pad = (n: number) => String(n).padStart(2, '0');
   const d = new Date(t.occurredAt);
   const stamp = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  const who = t.counterpartyNumber ? `${t.counterpartyName} (${t.counterpartyNumber})` : t.counterpartyName;
 
   switch (t.type) {
     case 'transfer_in':
-      return `Payment received for ${ghs(t.amountMinor)} from ${who} Current Balance: ${ghs(t.balanceAfterMinor)}. Available Balance: ${ghs(t.balanceAfterMinor)}. Reference: . Transaction ID: ${t.externalRef}. TRANSACTION FEE: 0.00`;
+      return `Payment received for ${ghs(t.amountMinor)} from ${who} Current Balance: ${ghs(t.balanceAfterMinor)} . Available Balance: ${ghs(t.balanceAfterMinor)}. Reference: . Transaction ID: ${t.externalRef}. TRANSACTION FEE: 0.00`;
     case 'cash_out':
-      return `Cash Out made for ${ghs(t.amountMinor)} to ${who}. Current Balance: ${ghs(t.balanceAfterMinor)}. Fee was ${ghs(t.feeMinor)}. Transaction Id: ${t.externalRef}.`;
+      return `Cash Out made for ${tight(t.amountMinor)} to ${t.counterpartyName}. Current Balance: ${tight(t.balanceAfterMinor)} Financial Transaction Id: ${t.externalRef}. Cash-out fee is charged automatically from your MTN MoMo wallet. Please do not pay any fees to the Agent. Thank you for using MTN MobileMoney. Fee charged: ${tight(t.feeMinor)}.`;
     case 'payment':
     case 'airtime_data':
-      return `Your payment of ${ghs(t.amountMinor)} to ${who} has been completed at ${stamp}. Your new balance: ${ghs(t.balanceAfterMinor)}. Fee was ${ghs(t.feeMinor)} Tax was ${ghs(t.taxMinor)}. Reference: . Financial Transaction Id: ${t.externalRef}.`;
+      return `Your payment of ${ghs(t.amountMinor)} to ${t.counterpartyName} has been completed at ${stamp}. Your new balance: ${ghs(t.balanceAfterMinor)}. Fee was ${ghs(t.feeMinor)} Tax was ${ghs(t.taxMinor)}. Reference: -. Financial Transaction Id: ${t.externalRef}. External Transaction Id: ${t.externalRef}.`;
     default:
-      return `Payment made for ${ghs(t.amountMinor)} to ${who}. Current Balance: ${ghs(t.balanceAfterMinor)}. Reference: . Transaction Id: ${t.externalRef}. Fee was ${ghs(t.feeMinor)} Tax was ${ghs(t.taxMinor)}. ${stamp}`;
+      return `Payment made for ${ghs(t.amountMinor)} to ${who} Current Balance: ${ghs(t.balanceAfterMinor)} . Available Balance: ${ghs(t.balanceAfterMinor)}. Reference: . Transaction ID: ${t.externalRef}. Fee charged: ${tight(t.feeMinor)} Tax charged: ${formatAmount(t.taxMinor)}.`;
   }
 }

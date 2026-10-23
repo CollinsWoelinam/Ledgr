@@ -1,0 +1,23 @@
+{
+  "description": "airtime_data, telecel_cash template 6",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "1604123219356662 confirmed. Your data bundle purchase request of GHS6.29 to 233514126694 on 2024-08-05 has been received at 19:01:50. Kindly wait for confirmation. Your Telecel Cash balance is GHS70.85.",
+    "receivedAt": "2026-03-20T13:45:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "airtime_data",
+    "direction": "out",
+    "amountMinor": 629,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "Telecel bundle",
+    "counterpartyNumber": "233514126694",
+    "balanceAfterMinor": 7085,
+    "externalRef": "1604123219356662",
+    "occurredAt": "2026-03-20T13:45:00"
+  }
+}

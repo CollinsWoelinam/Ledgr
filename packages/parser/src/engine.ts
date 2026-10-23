@@ -10,7 +10,8 @@ export interface EngineConfig {
 }
 
 const MACROS: Record<string, string> = {
-  '{amount}': '\\d[\\d,]*(?:\\.\\d{1,2})?',
+  // Commas only as thousands separators, so "GHS9.99,Tax" stops at the amount.
+  '{amount}': '(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d{1,2})?',
   '{cur}': '[A-Z]{3}',
 };
 
@@ -54,7 +55,23 @@ export function parseSms(sms: RawSms, config: EngineConfig): ParseResult {
     const transaction = mapGroups(groups, template, provider, sms);
     return isValid(transaction) ? { ok: true, transaction } : { ok: false, reason: 'invalid' };
   }
+  // A message carrying a transaction ID is never ignored: if no template knows it, a person should see it.
+  const looksLikeTransaction = TRANSACTION_ID.test(body);
+  if (!looksLikeTransaction && provider.ignore?.some((pattern) => compilePattern(pattern).test(body))) return { ok: false, reason: 'ignored' };
   return { ok: false, reason: 'no_template_match' };
+}
+
+const TRANSACTION_ID = /Transaction I[dD]:? ?\d{6,}/;
+
+const ignoreCache = new Map<string, RegExp>();
+
+function compilePattern(pattern: string): RegExp {
+  let re = ignoreCache.get(pattern);
+  if (!re) {
+    re = new RegExp(pattern, 'i');
+    ignoreCache.set(pattern, re);
+  }
+  return re;
 }
 
 function mapGroups(groups: Record<string, string | undefined>, template: Template, provider: Provider, sms: RawSms): ParsedTransaction {
@@ -71,7 +88,7 @@ function mapGroups(groups: Record<string, string | undefined>, template: Templat
     feeMinor: money('fee') ?? 0,
     taxMinor: money('tax') ?? 0,
     currency: groups.currency?.toUpperCase() ?? provider.currency,
-    counterpartyName: text('name'),
+    counterpartyName: text('name') ?? template.counterparty,
     counterpartyNumber: text('number'),
     balanceAfterMinor: money('balance'),
     externalRef: text('ref'),

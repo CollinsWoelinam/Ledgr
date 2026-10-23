@@ -1,0 +1,22 @@
+{
+  "description": "payment, mtn_momo template 8",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Y'ello. You have Paid GHS 4 to Merchant 771169 on your mobile money account at 898738741435. Message from sender: gift. Your new balance: GHS 59.65 . Fee was GHS 1.27 . Financial Transaction Id: 78812538559.Download the MoMo App for a Faster & Easier Experience Click here: https://example.com/app",
+    "receivedAt": "2026-03-15T15:05:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 400,
+    "feeMinor": 127,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "Merchant 771169",
+    "balanceAfterMinor": 5965,
+    "externalRef": "78812538559",
+    "occurredAt": "2026-03-15T15:05:00"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "description": "transfer_out, telecel_cash template 0",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "4401036609715221 Confirmed. GHS8.81 sent to 0287906845 KOJO BOATENG on MTN MOBILE MONEY on 2026-03-22 at 15:60:39. Your Telecel Cash balance is GHS31.98. You were charged GHS3.18. Your E-levy charge is GHS8.85. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: school. Sendi k3k3!",
+    "receivedAt": "2026-03-14T13:27:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 881,
+    "feeMinor": 318,
+    "taxMinor": 885,
+    "currency": "GHS",
+    "counterpartyName": "KOJO BOATENG",
+    "counterpartyNumber": "0287906845",
+    "balanceAfterMinor": 3198,
+    "externalRef": "4401036609715221",
+    "occurredAt": "2026-03-22T16:00:39"
+  }
+}

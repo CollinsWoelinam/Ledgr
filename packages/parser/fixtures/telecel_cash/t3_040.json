@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 3",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "6371369066097508 Confirmed. You have received GHS526.73 from ********6796-Inv Credit on 2026-03-28 at 18:82:39. Your Telecel Cash balance is GHS884.12. Ref: lunch",
+    "receivedAt": "2026-03-02T13:09:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 52673,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "Inv Credit",
+    "counterpartyNumber": "6796",
+    "balanceAfterMinor": 88412,
+    "externalRef": "6371369066097508",
+    "occurredAt": "2026-03-28T19:22:39"
+  }
+}

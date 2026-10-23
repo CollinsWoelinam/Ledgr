@@ -1,0 +1,22 @@
+{
+  "description": "cash_out, mtn_momo template 5",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash Out made for GHS32.68 to GRACE MINI MART. Current Balance: GHS70.30 Financial Transaction Id: 46869417083. Cash-out fee is charged automatically from your MTN MoMo wallet. Please do not pay any fees to the Agent. Thank you for using MTN MobileMoney. Fee charged: GHS8.67.",
+    "receivedAt": "2026-03-23T18:25:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_out",
+    "direction": "out",
+    "amountMinor": 3268,
+    "feeMinor": 867,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "GRACE MINI MART",
+    "balanceAfterMinor": 7030,
+    "externalRef": "46869417083",
+    "occurredAt": "2026-03-23T18:25:00"
+  }
+}

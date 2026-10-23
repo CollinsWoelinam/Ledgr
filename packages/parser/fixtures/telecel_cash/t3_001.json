@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 3",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "5706390211031134 Confirmed. You have received GHS87.22 from 0545320047 - EFUA MENSAH QUAYE on 2026-03-05 at 12:20:10. Your Telecel Cash balance is GHS193.33. Reference: fuel. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information",
+    "receivedAt": "2026-03-24T07:53:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 8722,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "EFUA MENSAH QUAYE",
+    "counterpartyNumber": "0545320047",
+    "balanceAfterMinor": 19333,
+    "externalRef": "5706390211031134",
+    "occurredAt": "2026-03-05T12:20:10"
+  }
+}

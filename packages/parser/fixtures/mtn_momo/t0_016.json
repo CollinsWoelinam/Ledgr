@@ -1,0 +1,22 @@
+{
+  "description": "airtime_data, mtn_momo template 0",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your payment of GHS 4.93 to MTN AIRTIME has been completed at 2026-03-07 12:84:41. Your new balance: GHS 6.48. Fee was GHS 1.26 Tax was GHS -. Reference: groceries. Financial Transaction Id: 21649002566. External Transaction Id: 36722780384.Download the MoMo App for a Faster & Easier Experience Click here: https://example.com/app",
+    "receivedAt": "2026-03-16T19:52:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "airtime_data",
+    "direction": "out",
+    "amountMinor": 493,
+    "feeMinor": 126,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "MTN AIRTIME",
+    "balanceAfterMinor": 648,
+    "externalRef": "21649002566",
+    "occurredAt": "2026-03-07T13:24:41"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "description": "transfer_out, telecel_cash template 0",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "2282659320046019 Confirmed. GHS75.21 sent to 0808875930 - AFIA BOATENG QUAYE on MTN MOBILE MONEY on 2026-03-05 at 10:90:23. Your Telecel Cash balance is GHS754.61. You were charged GHS9.41. Your E-levy charge is GHS9.21. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: lunch. Sendi k3k3!",
+    "receivedAt": "2026-03-01T17:36:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 7521,
+    "feeMinor": 941,
+    "taxMinor": 921,
+    "currency": "GHS",
+    "counterpartyName": "AFIA BOATENG QUAYE",
+    "counterpartyNumber": "0808875930",
+    "balanceAfterMinor": 75461,
+    "externalRef": "2282659320046019",
+    "occurredAt": "2026-03-05T11:30:23"
+  }
+}

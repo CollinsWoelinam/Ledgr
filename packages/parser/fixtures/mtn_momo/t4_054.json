@@ -1,0 +1,22 @@
+{
+  "description": "cash_in, mtn_momo template 4",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash In received for GHS 926.41 from GOLDEN TOUCH VENTURES. Current Balance GHS 187.80 Available Balance GHS 187.80. Transaction ID: 20287443795. Fee charged: GHS 6. Cash in (Deposit) is a free transaction on MTN Mobile Money. Please do not pay any fees for it.",
+    "receivedAt": "2026-03-24T11:11:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_in",
+    "direction": "in",
+    "amountMinor": 92641,
+    "feeMinor": 600,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "GOLDEN TOUCH VENTURES",
+    "balanceAfterMinor": 18780,
+    "externalRef": "20287443795",
+    "occurredAt": "2026-03-24T11:11:00"
+  }
+}

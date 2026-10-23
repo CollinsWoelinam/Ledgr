@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 3",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "3724708566049505 Confirmed. You have received GHS78.20 from 233402090004 - KOJO QUAYE TETTEH on 2026-03-13 at 14:72:08. Your Telecel Cash balance is GHS14.47. Reference: fuel. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information",
+    "receivedAt": "2026-03-08T08:11:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 7820,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "KOJO QUAYE TETTEH",
+    "counterpartyNumber": "233402090004",
+    "balanceAfterMinor": 1447,
+    "externalRef": "3724708566049505",
+    "occurredAt": "2026-03-13T15:12:08"
+  }
+}

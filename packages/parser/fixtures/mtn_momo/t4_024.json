@@ -1,0 +1,22 @@
+{
+  "description": "cash_in, mtn_momo template 4",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash In received for GHS 493.36 from AFIA APPIAH MENSAH. Current Balance GHS 982.59 Available Balance GHS 982.59. Transaction ID: 45920237169. Fee charged: GHS 1. Cash in (Deposit) is a free transaction on MTN Mobile Money. Please do not pay any fees for it.",
+    "receivedAt": "2026-03-04T08:44:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_in",
+    "direction": "in",
+    "amountMinor": 49336,
+    "feeMinor": 100,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "AFIA APPIAH MENSAH",
+    "balanceAfterMinor": 98259,
+    "externalRef": "45920237169",
+    "occurredAt": "2026-03-04T08:44:00"
+  }
+}

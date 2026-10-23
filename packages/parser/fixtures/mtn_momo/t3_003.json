@@ -1,0 +1,22 @@
+{
+  "description": "transfer_out, mtn_momo template 3",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment made for GHS 2.12 to ABENA ADDO. Current Balance: GHS 98.89. Available Balance: GHS 98.89. Reference: transport. Transaction ID: 89843917471. Fee charged: GHS 5.77 TAX charged: GHS 6.73.",
+    "receivedAt": "2026-03-18T16:20:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 212,
+    "feeMinor": 577,
+    "taxMinor": 673,
+    "currency": "GHS",
+    "counterpartyName": "ABENA ADDO",
+    "balanceAfterMinor": 9889,
+    "externalRef": "89843917471",
+    "occurredAt": "2026-03-18T16:20:00"
+  }
+}

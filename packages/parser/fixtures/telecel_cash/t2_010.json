@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "2120490781645869 Confirmed. You have received GHS480.42 from MTN MOBILE MONEY with transaction reference: Transfer From: 233402513548-KOFI MENSAH on 2026-03-22 at 19:58:31. Your Telecel Cash balance is GHS498.40. Ref: school. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-16T20:38:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 48042,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "KOFI MENSAH",
+    "counterpartyNumber": "233402513548",
+    "balanceAfterMinor": 49840,
+    "externalRef": "2120490781645869",
+    "occurredAt": "2026-03-22T19:58:31"
+  }
+}

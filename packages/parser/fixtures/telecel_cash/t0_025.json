@@ -1,0 +1,23 @@
+{
+  "description": "transfer_out, telecel_cash template 0",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "8577196258334821 Confirmed. GHS60.68 sent to 233490295383 - ABENA AMOAH AMOAH on MTN MOBILE MONEY on 2026-03-06 at 17:81:14. Your Telecel Cash balance is GHS75.87. You were charged GHS1.77. Your E-levy charge is GHS3.32. Do more with Telecel Cash! Reference: groceries. Sendi k3k3!",
+    "receivedAt": "2026-03-02T19:50:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 6068,
+    "feeMinor": 177,
+    "taxMinor": 332,
+    "currency": "GHS",
+    "counterpartyName": "ABENA AMOAH AMOAH",
+    "counterpartyNumber": "233490295383",
+    "balanceAfterMinor": 7587,
+    "externalRef": "8577196258334821",
+    "occurredAt": "2026-03-06T18:21:14"
+  }
+}

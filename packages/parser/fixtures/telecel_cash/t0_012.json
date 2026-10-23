@@ -1,0 +1,23 @@
+{
+  "description": "transfer_out, telecel_cash template 0",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "5863000566838867 Confirmed. GHS8.56 sent to 0240865611 - AFIA AMOAH on MTN MOBILE MONEY on 2026-03-22 at 18:59:02. Your Telecel Cash balance is GHS69.80. You were charged GHS9.35. Your E-levy charge is GHS1.13. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: data. Sendi k3k3!",
+    "receivedAt": "2026-03-08T20:29:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 856,
+    "feeMinor": 935,
+    "taxMinor": 113,
+    "currency": "GHS",
+    "counterpartyName": "AFIA AMOAH",
+    "counterpartyNumber": "0240865611",
+    "balanceAfterMinor": 6980,
+    "externalRef": "5863000566838867",
+    "occurredAt": "2026-03-22T18:59:02"
+  }
+}

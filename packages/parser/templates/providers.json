@@ -1,5 +1,57 @@
 [
-  { "id": "mtn_momo", "name": "MTN MoMo", "senderIds": ["MobileMoney"], "currency": "GHS" },
-  { "id": "telecel_cash", "name": "Telecel Cash", "senderIds": ["T-CASH"], "currency": "GHS" },
-  { "id": "at_money", "name": "AT Money", "senderIds": ["AT_MONEY"], "currency": "GHS" }
+  {
+    "id": "mtn_momo",
+    "name": "MTN MoMo",
+    "senderIds": [
+      "MobileMoney"
+    ],
+    "currency": "GHS",
+    "ignore": [
+      "^<#>",
+      "\\bOTP\\b",
+      "following code",
+      "Airtime recharged received",
+      "^Y'ello(?:\\.|!| Valued Customer[.,!])",
+      "Download the (?:my)?MoMo ?App",
+      "bonus",
+      "^FREE ",
+      "Recharge",
+      "Reload",
+      "Save with ease",
+      "Just MoMo it",
+      "Dial \\*",
+      "^Y'?ello(?:,| Business| Valued)",
+      "^Dear Valued Customer",
+      "MoMo ?App",
+      "^Exciting offer",
+      "^MoMo is giving",
+      "has failed at",
+      "pincode",
+      "^You have successfully purchased"
+    ]
+  },
+  {
+    "id": "telecel_cash",
+    "name": "Telecel Cash",
+    "senderIds": [
+      "T-CASH"
+    ],
+    "currency": "GHS",
+    "ignore": [
+      "^Failed\\.",
+      "^Transaction failed",
+      "wallet balance is",
+      "^Congratulations",
+      "identity in Telecel Cash",
+      "Dial \\*"
+    ]
+  },
+  {
+    "id": "at_money",
+    "name": "AT Money",
+    "senderIds": [
+      "AT_MONEY"
+    ],
+    "currency": "GHS"
+  }
 ]

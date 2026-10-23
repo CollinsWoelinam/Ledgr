@@ -42,6 +42,7 @@ export interface Template {
   version: number;
   type: TransactionType;
   direction?: Direction; // overrides the type's default direction
+  counterparty?: string; // fixed name when the message has none (e.g. interest credits)
   pattern: string;
   date_format?: string; // tokens: yyyy, yy, MM, dd, HH, mm, ss
 }
@@ -51,9 +52,13 @@ export interface Provider {
   name: string;
   senderIds: string[];
   currency: string;
+  // Messages from this sender that are not transactions (OTPs, promos, balance checks, failures).
+  // Checked only after no template matched, so they never hide a real transaction.
+  ignore?: string[];
 }
 
-export type ParseFailure = 'unknown_sender' | 'no_template_match' | 'invalid';
+// 'ignored': a known non-transaction message. 'no_template_match': looks unknown, goes to the review queue.
+export type ParseFailure = 'unknown_sender' | 'ignored' | 'no_template_match' | 'invalid';
 
 export type ParseResult =
   | { ok: true; transaction: ParsedTransaction }

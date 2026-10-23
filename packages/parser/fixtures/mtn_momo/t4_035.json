@@ -1,0 +1,22 @@
+{
+  "description": "cash_in, mtn_momo template 4",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash In received for GHS 987.74 from SUNRISE STORES. Current Balance GHS 747.70 Available Balance GHS 747.70. Transaction ID: 50665501338. Fee charged: GHS 4. Cash in (Deposit) is a free transaction on MTN Mobile Money. Please do not pay any fees for it.",
+    "receivedAt": "2026-03-24T16:27:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_in",
+    "direction": "in",
+    "amountMinor": 98774,
+    "feeMinor": 400,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "SUNRISE STORES",
+    "balanceAfterMinor": 74770,
+    "externalRef": "50665501338",
+    "occurredAt": "2026-03-24T16:27:00"
+  }
+}

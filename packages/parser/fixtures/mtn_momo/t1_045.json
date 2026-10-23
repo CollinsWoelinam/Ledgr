@@ -1,0 +1,22 @@
+{
+  "description": "payment, mtn_momo template 1",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your payment of GHS 69.39 to KWAKU APPIAH has been completed at 2026-03-17 12:91:25. Your new balance: GHS 9.56. Fee was GHS 3.26 Tax was GHS -. Reference: data. Financial Transaction Id: 16260536185. External Transaction Id: 65579176760.Download the MoMo App for a Faster & Easier Experience Click here: https://example.com/app",
+    "receivedAt": "2026-03-08T12:31:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 6939,
+    "feeMinor": 326,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "KWAKU APPIAH",
+    "balanceAfterMinor": 956,
+    "externalRef": "16260536185",
+    "occurredAt": "2026-03-17T13:31:25"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "description": "cash_in, mtn_momo template 4",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash In received for GHS 398.78 from FIIFI ANSAH QUAYE. Current Balance GHS 383.94 Available Balance GHS 383.94. Transaction ID: 48855351617. Fee charged: GHS 6. Cash in (Deposit) is a free transaction on MTN Mobile Money. Please do not pay any fees for it.",
+    "receivedAt": "2026-03-21T18:15:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_in",
+    "direction": "in",
+    "amountMinor": 39878,
+    "feeMinor": 600,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "FIIFI ANSAH QUAYE",
+    "balanceAfterMinor": 38394,
+    "externalRef": "48855351617",
+    "occurredAt": "2026-03-21T18:15:00"
+  }
+}

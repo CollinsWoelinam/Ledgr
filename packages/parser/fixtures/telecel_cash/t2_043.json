@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "9893934422866473 Confirmed. You have received GHS499.85 from MTN MOBILE MONEY with transaction reference: Transfer From: 233309195262-ADJOA TETTEH on 2026-03-17 at 20:13:22. Your Telecel Cash balance is GHS7,769.13. Ref: rent. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-06T15:31:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 49985,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "ADJOA TETTEH",
+    "counterpartyNumber": "233309195262",
+    "balanceAfterMinor": 776913,
+    "externalRef": "9893934422866473",
+    "occurredAt": "2026-03-17T20:13:22"
+  }
+}

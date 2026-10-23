@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "4408621133242999 Confirmed. You have received GHS76.45 from MTN MOBILE MONEY with transaction reference: Transfer From: 233463269781-ABENA BOATENG on 2026-03-28 at 17:37:09. Your Telecel Cash balance is GHS279.84. Ref: rent. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-01T14:49:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 7645,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "ABENA BOATENG",
+    "counterpartyNumber": "233463269781",
+    "balanceAfterMinor": 27984,
+    "externalRef": "4408621133242999",
+    "occurredAt": "2026-03-28T17:37:09"
+  }
+}

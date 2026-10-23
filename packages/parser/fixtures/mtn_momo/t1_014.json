@@ -1,0 +1,22 @@
+{
+  "description": "payment, mtn_momo template 1",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your payment of GHS 56.19 to KOJO ADDO OWUSU has been completed at 2026-03-07 18:18:20. Reference: school. Your new balance: GHS 70.38. Fee was GHS 2.61 Tax charged: GHS6. Financial Transaction Id: 40669842579. External Transaction Id: -.Download the MoMo App for a Faster & Easier Experience Click here: https://example.com/app",
+    "receivedAt": "2026-03-08T12:24:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 5619,
+    "feeMinor": 261,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "KOJO ADDO OWUSU",
+    "balanceAfterMinor": 7038,
+    "externalRef": "40669842579",
+    "occurredAt": "2026-03-07T18:18:20"
+  }
+}

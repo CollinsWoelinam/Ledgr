@@ -1,0 +1,22 @@
+{
+  "description": "transfer_in, mtn_momo template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment received for GHS 839.97 from Efua Asante Asante Current Balance: GHS 798.59 . Available Balance: GHS 798.59. Reference: fuel. Transaction ID: 75105935584. TRANSACTION FEE: 3.80",
+    "receivedAt": "2026-03-06T15:22:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 83997,
+    "feeMinor": 380,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "Efua Asante Asante",
+    "balanceAfterMinor": 79859,
+    "externalRef": "75105935584",
+    "occurredAt": "2026-03-06T15:22:00"
+  }
+}

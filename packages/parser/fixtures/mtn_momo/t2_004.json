@@ -1,0 +1,22 @@
+{
+  "description": "transfer_in, mtn_momo template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment received for GHS 72.21 from KOFI BOATENG OWUSU Current Balance: GHS 88.54 . Available Balance: GHS 88.54. Reference: fuel. Transaction ID: 25199925764. TRANSACTION FEE: 1.27",
+    "receivedAt": "2026-03-24T16:08:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 7221,
+    "feeMinor": 127,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "KOFI BOATENG OWUSU",
+    "balanceAfterMinor": 8854,
+    "externalRef": "25199925764",
+    "occurredAt": "2026-03-24T16:08:00"
+  }
+}

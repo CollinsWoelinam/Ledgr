@@ -1,0 +1,22 @@
+{
+  "description": "payment, mtn_momo template 7",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment for GHS3.62 to KOJO DARKO .Current Balance: GHS 8.11. Transaction Id: 64060166295. Fee charged: GHS2.36,Tax Charged 2.Download the MoMo App for a Faster & Easier Experience. Click here: https://example.com/app",
+    "receivedAt": "2026-03-04T13:54:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 362,
+    "feeMinor": 236,
+    "taxMinor": 200,
+    "currency": "GHS",
+    "counterpartyName": "KOJO DARKO",
+    "balanceAfterMinor": 811,
+    "externalRef": "64060166295",
+    "occurredAt": "2026-03-04T13:54:00"
+  }
+}

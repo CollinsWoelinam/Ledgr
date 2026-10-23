@@ -17,3 +17,10 @@ test('every demo SMS parses back into its transaction', () => {
     });
   }
 });
+
+// The demo review queue shows messages a real phone would put there: from the wallet sender, not parseable.
+test('demo review items really are unparseable wallet messages', () => {
+  for (const item of seedDemoData(new Date(2026, 9, 22, 12)).reviewQueue) {
+    expect(parseSms({ sender: item.sender, body: item.body, receivedAt: item.receivedAt }, bundledConfig)).toEqual({ ok: false, reason: 'no_template_match' });
+  }
+});

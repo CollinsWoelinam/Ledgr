@@ -1,42 +1,72 @@
 [
   {
     "provider": "mtn_momo",
-    "version": 1,
-    "type": "transfer_out",
-    "pattern": "Payment made for (?<currency>{cur}) ?(?<amount>{amount}) to (?<name>.+?)(?: (?<number>0\\d{9}))?\\. Current Balance: {cur} ?(?<balance>{amount}).*?Transaction Id: (?<ref>\\d+)\\.(?: Fee was {cur} ?(?<fee>{amount}))?(?: Tax was {cur} ?(?<tax>{amount}))?(?:.*(?<date>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}))?",
-    "date_format": "yyyy-MM-dd HH:mm:ss"
-  },
-  {
-    "provider": "mtn_momo",
-    "version": 1,
-    "type": "transfer_in",
-    "pattern": "Payment received for (?<currency>{cur}) ?(?<amount>{amount}) from (?<name>.+?)(?: (?<number>0\\d{9}))?\\.? Current Balance: {cur} ?(?<balance>{amount}).*?Transaction ID: (?<ref>\\d+)(?:.*?TRANSACTION FEE: (?<fee>{amount}))?",
-    "date_format": "yyyy-MM-dd HH:mm:ss"
-  },
-  {
-    "provider": "mtn_momo",
-    "version": 1,
-    "type": "cash_out",
-    "pattern": "Cash Out made for (?<currency>{cur}) ?(?<amount>{amount}) to (?<name>.+?)\\. Current Balance: {cur} ?(?<balance>{amount})\\.(?: Fee was {cur} ?(?<fee>{amount})\\.)? Transaction Id: (?<ref>\\d+)"
-  },
-  {
-    "provider": "mtn_momo",
-    "version": 1,
+    "version": 2,
     "type": "airtime_data",
-    "pattern": "Your payment of (?<currency>{cur}) ?(?<amount>{amount}) to (?<name>MTN (?:AIRTIME|DATA)[^.]*?) has been completed at (?<date>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\. Your new balance: {cur} ?(?<balance>{amount})\\.(?: Fee was {cur} ?(?<fee>{amount}))?(?: Tax was {cur} ?(?<tax>{amount}))?.*?Transaction Id: (?<ref>\\d+)",
+    "pattern": "Your payment of {cur} ?(?<amount>{amount}) to (?<name>[^.]*?(?:AIRTIME|BUNDLE|DATA)[^.]*?) has been completed at (?<date>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\.?.*?new balance: {cur} ?(?<balance>{amount}) ?\\.(?: Fee was {cur} ?(?<fee>{amount}))?(?: Tax was {cur} ?(?:(?<tax>{amount})|-))?.*? Financial Transaction Id: (?<ref>\\d+)",
     "date_format": "yyyy-MM-dd HH:mm:ss"
   },
   {
     "provider": "mtn_momo",
-    "version": 1,
+    "version": 2,
     "type": "payment",
-    "pattern": "Your payment of (?<currency>{cur}) ?(?<amount>{amount}) to (?<name>.+?) has been completed at (?<date>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\. Your new balance: {cur} ?(?<balance>{amount})\\.(?: Fee was {cur} ?(?<fee>{amount}))?(?: Tax was {cur} ?(?<tax>{amount}))?.*?Transaction Id: (?<ref>\\d+)",
+    "pattern": "Your payment of {cur} ?(?<amount>{amount}) to (?<name>.+?) has been completed at (?<date>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\.?.*?new balance: {cur} ?(?<balance>{amount}) ?\\.(?: Fee was {cur} ?(?<fee>{amount}))?(?: Tax was {cur} ?(?:(?<tax>{amount})|-))?.*? Financial Transaction Id: (?<ref>\\d+)",
     "date_format": "yyyy-MM-dd HH:mm:ss"
   },
   {
     "provider": "mtn_momo",
-    "version": 1,
+    "version": 2,
+    "type": "transfer_in",
+    "pattern": "Payment received for {cur} ?(?<amount>{amount}) from (?<name>.+?)(?: \\((?<number>\\d+) ?\\))? Current Balance: {cur} ?(?<balance>{amount}) ?\\..*? Transaction ID: (?<ref>\\d+)\\.(?: TRANSACTION FEE: (?<fee>{amount}))?"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 2,
+    "type": "transfer_out",
+    "pattern": "Payment made for {cur} ?(?<amount>{amount}) to (?<name>.+?)(?: \\((?<number>\\d+) ?\\))?\\.? Current Balance: {cur} ?(?<balance>{amount}) ?\\..*? Transaction ID: (?<ref>\\d+)\\.(?: Fee charged: {cur} ?(?<fee>{amount}))?(?: Tax charged: (?:{cur} ?)?(?<tax>{amount}))?"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 2,
+    "type": "cash_in",
+    "pattern": "Cash In received for {cur} ?(?<amount>{amount}) from (?<name>.+?)\\. Current Balance {cur} ?(?<balance>{amount}) Available Balance {cur} ?{amount}\\. Transaction ID: (?<ref>\\d+)\\.(?: Fee charged: {cur} ?(?<fee>{amount}))?"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 2,
+    "type": "cash_out",
+    "pattern": "Cash Out made for {cur} ?(?<amount>{amount}) to (?<name>.+?)\\. Current Balance: {cur} ?(?<balance>{amount}) Financial Transaction Id: (?<ref>\\d+)\\.(?:.*?Fee charged: {cur} ?(?<fee>{amount}))?"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 2,
+    "type": "airtime_data",
+    "pattern": "Payment for {cur} ?(?<amount>{amount}) to (?<name>MTNBUNDLE|MTN) ?\\.+ ?Current Balance: {cur} ?(?<balance>{amount})\\. Transaction Id: (?<ref>\\d+)\\.(?: Fee charged: {cur} ?(?<fee>{amount}))?(?:, ?Tax Charged:? ?(?<tax>{amount}))?"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 2,
+    "type": "payment",
+    "pattern": "Payment for {cur} ?(?<amount>{amount}) to (?<name>.+?) ?\\.+ ?Current Balance: {cur} ?(?<balance>{amount})\\. Transaction Id: (?<ref>\\d+)\\.(?: Fee charged: {cur} ?(?<fee>{amount}))?(?:, ?Tax Charged:? ?(?<tax>{amount}))?"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 2,
+    "type": "payment",
+    "pattern": "Y'ello\\. You have Paid {cur} ?(?<amount>{amount}) to (?<name>Merchant \\d+) on your mobile money account.*? Your new balance: {cur} ?(?<balance>{amount}) ?\\.(?: Fee was {cur} ?(?<fee>{amount}) ?\\.)? Financial Transaction Id: (?<ref>\\d+)"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 2,
+    "type": "transfer_in",
+    "counterparty": "MTN MoMo credit",
+    "pattern": "An amount of {cur} ?(?<amount>{amount}) has been credited to your mobile money account\\..*? Your new balance: {cur} ?(?<balance>{amount})\\. Financial Transaction Id: (?<ref>\\d+)"
+  },
+  {
+    "provider": "mtn_momo",
+    "version": 2,
     "type": "reversal",
-    "pattern": "Your transaction of (?<currency>{cur}) ?(?<amount>{amount}) with Transaction ID (?<original_ref>\\d+) has been reversed\\. Your new balance: {cur} ?(?<balance>{amount})"
+    "pattern": "the transfer of {cur} ?(?<amount>{amount}) to (?<name>.+?) ?\\.? has been reversed on (?<date>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) with transaction ID: (?<original_ref>\\d+)\\. Your new balance is {cur} ?(?<balance>{amount})",
+    "date_format": "yyyy-MM-dd HH:mm:ss"
   }
 ]

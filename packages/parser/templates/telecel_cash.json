@@ -1,1 +1,58 @@
-[]
+[
+  {
+    "provider": "telecel_cash",
+    "version": 2,
+    "type": "transfer_out",
+    "pattern": "^(?<ref>\\d+) Confirmed\\. {cur} ?(?<amount>{amount}) sent to (?<number>\\d+) -? ?(?<name>.+?) on (?:.+? on )?(?<date>\\d{4}-\\d{2}-\\d{2} at \\d{2}:\\d{2}:\\d{2})\\. Your Telecel Cash balance is {cur} ?(?<balance>{amount})\\.(?: You were charged {cur} ?(?<fee>{amount})\\.)?(?: Your E-levy charge is {cur} ?(?<tax>{amount})\\.)?",
+    "date_format": "yyyy-MM-dd at HH:mm:ss"
+  },
+  {
+    "provider": "telecel_cash",
+    "version": 2,
+    "type": "payment",
+    "pattern": "^(?<ref>\\d+) Confirmed\\. {cur} ?(?<amount>{amount}) paid to (?<number>\\d+) - (?<name>.+?) on (?<date>\\d{4}-\\d{2}-\\d{2} at \\d{2}:\\d{2}:\\d{2})\\. Your new Telecel Cash balance is {cur} ?(?<balance>{amount})\\.(?: You were charged {cur} ?(?<fee>{amount})\\.)?(?: Your E-levy charge is {cur} ?(?<tax>{amount})\\.)?",
+    "date_format": "yyyy-MM-dd at HH:mm:ss"
+  },
+  {
+    "provider": "telecel_cash",
+    "version": 2,
+    "type": "transfer_in",
+    "pattern": "^(?<ref>\\d+) Confirmed\\. You have received {cur} ?(?<amount>{amount}) from .+? with transaction reference: Transfer From: (?<number>\\d+)-(?<name>.+?) on (?<date>\\d{4}-\\d{2}-\\d{2} at \\d{2}:\\d{2}:\\d{2})\\. Your (?:new )?Telecel Cash balance is {cur} ?(?<balance>{amount})",
+    "date_format": "yyyy-MM-dd at HH:mm:ss"
+  },
+  {
+    "provider": "telecel_cash",
+    "version": 2,
+    "type": "transfer_in",
+    "pattern": "^(?<ref>\\d+) Confirmed\\. You have received {cur} ?(?<amount>{amount}) from \\**(?<number>\\d+) ?- ?(?<name>.+?) on (?<date>\\d{4}-\\d{2}-\\d{2} at \\d{2}:\\d{2}:\\d{2})\\. Your (?:new )?Telecel Cash balance is {cur} ?(?<balance>{amount})",
+    "date_format": "yyyy-MM-dd at HH:mm:ss"
+  },
+  {
+    "provider": "telecel_cash",
+    "version": 2,
+    "type": "transfer_in",
+    "pattern": "^(?<ref>\\d+) confirmed\\. You have received {cur} ?(?<amount>{amount}) as payment from (?<name>.+?) on (?<date>\\d{4}-\\d{2}-\\d{2} at \\d{2}:\\d{2}:\\d{2})\\. Your new Telecel Cash balance is {cur} ?(?<balance>{amount})",
+    "date_format": "yyyy-MM-dd at HH:mm:ss"
+  },
+  {
+    "provider": "telecel_cash",
+    "version": 2,
+    "type": "cash_in",
+    "pattern": "^(?<ref>\\d+) Confirmed\\. On (?<date>\\d{4}-\\d{2}-\\d{2} at \\d{2}:\\d{2}:\\d{2}), a deposit of {cur} ?(?<amount>{amount}) was made to your account from (?<name>.+?)\\. Your balance is {cur} ?(?<balance>{amount})",
+    "date_format": "yyyy-MM-dd at HH:mm:ss"
+  },
+  {
+    "provider": "telecel_cash",
+    "version": 2,
+    "type": "airtime_data",
+    "counterparty": "Telecel bundle",
+    "pattern": "^(?<ref>\\d+) confirmed\\. Your (?:data )?bundle purchase request of {cur} ?(?<amount>{amount})(?: to (?<number>\\d+))? on \\d{4}-\\d{2}-\\d{2} has been received at \\d{2}:\\d{2}:\\d{2}\\..*?Your (?:new )?Telecel Cash balance is {cur} ?(?<balance>{amount})"
+  },
+  {
+    "provider": "telecel_cash",
+    "version": 2,
+    "type": "transfer_in",
+    "counterparty": "Telecel Cash interest",
+    "pattern": "you have received {cur} ?(?<amount>{amount}) from Telecel Cash as interest earned.*?Your new balance is {cur} ?(?<balance>{amount})"
+  }
+]

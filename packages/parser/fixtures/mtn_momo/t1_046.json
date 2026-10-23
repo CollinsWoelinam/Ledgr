@@ -1,0 +1,22 @@
+{
+  "description": "payment, mtn_momo template 1",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your payment of GHS 123.70 to ABENA ANSAH has been completed at 2026-03-17 11:99:05. Your new balance: GHS 3.21. Fee was GHS 6.16 Tax was GHS -. Reference: gift. Financial Transaction Id: 87380024664. External Transaction Id: 66945911131.Download the MoMo App for a Faster & Easier Experience Click here: https://example.com/app",
+    "receivedAt": "2026-03-06T20:03:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 12370,
+    "feeMinor": 616,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "ABENA ANSAH",
+    "balanceAfterMinor": 321,
+    "externalRef": "87380024664",
+    "occurredAt": "2026-03-17T12:39:05"
+  }
+}

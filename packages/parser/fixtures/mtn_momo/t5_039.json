@@ -1,0 +1,22 @@
+{
+  "description": "cash_out, mtn_momo template 5",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash Out made for GHS92.60 to BLESSED ENTERPRISE. Current Balance: GHS26.21 Financial Transaction Id: 24572568495. Cash-out fee is charged automatically from your MTN MoMo wallet. Please do not pay any fees to the Agent. Thank you for using MTN MobileMoney. Fee charged: GHS3.87.",
+    "receivedAt": "2026-03-02T14:43:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_out",
+    "direction": "out",
+    "amountMinor": 9260,
+    "feeMinor": 387,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "BLESSED ENTERPRISE",
+    "balanceAfterMinor": 2621,
+    "externalRef": "24572568495",
+    "occurredAt": "2026-03-02T14:43:00"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "description": "transfer_in, mtn_momo template 9",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "An amount of GHS 9.94 has been credited to your mobile money account. Message: school. Your new balance: GHS 13.44. Financial Transaction Id: 43878103128.",
+    "receivedAt": "2026-03-22T09:09:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 994,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "MTN MoMo credit",
+    "balanceAfterMinor": 1344,
+    "externalRef": "43878103128",
+    "occurredAt": "2026-03-22T09:09:00"
+  }
+}

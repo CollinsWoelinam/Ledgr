@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 3",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "4400624992531088 Confirmed. You have received GHS549.39 from ********2767-ADJOA DARKO ADDO on 2026-03-14 at 20:54:07. Your Telecel Cash balance is GHS373.16. Ref: fuel",
+    "receivedAt": "2026-03-03T09:24:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 54939,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "ADJOA DARKO ADDO",
+    "counterpartyNumber": "2767",
+    "balanceAfterMinor": 37316,
+    "externalRef": "4400624992531088",
+    "occurredAt": "2026-03-14T20:54:07"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "1583415676437336 Confirmed. You have received GHS993.32 from MTN MOBILE MONEY with transaction reference: Transfer From: 233647312512-KOJO ASANTE APPIAH on 2026-03-28 at 20:87:57. Your Telecel Cash balance is GHS277.63. Ref: data. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-05T13:13:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 99332,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "KOJO ASANTE APPIAH",
+    "counterpartyNumber": "233647312512",
+    "balanceAfterMinor": 27763,
+    "externalRef": "1583415676437336",
+    "occurredAt": "2026-03-28T21:27:57"
+  }
+}

@@ -41,3 +41,24 @@ test('dedupe keys: ref, then reversal ref, then hash', () => {
   expect(dedupeKey({ ...base, type: 'reversal', reversesRef: '9' })).toBe('p:rev:9');
   expect(dedupeKey({ ...base, counterpartyName: 'A' })).toBe('p:h:1:5:A');
 });
+
+describe('ignore patterns', () => {
+  const withIgnore: EngineConfig = { ...config, providers: [{ ...config.providers[0]!, ignore: ['^Promo', 'balance is'] }] };
+
+  test('known non-transactions are ignored, not sent to review', () => {
+    expect(parseSms(sms('PayCo', 'Promo! Get 20% bonus'), withIgnore)).toEqual({ ok: false, reason: 'ignored' });
+  });
+
+  test('templates win over ignore patterns', () => {
+    expect(parseSms(sms('PayCo', 'Sent GHS 5 to A. Ref 1'), { ...withIgnore, providers: [{ ...withIgnore.providers[0]!, ignore: ['Sent'] }] }).ok).toBe(true);
+  });
+
+  test('a message with a transaction ID is never ignored, even if a pattern matches', () => {
+    expect(parseSms(sms('PayCo', 'Promo payout of GHS 5. Transaction ID: 12345678.'), withIgnore)).toEqual({ ok: false, reason: 'no_template_match' });
+  });
+});
+
+test('curly apostrophes are straightened before matching', () => {
+  const curly: EngineConfig = { ...config, templates: [{ provider: 'p', version: 1, type: 'payment', pattern: "Y'ello\\. Paid {cur} ?(?<amount>{amount})" }] };
+  expect(parseSms(sms('PayCo', 'Y’ello. Paid GHS 2.50'), curly).ok).toBe(true);
+});

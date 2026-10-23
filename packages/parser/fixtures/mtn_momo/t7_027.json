@@ -1,0 +1,22 @@
+{
+  "description": "payment, mtn_momo template 7",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment for GHS669.32 to Bills.INV ..Current Balance: GHS 1.16. Transaction Id: 45204986564. Fee charged: GHS8.12,Tax Charged 7.Download the MoMo App for a Faster & Easier Experience. Click here: https://example.com/app",
+    "receivedAt": "2026-03-10T15:04:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 66932,
+    "feeMinor": 812,
+    "taxMinor": 700,
+    "currency": "GHS",
+    "counterpartyName": "Bills.INV",
+    "balanceAfterMinor": 116,
+    "externalRef": "45204986564",
+    "occurredAt": "2026-03-10T15:04:00"
+  }
+}

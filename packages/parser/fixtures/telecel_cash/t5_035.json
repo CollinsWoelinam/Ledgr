@@ -1,0 +1,22 @@
+{
+  "description": "cash_in, telecel_cash template 5",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "1546025908155872 Confirmed. On 2026-03-28 at 08:85:06, a deposit of GHS968.84 was made to your account from GRACE MINI MART. Your balance is GHS322.56. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-19T12:09:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "cash_in",
+    "direction": "in",
+    "amountMinor": 96884,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "GRACE MINI MART",
+    "balanceAfterMinor": 32256,
+    "externalRef": "1546025908155872",
+    "occurredAt": "2026-03-28T09:25:06"
+  }
+}

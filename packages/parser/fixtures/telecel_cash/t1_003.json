@@ -1,0 +1,23 @@
+{
+  "description": "payment, telecel_cash template 1",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "8523594312702261 Confirmed. GHS930.33 paid to 642177 - Inv.Debit on 2026-03-01 at 18:24:53. Your new Telecel Cash balance is GHS476.26. You were charged GHS7.63. Your E-levy charge is GHS8.15. Reference: school.. Sendi k3k3!",
+    "receivedAt": "2026-03-05T17:30:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 93033,
+    "feeMinor": 763,
+    "taxMinor": 815,
+    "currency": "GHS",
+    "counterpartyName": "Inv.Debit",
+    "counterpartyNumber": "642177",
+    "balanceAfterMinor": 47626,
+    "externalRef": "8523594312702261",
+    "occurredAt": "2026-03-01T18:24:53"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "description": "payment, mtn_momo template 1",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your payment of GHS 15.71 to EFUA OWUSU ADDO has been completed at 2026-03-07 15:38:10. Reference: school. Your new balance: GHS 67.36. Fee was GHS 6.79 Tax charged: GHS6. Financial Transaction Id: 45643902515. External Transaction Id: -.Download the MoMo App for a Faster & Easier Experience Click here: https://example.com/app",
+    "receivedAt": "2026-03-11T15:50:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 1571,
+    "feeMinor": 679,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "EFUA OWUSU ADDO",
+    "balanceAfterMinor": 6736,
+    "externalRef": "45643902515",
+    "occurredAt": "2026-03-07T15:38:10"
+  }
+}

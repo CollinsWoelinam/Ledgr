@@ -1,0 +1,23 @@
+{
+  "description": "transfer_out, telecel_cash template 0",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "7964347235158811 Confirmed. GHS17.37 sent to 0152646212 - EFUA OWUSU BOATENG on MTN MOBILE MONEY on 2026-03-21 at 16:94:24. Your Telecel Cash balance is GHS25.62. You were charged GHS2.42. Your E-levy charge is GHS4.42. Sending money from Telecel Cash to Telecel Cash remains FREE on the Telecel Play App. Download the App https://example.com/app and continue to enjoy the convenience. Reference: data. Sendi k3k3!",
+    "receivedAt": "2026-03-01T14:44:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_out",
+    "direction": "out",
+    "amountMinor": 1737,
+    "feeMinor": 242,
+    "taxMinor": 442,
+    "currency": "GHS",
+    "counterpartyName": "EFUA OWUSU BOATENG",
+    "counterpartyNumber": "0152646212",
+    "balanceAfterMinor": 2562,
+    "externalRef": "7964347235158811",
+    "occurredAt": "2026-03-21T17:34:24"
+  }
+}

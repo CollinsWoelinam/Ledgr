@@ -1,0 +1,22 @@
+{
+  "description": "payment, mtn_momo template 1",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Your payment of GHS 1994.44 to AMA QUAYE has been completed at 2026-03-02 16:10:24. Your new balance: GHS 156.37. Fee was GHS 6.51 Tax was GHS -. Reference: school. Financial Transaction Id: 51955027766. External Transaction Id: 98854277037.Download the MoMo App for a Faster & Easier Experience Click here: https://example.com/app",
+    "receivedAt": "2026-03-17T10:51:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "payment",
+    "direction": "out",
+    "amountMinor": 199444,
+    "feeMinor": 651,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "AMA QUAYE",
+    "balanceAfterMinor": 15637,
+    "externalRef": "51955027766",
+    "occurredAt": "2026-03-02T16:10:24"
+  }
+}

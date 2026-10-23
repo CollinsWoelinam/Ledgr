@@ -1,0 +1,10 @@
+{
+  "description": "non-transaction message from the wallet sender",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "<#> DO NOT share this SMS. This OTP is required to access your wallet so keep it private. MTN staff will NEVER ask for it. Enter code :1018 to complete your login. N/RywfrtIZL 1XTs3SAuJcW RdbS7eMOXvx Tg1mmsWBV/l l+/DM+Y4kqw 1IQp5cNCYgn L4X7x86s1X5 +BQ+l3vBZvQ 758KQ8fm4I7",
+    "receivedAt": "2026-03-10T09:00:00"
+  },
+  "expected": null
+}

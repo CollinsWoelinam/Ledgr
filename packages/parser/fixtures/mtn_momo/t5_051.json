@@ -1,0 +1,22 @@
+{
+  "description": "cash_out, mtn_momo template 5",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Cash Out made for GHS215.40 to FIIFI ADDO DARKO. Current Balance: GHS51.16 Financial Transaction Id: 54114758696. Cash-out fee is charged automatically from your MTN MoMo wallet. Please do not pay any fees to the Agent. Thank you for using MTN MobileMoney. Fee charged: GHS8.81.",
+    "receivedAt": "2026-03-13T07:49:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "cash_out",
+    "direction": "out",
+    "amountMinor": 21540,
+    "feeMinor": 881,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "FIIFI ADDO DARKO",
+    "balanceAfterMinor": 5116,
+    "externalRef": "54114758696",
+    "occurredAt": "2026-03-13T07:49:00"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "description": "transfer_in, telecel_cash template 7",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "Dear customer, you have received GHS3.91 from Telecel Cash as interest earned on your mobile money wallet for the period July 2024 to September 2024. Your new balance is GHS2.51.",
+    "receivedAt": "2026-03-24T14:56:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 391,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "Telecel Cash interest",
+    "balanceAfterMinor": 251,
+    "occurredAt": "2026-03-24T14:56:00"
+  }
+}

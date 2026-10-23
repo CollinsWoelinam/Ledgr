@@ -1,0 +1,23 @@
+{
+  "description": "transfer_in, telecel_cash template 2",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "3130908798942644 Confirmed. You have received GHS856.39 from MTN MOBILE MONEY with transaction reference: Transfer From: 233708347318-YAW DARKO DARKO on 2026-03-14 at 07:83:45. Your Telecel Cash balance is GHS874.77. Ref: data. Stay alert. Never share your PIN or OTP with anyone or click unknown links. Protect your personal information.",
+    "receivedAt": "2026-03-19T19:09:00"
+  },
+  "expected": {
+    "provider": "telecel_cash",
+    "type": "transfer_in",
+    "direction": "in",
+    "amountMinor": 85639,
+    "feeMinor": 0,
+    "taxMinor": 0,
+    "currency": "GHS",
+    "counterpartyName": "YAW DARKO DARKO",
+    "counterpartyNumber": "233708347318",
+    "balanceAfterMinor": 87477,
+    "externalRef": "3130908798942644",
+    "occurredAt": "2026-03-14T08:23:45"
+  }
+}

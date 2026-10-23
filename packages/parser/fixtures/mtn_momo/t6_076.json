@@ -1,0 +1,22 @@
+{
+  "description": "airtime_data, mtn_momo template 6",
+  "synthetic": false,
+  "sms": {
+    "sender": "MobileMoney",
+    "body": "Payment for GHS3.31 to MTN ..Current Balance: GHS 63.74. Transaction Id: 82117226102. Fee charged: GHS7.47,Tax Charged 2.Download the MoMo App for a Faster & Easier Experience. Click here: https://example.com/app",
+    "receivedAt": "2026-03-04T14:47:00"
+  },
+  "expected": {
+    "provider": "mtn_momo",
+    "type": "airtime_data",
+    "direction": "out",
+    "amountMinor": 331,
+    "feeMinor": 747,
+    "taxMinor": 200,
+    "currency": "GHS",
+    "counterpartyName": "MTN",
+    "balanceAfterMinor": 6374,
+    "externalRef": "82117226102",
+    "occurredAt": "2026-03-04T14:47:00"
+  }
+}

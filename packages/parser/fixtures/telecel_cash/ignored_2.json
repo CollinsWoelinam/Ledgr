@@ -1,0 +1,10 @@
+{
+  "description": "non-transaction message from the wallet sender",
+  "synthetic": false,
+  "sms": {
+    "sender": "T-CASH",
+    "body": "Congratulations! You have successfully purchased 8GB of internet bundle. Check your data balance by dialing *450#.",
+    "receivedAt": "2026-03-10T09:00:00"
+  },
+  "expected": null
+}
