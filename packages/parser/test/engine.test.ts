@@ -62,3 +62,8 @@ test('curly apostrophes are straightened before matching', () => {
   const curly: EngineConfig = { ...config, templates: [{ provider: 'p', version: 1, type: 'payment', pattern: "Y'ello\\. Paid {cur} ?(?<amount>{amount})" }] };
   expect(parseSms(sms('PayCo', 'Y’ello. Paid GHS 2.50'), curly).ok).toBe(true);
 });
+
+test('failed transactions are dropped even though they carry a transaction ID', () => {
+  const withFailed: EngineConfig = { ...config, providers: [{ ...config.providers[0]!, failed: ['has failed'] }] };
+  expect(parseSms(sms('PayCo', 'Your payment of GHS 80.00 has failed. Financial Transaction Id: 76550405509.'), withFailed)).toEqual({ ok: false, reason: 'ignored' });
+});

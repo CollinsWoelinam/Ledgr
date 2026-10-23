@@ -1,6 +1,7 @@
-import { bundledConfig, dedupeKey, parseSms, type EngineConfig } from '@ledgr/parser';
+import { bundledConfig, dedupeKey, parseSms, type EngineConfig, type ParsedTransaction } from '@ledgr/parser';
 import type { ReviewItem, Transaction } from '@/db/schema';
 import type { InboxSms } from '../../../modules/ledgr-sms';
+import { amountIn } from './reviewHint';
 
 export type Incoming = Omit<Transaction, 'categoryId'>;
 
@@ -17,8 +18,7 @@ export function classify(messages: InboxSms[], config: EngineConfig = bundledCon
   for (const m of messages) {
     const result = parseSms({ sender: m.sender, body: m.body, receivedAt: m.receivedAt }, config);
     if (result.ok) {
-      const { templateVersion: _v, ...tx } = result.transaction;
-      out.transactions.push({ ...tx, id: dedupeKey(result.transaction), source: 'sms', smsBody: m.body });
+      out.transactions.push(toIncoming(result.transaction, m.body));
     } else if (result.reason === 'no_template_match' || result.reason === 'invalid') {
       out.review.push({ id: `sms-${m.id}`, sender: m.sender, body: m.body, receivedAt: m.receivedAt });
     } else {
@@ -31,4 +31,38 @@ export function classify(messages: InboxSms[], config: EngineConfig = bundledCon
 // Senders to read for the wallets the user picked.
 export function sendersFor(providerIds: string[], config: EngineConfig = bundledConfig): string[] {
   return config.providers.filter((p) => providerIds.includes(p.id)).flatMap((p) => p.senderIds);
+}
+
+function toIncoming(parsed: ParsedTransaction, body: string): Incoming {
+  const { templateVersion: _v, ...tx } = parsed;
+  return { ...tx, id: dedupeKey(parsed), source: 'sms', smsBody: body };
+}
+
+// The provider's transaction ID quoted in a message, if any ("Transaction ID: 52991824765").
+export function transactionIdIn(body: string): string | undefined {
+  return /Transaction I[dD]:? ?(\d{6,})/.exec(body)?.[1];
+}
+
+// Re-checks the review queue with the current templates: messages that now parse become transactions, known
+// non-transactions (failed, promos) leave, and several messages about one transaction ID keep one: the one that
+// states an amount, else the newest.
+// Runs on every launch, so template improvements clear old review items without the user doing anything.
+export function recheckReview(items: ReviewItem[], knownRefs: Set<string>, config: EngineConfig = bundledConfig): { keep: ReviewItem[]; transactions: Incoming[] } {
+  const keep: ReviewItem[] = [];
+  const transactions: Incoming[] = [];
+  const seen = new Set(knownRefs);
+  const informative = (r: ReviewItem) => (amountIn(r.body) ? 1 : 0);
+  for (const item of [...items].sort((a, b) => informative(b) - informative(a) || b.receivedAt - a.receivedAt)) {
+    const result = parseSms({ sender: item.sender, body: item.body, receivedAt: item.receivedAt }, config);
+    if (result.ok) {
+      transactions.push(toIncoming(result.transaction, item.body));
+      continue;
+    }
+    if (result.reason === 'ignored') continue;
+    const id = transactionIdIn(item.body);
+    if (id && seen.has(id)) continue;
+    if (id) seen.add(id);
+    keep.push(item);
+  }
+  return { keep, transactions };
 }

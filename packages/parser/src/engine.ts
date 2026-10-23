@@ -55,7 +55,8 @@ export function parseSms(sms: RawSms, config: EngineConfig): ParseResult {
     const transaction = mapGroups(groups, template, provider, sms);
     return isValid(transaction) ? { ok: true, transaction } : { ok: false, reason: 'invalid' };
   }
-  // A message carrying a transaction ID is never ignored: if no template knows it, a person should see it.
+  if (provider.failed?.some((pattern) => compilePattern(pattern).test(body))) return { ok: false, reason: 'ignored' };
+  // Otherwise a message carrying a transaction ID is never ignored: if no template knows it, a person should see it.
   const looksLikeTransaction = TRANSACTION_ID.test(body);
   if (!looksLikeTransaction && provider.ignore?.some((pattern) => compilePattern(pattern).test(body))) return { ok: false, reason: 'ignored' };
   return { ok: false, reason: 'no_template_match' };

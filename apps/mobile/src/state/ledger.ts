@@ -7,7 +7,7 @@ import * as transactionsRepo from '@/db/repositories/transactions';
 import type { Budget, Category, CategoryRule, ReviewItem, Transaction } from '@/db/schema';
 import type { SqlDb } from '@/db/sql';
 import { seedDemoData } from '@/demo/seed';
-import type { Incoming } from '@/features/sms/pipeline';
+import { recheckReview, transactionIdIn, type Incoming } from '@/features/sms/pipeline';
 import { categorize, counterpartyKey } from '@/features/categorization/categorize';
 import { DEFAULT_CATEGORIES, SYSTEM_RULES } from '@/features/categorization/defaultCategories';
 
@@ -23,6 +23,8 @@ export interface LedgerState {
   attach: (db: SqlDb, encrypted: boolean) => Promise<void>;
   loadDemo: () => void;
   ingest: (incoming: Incoming[], review: ReviewItem[]) => { added: number; reviewAdded: number };
+  recheckReview: () => void;
+  clearReview: () => void;
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
   setBudget: (categoryId: string | null, amountMinor: number | null) => void;
   addCategory: (category: Omit<Category, 'id' | 'isDefault'>) => void;
@@ -69,6 +71,7 @@ export const useLedger = create<LedgerState>()((set, get) => ({
     db = database;
     await ensureDefaults(database);
     set({ ...(await loadLedger(database)), encrypted, ready: true });
+    get().recheckReview();
   },
 
   loadDemo: () => {
@@ -98,7 +101,13 @@ export const useLedger = create<LedgerState>()((set, get) => ({
       fresh.push({ ...t, categoryId: present.has(categoryId) ? categoryId : 'other' });
     }
     const knownReview = new Set(reviewQueue.map((r) => r.id));
-    const newReview = review.filter((r) => !knownReview.has(r.id));
+    const knownRefs = new Set([...transactions, ...fresh].map((t) => t.externalRef).filter((r): r is string => !!r));
+    const reviewRefs = new Set(reviewQueue.map((r) => transactionIdIn(r.body)).filter((r): r is string => !!r));
+    // A message about a transaction already stored, or already waiting for review, adds nothing.
+    const newReview = recheckReview(
+      review.filter((r) => !knownReview.has(r.id)),
+      new Set([...knownRefs, ...reviewRefs]),
+    ).keep;
     if (fresh.length === 0 && newReview.length === 0) return { added: 0, reviewAdded: 0 };
 
     set({
@@ -110,6 +119,29 @@ export const useLedger = create<LedgerState>()((set, get) => ({
       if (newReview.length) await reviewRepo.addReviewItems(d, newReview);
     });
     return { added: fresh.length, reviewAdded: newReview.length };
+  },
+
+  recheckReview: () => {
+    const { reviewQueue, transactions } = get();
+    if (reviewQueue.length === 0) return;
+    const knownRefs = new Set(transactions.map((t) => t.externalRef).filter((r): r is string => !!r));
+    const { keep, transactions: parsed } = recheckReview(reviewQueue, knownRefs);
+    const kept = new Set(keep.map((r) => r.id));
+    const dropped = reviewQueue.filter((r) => !kept.has(r.id));
+    if (dropped.length === 0) return;
+    set({ reviewQueue: keep });
+    persist(async (d) => {
+      for (const r of dropped) await reviewRepo.removeReviewItem(d, r.id);
+    });
+    if (parsed.length) get().ingest(parsed, []);
+  },
+
+  clearReview: () => {
+    const ids = get().reviewQueue.map((r) => r.id);
+    set({ reviewQueue: [] });
+    persist(async (d) => {
+      for (const id of ids) await reviewRepo.removeReviewItem(d, id);
+    });
   },
 
   // FR-3.3: "apply to all from this counterparty" saves a user rule and re-categorizes matches. Returns how many changed.

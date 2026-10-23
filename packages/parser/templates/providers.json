@@ -25,9 +25,15 @@
       "MoMo ?App",
       "^Exciting offer",
       "^MoMo is giving",
-      "has failed at",
       "pincode",
-      "^You have successfully purchased"
+      "^You have successfully purchased",
+      "welcome to MTN MobileMoney"
+    ],
+    "failed": [
+      "has failed at",
+      "^Failed\\b",
+      "was unsuccessful",
+      "^Transaction failed"
     ]
   },
   {
@@ -38,12 +44,15 @@
     ],
     "currency": "GHS",
     "ignore": [
-      "^Failed\\.",
-      "^Transaction failed",
       "wallet balance is",
       "^Congratulations",
       "identity in Telecel Cash",
       "Dial \\*"
+    ],
+    "failed": [
+      "^Failed\\.",
+      "was unsuccessful",
+      "^Transaction failed"
     ]
   },
   {

@@ -55,6 +55,8 @@ export interface Provider {
   // Messages from this sender that are not transactions (OTPs, promos, balance checks, failures).
   // Checked only after no template matched, so they never hide a real transaction.
   ignore?: string[];
+  // Failed or declined transactions: no money moved, so they're dropped even though they carry a transaction ID.
+  failed?: string[];
 }
 
 // 'ignored': a known non-transaction message. 'no_template_match': looks unknown, goes to the review queue.
