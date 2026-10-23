@@ -47,5 +47,6 @@ export function TransactionRow({ tx, divider }: { tx: Transaction; divider?: boo
 
 // SMS names arrive in capitals ("AUNTIE AKOS KITCHEN"); show them as names.
 export function titleCase(name: string): string {
-  return name.toLowerCase().replace(/\b([a-z])/g, (m) => m.toUpperCase()).replace(/\bMtn\b/g, 'MTN').replace(/\bKfc\b/g, 'KFC').replace(/\bEcg\b/g, 'ECG').replace(/\bDstv\b/g, 'DStv');
+  // Capitalise at the start of each word only, so "TONY'S" becomes "Tony's", not "Tony'S".
+  return name.toLowerCase().replace(/(^|[\s(\-/.])([a-z])/g, (_, sep: string, ch: string) => sep + ch.toUpperCase()).replace(/\bMtn\b/g, 'MTN').replace(/\bKfc\b/g, 'KFC').replace(/\bEcg\b/g, 'ECG').replace(/\bDstv\b/g, 'DStv');
 }

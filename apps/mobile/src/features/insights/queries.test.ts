@@ -41,3 +41,10 @@ test('top counterparties aggregate by name', () => {
     { name: 'A', amountMinor: 1500, count: 2 },
   ]);
 });
+
+test('balance adds up the latest balance of each wallet', () => {
+  const mtn = tx({ provider: 'mtn_momo', balanceAfterMinor: 7300, occurredAt: at(20) });
+  const older = tx({ provider: 'mtn_momo', balanceAfterMinor: 9999, occurredAt: at(2) });
+  const telecel = tx({ provider: 'telecel_cash', balanceAfterMinor: 73, occurredAt: at(21) });
+  expect(latestBalance([mtn, older, telecel])).toBe(7373);
+});

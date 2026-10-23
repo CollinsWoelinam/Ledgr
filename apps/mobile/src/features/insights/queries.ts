@@ -20,13 +20,17 @@ export function summarize(transactions: Transaction[], period: Period): PeriodSu
   return s;
 }
 
-// Latest known wallet balance, from the most recent transaction that reported one.
+// Money across all wallets: each wallet's most recently reported balance, added up.
+// (One wallet's SMS says nothing about another's balance.)
 export function latestBalance(transactions: Transaction[]): number | undefined {
-  let best: Transaction | undefined;
+  const latest = new Map<string, Transaction>();
   for (const t of transactions) {
-    if (t.balanceAfterMinor !== undefined && (!best || t.occurredAt > best.occurredAt)) best = t;
+    if (t.balanceAfterMinor === undefined) continue;
+    const best = latest.get(t.provider);
+    if (!best || t.occurredAt > best.occurredAt) latest.set(t.provider, t);
   }
-  return best?.balanceAfterMinor;
+  if (latest.size === 0) return undefined;
+  return [...latest.values()].reduce((sum, t) => sum + t.balanceAfterMinor!, 0);
 }
 
 export function spendByCategory(transactions: Transaction[], period: Period): { categoryId: string; amountMinor: number }[] {

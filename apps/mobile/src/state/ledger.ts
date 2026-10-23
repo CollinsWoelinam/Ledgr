@@ -7,6 +7,7 @@ import * as transactionsRepo from '@/db/repositories/transactions';
 import type { Budget, Category, CategoryRule, ReviewItem, Transaction } from '@/db/schema';
 import type { SqlDb } from '@/db/sql';
 import { seedDemoData } from '@/demo/seed';
+import type { Incoming } from '@/features/sms/pipeline';
 import { categorize, counterpartyKey } from '@/features/categorization/categorize';
 import { DEFAULT_CATEGORIES, SYSTEM_RULES } from '@/features/categorization/defaultCategories';
 
@@ -21,6 +22,7 @@ export interface LedgerState {
   encrypted: boolean;
   attach: (db: SqlDb, encrypted: boolean) => Promise<void>;
   loadDemo: () => void;
+  ingest: (incoming: Incoming[], review: ReviewItem[]) => { added: number; reviewAdded: number };
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
   setBudget: (categoryId: string | null, amountMinor: number | null) => void;
   addCategory: (category: Omit<Category, 'id' | 'isDefault'>) => void;
@@ -80,6 +82,31 @@ export const useLedger = create<LedgerState>()((set, get) => ({
       await reviewRepo.addReviewItems(d, reviewQueue);
       for (const b of DEMO_BUDGETS) await budgetsRepo.setBudget(d, b.categoryId, b.amountMinor);
     });
+  },
+
+  // New SMS transactions: drop ones already stored (ids are dedupe keys, FR-2.3), categorize, save.
+  ingest: (incoming, review) => {
+    const { transactions, rules, reviewQueue } = get();
+    const known = new Set(transactions.map((t) => t.id));
+    const fresh: Transaction[] = [];
+    for (const t of incoming) {
+      if (known.has(t.id)) continue;
+      known.add(t.id);
+      fresh.push({ ...t, categoryId: categorize(t, rules) });
+    }
+    const knownReview = new Set(reviewQueue.map((r) => r.id));
+    const newReview = review.filter((r) => !knownReview.has(r.id));
+    if (fresh.length === 0 && newReview.length === 0) return { added: 0, reviewAdded: 0 };
+
+    set({
+      transactions: [...fresh, ...transactions].sort((a, b) => b.occurredAt - a.occurredAt),
+      reviewQueue: [...newReview, ...reviewQueue].sort((a, b) => b.receivedAt - a.receivedAt),
+    });
+    persist(async (d) => {
+      if (fresh.length) await transactionsRepo.insertTransactions(d, fresh);
+      if (newReview.length) await reviewRepo.addReviewItems(d, newReview);
+    });
+    return { added: fresh.length, reviewAdded: newReview.length };
   },
 
   // FR-3.3: "apply to all from this counterparty" saves a user rule and re-categorizes matches. Returns how many changed.

@@ -30,7 +30,7 @@ export default function WelcomeScreen() {
               SMS · MobileMoney
             </Text>
             <Text size={13} color="#D4E3DC" style={{ lineHeight: 20 }}>
-              Payment made for GHS 45.00 to KWAME MENSAH 0244000172. Current Balance: GHS 1,370.36. Fee was GHS 0.34…
+              Payment made for GHS 45.00 to KWAME MENSAH Current Balance: GHS 1,370.36 . Available Balance: GHS 1,370.36. Reference: lunch…
             </Text>
           </View>
           <View style={{ alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: c.heroAlt, alignItems: 'center', justifyContent: 'center' }}>

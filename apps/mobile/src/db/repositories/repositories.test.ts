@@ -22,6 +22,15 @@ test('migrations set the schema version', async () => {
   expect(await db.get('PRAGMA user_version')).toEqual({ user_version: MIGRATIONS.length });
 });
 
+test('system rules are refreshed on launch without touching user rules', async () => {
+  await db.run("UPDATE category_rules SET pattern = 'OLD' WHERE id = 'sys-0'");
+  await upsertRule(db, { id: 'user-X', matchType: 'counterparty', pattern: 'X', categoryId: 'food', priority: 0, createdBy: 'user' });
+  await ensureDefaults(db);
+  const rules = await listRules(db);
+  expect(rules.find((r) => r.id === 'sys-0')?.pattern).toBe(SYSTEM_RULES[0]!.pattern);
+  expect(rules.find((r) => r.id === 'user-X')).toBeDefined();
+});
+
 test('defaults are installed once', async () => {
   await ensureDefaults(db);
   expect(await listCategories(db)).toHaveLength(10);

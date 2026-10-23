@@ -14,13 +14,15 @@ export interface LedgerSnapshot {
   reviewQueue: ReviewItem[];
 }
 
-// First run: install the default categories and system rules.
+// First run installs the default categories. System rules are the app's, not the user's, so they're refreshed on
+// every launch: improved keyword rules reach existing installs. User rules (created_by = 'user') are untouched.
 export async function ensureDefaults(db: SqlDb): Promise<void> {
   const existing = await db.get<{ n: number }>('SELECT COUNT(*) AS n FROM categories');
-  if (existing?.n) return;
+  const present = new Set((await db.all<{ id: string }>('SELECT id FROM categories')).map((c) => c.id));
   await db.transaction(async () => {
-    for (const [i, c] of DEFAULT_CATEGORIES.entries()) await upsertCategory(db, c, i);
-    for (const r of SYSTEM_RULES) await upsertRule(db, r);
+    if (!existing?.n) for (const [i, c] of DEFAULT_CATEGORIES.entries()) await upsertCategory(db, c, i);
+    // A system rule whose category the user deleted stays deleted.
+    for (const r of SYSTEM_RULES) if (!existing?.n || present.has(r.categoryId)) await upsertRule(db, r);
   });
 }
 

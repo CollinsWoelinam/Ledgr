@@ -9,9 +9,11 @@ export interface SettingsState {
   providers: string[];
   currency: string;
   monthStartDay: number;
+  smsCursor: number; // received-at of the newest inbox SMS already processed
   setProviders: (providers: string[]) => void;
   completeOnboarding: (source: 'demo' | 'sms') => void;
   setMonthStartDay: (day: number) => void;
+  setSmsCursor: (at: number) => void;
   reset: () => void;
 }
 
@@ -21,6 +23,7 @@ const initial = {
   providers: ['mtn_momo'],
   currency: 'GHS',
   monthStartDay: 1,
+  smsCursor: 0,
 } satisfies Partial<SettingsState>;
 
 export const useSettings = create<SettingsState>()(
@@ -30,6 +33,7 @@ export const useSettings = create<SettingsState>()(
       setProviders: (providers) => set({ providers }),
       completeOnboarding: (dataSource) => set({ onboarded: true, dataSource }),
       setMonthStartDay: (monthStartDay) => set({ monthStartDay: Math.min(28, Math.max(1, monthStartDay)) }),
+      setSmsCursor: (smsCursor) => set({ smsCursor }),
       reset: () => set(initial),
     }),
     { name: 'ledgr-settings', storage: createJSONStorage(() => AsyncStorage) },

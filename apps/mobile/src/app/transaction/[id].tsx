@@ -97,12 +97,13 @@ export default function TransactionDetailScreen() {
           </View>
           <Text size={13} style={{ lineHeight: 21 }} selectable>
             {highlight(tx.smsBody, [
-              formatMoney(tx.amountMinor, tx.currency),
+              ...money(tx.amountMinor, tx.currency),
               [tx.counterpartyName, tx.counterpartyNumber].filter(Boolean).join(' '),
-              tx.balanceAfterMinor === undefined ? undefined : formatMoney(tx.balanceAfterMinor, tx.currency),
+              tx.counterpartyName,
+              ...(tx.balanceAfterMinor === undefined ? [] : money(tx.balanceAfterMinor, tx.currency)),
               tx.externalRef,
-              formatMoney(tx.feeMinor, tx.currency),
-              formatMoney(tx.taxMinor, tx.currency),
+              ...money(tx.feeMinor, tx.currency),
+              ...money(tx.taxMinor, tx.currency),
             ]).map((seg, i) =>
               seg.match ? (
                 <Text key={i} size={13} weight="medium" style={{ backgroundColor: c.highlight }}>
@@ -152,6 +153,12 @@ export default function TransactionDetailScreen() {
       </Card>
     </Screen>
   );
+}
+
+// Providers write amounts both ways: "GHS 100.00" and "GHS100.00".
+function money(minor: number, currency: string): string[] {
+  const spaced = formatMoney(minor, currency);
+  return [spaced, spaced.replace(' ', '')];
 }
 
 function Tile({ label, value }: { label: string; value: string }) {

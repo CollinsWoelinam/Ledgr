@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useColorScheme, View } from 'react-native';
 import { openLedgerDb } from '@/db/client';
+import { useSmsSync } from '@/features/sms/useSmsSync';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
 import { EmptyState } from '@/ui/components';
@@ -24,6 +25,7 @@ export default function RootLayout() {
   const hasData = useLedger((s) => s.transactions.length > 0);
   const loadDemo = useLedger((s) => s.loadDemo);
   const dbError = useLedgerDatabase();
+  useSmsSync();
 
   // Demo mode with an empty database (e.g. the first launch after an upgrade): seed it once.
   useEffect(() => {

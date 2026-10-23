@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle } from 'react-native-svg';
+import { smsAvailable, syncInbox } from '@/features/sms/sync';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
 import { Button, Text } from '@/ui/components';
@@ -16,8 +17,8 @@ const STROKE = 14;
 const R = (RING - STROKE) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * R;
 
-// FR-1.4: historical scan with progress, then a summary.
-// TODO: when source is 'sms', run features/sms/historicalImport once the native module exists.
+// FR-1.4: historical scan with progress, then a summary. Real SMS when the native module is built in,
+// otherwise (Expo Go, or the user chose demo) seeded demo data.
 export default function ImportScreen() {
   const c = useColors();
   const { source } = useLocalSearchParams<{ source: 'demo' | 'sms' }>();
@@ -26,14 +27,22 @@ export default function ImportScreen() {
   const reviewCount = useLedger((s) => s.reviewQueue.length);
   const completeOnboarding = useSettings((s) => s.completeOnboarding);
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const realSms = source === 'sms' && smsAvailable();
 
   useEffect(() => {
+    if (realSms) {
+      syncInbox((read, total) => setProgress(total ? read / total : 1))
+        .then(() => setProgress(1))
+        .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)));
+      return;
+    }
     loadDemo();
     const timer = setInterval(() => setProgress((p) => Math.min(p + 0.03, 1)), 40);
     return () => clearInterval(timer);
-  }, [loadDemo]);
+  }, [realSms, loadDemo]);
 
-  const done = progress >= 1;
+  const done = progress >= 1 || !!error;
   const total = transactions.length;
   const since = useMemo(() => {
     const oldest = transactions.reduce((min, t) => Math.min(min, t.occurredAt), Date.now());
@@ -84,9 +93,11 @@ export default function ImportScreen() {
           </View>
 
           <Text size={14} color="#B9CDC5" style={{ textAlign: 'center', lineHeight: 21 }}>
-            {source === 'sms'
-              ? 'SMS import is not wired up yet, so this preview uses demo data.'
-              : 'Fix any category once and Ledgr remembers it for that person or shop.'}
+            {error
+              ? `Couldn’t read your SMS: ${error}`
+              : source === 'sms' && !realSms
+                ? 'Reading SMS needs the installed app, so this preview uses demo data.'
+                : 'Fix any category once and Ledgr remembers it for that person or shop.'}
           </Text>
         </View>
 
@@ -94,7 +105,7 @@ export default function ImportScreen() {
           title="Open my dashboard"
           kind="accent"
           disabled={!done}
-          onPress={() => completeOnboarding('demo')}
+          onPress={() => completeOnboarding(realSms ? 'sms' : 'demo')}
         />
       </View>
     </SafeAreaView>

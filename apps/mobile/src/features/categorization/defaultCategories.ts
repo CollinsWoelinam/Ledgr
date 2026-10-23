@@ -16,7 +16,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
 
 export const SYSTEM_RULES: CategoryRule[] = [
   { pattern: 'AIRTIME|DATA BUNDLE|MTN DATA', categoryId: 'airtime' },
-  { pattern: 'ECG|GWCL|WATER|DSTV|GOTV|PREPAID', categoryId: 'bills' },
+  { pattern: 'ECG|GWCL|WATER|DSTV|GOTV|PREPAID|BILLS', categoryId: 'bills' },
   { pattern: 'UBER|BOLT|YANGO|TROTRO|SHELL|GOIL|TOTAL', categoryId: 'transport' },
   { pattern: 'KFC|PIZZA|CHOP|RESTAURANT|KITCHEN|CAFE|BAKERY', categoryId: 'food' },
   { pattern: 'SHOPRITE|MELCOM|MALL|MART|SUPERMARKET|JUMIA', categoryId: 'shopping' },
