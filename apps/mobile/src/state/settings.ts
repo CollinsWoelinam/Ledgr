@@ -17,6 +17,8 @@ export interface SettingsState {
   theme: ThemeChoice | null; // null until the user picks: the app follows the phone's light/dark mode
   appLock: boolean;
   lockAfterMs: number; // how long the app may be in the background before it locks again
+  budgetAlerts: boolean; // notify at 80% and 100% of a budget
+  alertedBudgets: string[]; // thresholds already announced this budget month (see features/budgets/alerts)
   setProviders: (providers: string[]) => void;
   completeOnboarding: (source: 'demo' | 'sms') => void;
   setMonthStartDay: (day: number) => void;
@@ -26,6 +28,8 @@ export interface SettingsState {
   setTheme: (theme: ThemeChoice) => void;
   setAppLock: (on: boolean) => void;
   setLockAfterMs: (ms: number) => void;
+  setBudgetAlerts: (on: boolean) => void;
+  setAlertedBudgets: (keys: string[]) => void;
   reset: () => void;
 }
 
@@ -41,6 +45,8 @@ const initial = {
   theme: null,
   appLock: false,
   lockAfterMs: 0,
+  budgetAlerts: true,
+  alertedBudgets: [] as string[],
 } satisfies Partial<SettingsState>;
 
 export const useSettings = create<SettingsState>()(
@@ -56,6 +62,8 @@ export const useSettings = create<SettingsState>()(
       setTheme: (theme) => set({ theme }),
       setAppLock: (appLock) => set({ appLock }),
       setLockAfterMs: (lockAfterMs) => set({ lockAfterMs }),
+      setBudgetAlerts: (budgetAlerts) => set({ budgetAlerts }),
+      setAlertedBudgets: (alertedBudgets) => set({ alertedBudgets }),
       reset: () => set(initial),
     }),
     {

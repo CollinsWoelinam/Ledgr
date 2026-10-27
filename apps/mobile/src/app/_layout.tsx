@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Appearance, useColorScheme, View } from 'react-native';
 import { openLedgerDb } from '@/db/client';
+import { useBudgetAlerts } from '@/features/budgets/useBudgetAlerts';
 import { useAppLockLifecycle, useLockState } from '@/features/security/useAppLock';
 import { useSmsSync } from '@/features/sms/useSmsSync';
 import { useLedger } from '@/state/ledger';
@@ -34,6 +35,7 @@ export default function RootLayout() {
     if (hydrated) Appearance.setColorScheme(themeChoice ?? 'auto');
   }, [hydrated, themeChoice]);
   useSmsSync();
+  useBudgetAlerts();
   // Until the lock has started, an enabled lock counts as locked, so data is never drawn uncovered for a frame.
   const appLock = useSettings((s) => s.appLock);
   const locked = useLockState((s) => s.locked || (appLock && !s.started));

@@ -1,8 +1,9 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { bundledConfig } from '@ledgr/parser';
-import { router } from 'expo-router';
-import type { ReactNode } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState, type ReactNode } from 'react';
 import { Alert, Pressable, View } from 'react-native';
+import { notificationsAllowed } from '@/features/budgets/notifications';
 import { phoneHasScreenLock } from '@/features/security/appLock';
 import { LOCK_AFTER_OPTIONS } from '@/features/security/lockPolicy';
 import { confirmWithLock } from '@/features/security/useAppLock';
@@ -15,7 +16,19 @@ import { useColors } from '@/ui/theme';
 // FR-6: control. Backup and export are shown but switched off until they exist.
 export default function SettingsScreen() {
   const c = useColors();
-  const { monthStartDay, setMonthStartDay, currency, dataSource, providers, appLock, setAppLock, lockAfterMs, setLockAfterMs } = useSettings();
+  const { monthStartDay, setMonthStartDay, currency, dataSource, providers, appLock, setAppLock, lockAfterMs, setLockAfterMs, budgetAlerts, setBudgetAlerts } = useSettings();
+  // Notification permission can be changed in Android settings at any time, so it's re-checked on each visit.
+  const [notificationsOn, setNotificationsOn] = useState(true);
+  useFocusEffect(useCallback(() => void notificationsAllowed(false).then(setNotificationsOn), []));
+  const toggleAlerts = async (on: boolean) => {
+    if (on && !(await notificationsAllowed(true))) {
+      Alert.alert('Notifications are off for Ledgr', 'To get budget alerts, allow notifications in Android Settings › Apps › Ledgr › Notifications.');
+      setNotificationsOn(false);
+      return;
+    }
+    setNotificationsOn(true);
+    setBudgetAlerts(on);
+  };
 
   // Turning the lock on needs a phone screen lock and one successful unlock; turning it off needs an unlock too,
   // so someone holding an unlocked phone can't just switch it off.
@@ -72,6 +85,12 @@ export default function SettingsScreen() {
 
       <Group title="Money">
         <ListRow title="Month starts on" detail="Match your payday" right={<Stepper value={monthStartDay} onChange={setMonthStartDay} />} />
+        <ListRow
+          title="Budget alerts"
+          detail={budgetAlerts && !notificationsOn ? 'Notifications are off for Ledgr in Android settings' : 'When a budget reaches 80% and 100%'}
+          divider
+          right={<Toggle value={budgetAlerts && notificationsOn} onChange={toggleAlerts} label="Budget alerts" />}
+        />
         <ListRow title="Wallets" value={wallets} divider />
         <ListRow title="Currency" value={currency} divider />
       </Group>

@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Category } from '@/db/schema';
+import { notificationsAllowed } from '@/features/budgets/notifications';
 import { daysLeft, elapsedRatio, paceStatus, type PaceStatus } from '@/features/budgets/pace';
 import { budgetProgress, type BudgetProgress } from '@/features/budgets/progress';
 import { formatAmount, formatMoney, parseMoneyInput } from '@/lib/format';
@@ -113,6 +114,8 @@ export default function BudgetsScreen() {
           onSave={(categoryId, amount) => {
             setBudget(categoryId, amount);
             setEditing(null);
+            // The first budget is when alerts become useful, so that's when to ask (once; Settings can ask again).
+            if (amount && budgets.length === 0 && useSettings.getState().budgetAlerts) void notificationsAllowed(true);
           }}
         />
       )}

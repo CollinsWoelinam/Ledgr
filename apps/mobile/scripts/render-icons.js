@@ -16,4 +16,6 @@ out(shrink(read('mark.svg')), 1024, 'adaptive-icon.png');
 out(shrink(read('monochrome.svg')), 1024, 'monochrome-icon.png');
 out(read('mark.svg'), 512, 'splash-icon.png');
 out(read('icon.svg'), 48, 'favicon.png');
+// Status-bar notification icon: Android uses only its alpha, so the mark alone, cropped tight, in white.
+out(read('monochrome.svg').replace('viewBox="0 0 1024 1024"', 'viewBox="200 200 624 640"').replace('fill="#000"', 'fill="#FFF"'), 96, 'notification-icon.png');
 console.log('icons rendered');
