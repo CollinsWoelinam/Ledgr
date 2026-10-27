@@ -16,6 +16,13 @@
 
 Every MTN MoMo and Telecel Cash transaction already arrives as an SMS: the amount, the fee, the e-levy and your new balance. Ledgr reads those messages on the phone, records each one, sorts it into a category and tracks it against your budgets, so you see where your money went without typing anything in. Nothing is uploaded: there's no account and no server, and your SMS never leave the device.
 
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/screens/dark/home.png"><img src="docs/assets/screens/light/home.png" width="230" alt="Home: this month’s spending against the budget, money in, fees and balance, and today’s transactions"></picture>&nbsp;&nbsp;
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/screens/dark/insights.png"><img src="docs/assets/screens/light/insights.png" width="230" alt="Insights: spending by category, the daily rhythm and top recipients"></picture>&nbsp;&nbsp;
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/screens/dark/budgets.png"><img src="docs/assets/screens/light/budgets.png" width="230" alt="Budgets: the overall budget and each category against the month’s pace"></picture>
+</p>
+<p align="center"><sub>Screenshots from demo mode: every name and amount is invented.</sub></p>
+
 ## What it does
 
 <table>
@@ -94,6 +101,17 @@ No sign-up, no internet needed, no ads or trackers. Light and dark themes, follo
 </table>
 
 See **[the feature guide](docs/features.md)** for how each one behaves.
+
+## A closer look
+
+<table>
+<tr>
+<td align="center" width="25%"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/screens/dark/welcome.png"><img src="docs/assets/screens/light/welcome.png" width="180" alt="Welcome: an SMS becoming a sorted transaction"></picture><br><sub><b>Welcome</b><br>SMS in, transaction out</sub></td>
+<td align="center" width="25%"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/screens/dark/activity.png"><img src="docs/assets/screens/light/activity.png" width="180" alt="Activity: search, filters and transactions grouped by day"></picture><br><sub><b>Activity</b><br>Search, filter, group by day</sub></td>
+<td align="center" width="25%"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/screens/dark/detail.png"><img src="docs/assets/screens/light/detail.png" width="180" alt="Transaction detail: the SMS it came from, with the amounts it read highlighted"></picture><br><sub><b>Transaction</b><br>Read from your SMS, highlighted</sub></td>
+<td align="center" width="25%"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/screens/dark/review.png"><img src="docs/assets/screens/light/review.png" width="180" alt="Needs review: wallet messages Ledgr could not read yet"></picture><br><sub><b>Needs review</b><br>Nothing is dropped</sub></td>
+</tr>
+</table>
 
 ## Supported wallets
 

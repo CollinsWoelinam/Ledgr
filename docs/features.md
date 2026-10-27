@@ -10,12 +10,16 @@ How each part of Ledgr behaves, and the rules behind the numbers. For the short 
 
 ## <img src="assets/icons/sms.svg" width="28" height="28" alt=""> Reading your wallet SMS
 
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/screens/dark/review.png"><img src="assets/screens/light/review.png" width="240" alt="Needs review: wallet messages Ledgr could not read yet" align="right"></picture>
+
 - **First launch.** Ledgr explains why it needs SMS access before Android asks. Once allowed, it reads your wallet history and shows what it found. Without the permission you can explore it on demo data and allow SMS later.
 - **Only wallet senders.** Ledgr asks Android for messages from `MobileMoney` (MTN MoMo) and `T-CASH` (Telecel Cash) only. Other messages are never read.
 - **Staying current.** New transactions are picked up within seconds of the SMS, when you open Ledgr, and when you return to it. While Ledgr is closed, Android starts it briefly in the background for a wallet SMS, so budgets and alerts stay up to date.
 - **No duplicates.** MTN sometimes sends two messages for one transaction; each transaction is recorded once, by its transaction ID.
 - **Better reading over time.** When Ledgr learns a new message format, it re-reads your inbox once, so older messages in that format are recorded too.
 - **Needs review.** A wallet message Ledgr can't read yet isn't dropped. It waits in **Needs review** with a short summary ("Money in · GHS 20.00") and the full text on request. **Add manually…** turns it into a transaction, pre-filled from the message; **Clear** removes it from Ledgr (your SMS inbox is never changed).
+
+<br clear="all">
 
 ## <img src="assets/icons/reconcile.svg" width="28" height="28" alt=""> Accounting for every cedi
 
@@ -30,11 +34,15 @@ Every wallet SMS reports your new balance, so each balance should equal the prev
 
 ## <img src="assets/icons/categories.svg" width="28" height="28" alt=""> Categories
 
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/screens/dark/detail.png"><img src="assets/screens/light/detail.png" width="240" alt="A transaction with the SMS it came from and its category" align="right"></picture>
+
 Twelve to start: Food, Transport, Airtime & Data, Bills & Utilities, Shopping, Transfers to People, Income, Fees, Savings, Cash withdrawals, Bank transfers and Other.
 
 - **How a transaction is sorted**, first match wins: your own rules, then what you chose before for that person or shop, then keywords (e.g. "ECG" → Bills), then the transaction type (a cash-out → Cash withdrawals).
 - **Correcting.** Pick a new category on a transaction. With **Apply to all from …** on (the default), everything from them moves too, and their future transactions follow.
 - **Your own.** Create, rename, recolour and delete categories. Deleting one moves its transactions to Other.
+
+<br clear="all">
 
 ## What counts as spending
 
@@ -42,9 +50,13 @@ Once money leaves a wallet it counts as spent: payments, transfers to people, ba
 
 ## <img src="assets/icons/budgets.svg" width="28" height="28" alt=""> Budgets
 
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/screens/dark/budgets.png"><img src="assets/screens/light/budgets.png" width="240" alt="Budgets: overall and per category, against the month’s pace" align="right"></picture>
+
 - **Overall, per category, or both**, each a monthly limit across all wallets.
 - **Your month.** The budget month can start on any day from the 1st to the 28th, to match payday (Settings › Month starts on).
 - **Pace, not just totals.** Each budget is compared with how much of the month has passed: **On pace**, **Ahead of pace** (spending faster than the month), **Nearly** (80% used) or **Over**. Home shows the overall budget with a daily allowance for the rest of the month, and your two fullest category budgets.
+
+<br clear="all">
 
 ## <img src="assets/icons/alerts.svg" width="28" height="28" alt=""> Notifications
 
@@ -57,7 +69,11 @@ All notifications are created by the phone itself. Nothing is sent from a server
 
 ## <img src="assets/icons/insights.svg" width="28" height="28" alt=""> Insights
 
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/screens/dark/insights.png"><img src="assets/screens/light/insights.png" width="240" alt="Insights: spending by category, daily rhythm and top recipients" align="right"></picture>
+
 Browse any month back to your first transaction: where the money went by category, daily spending, your top recipients, and fees and e-levy paid. Once anything is marked business, a business/personal split appears. The wallet switcher (All wallets, MTN MoMo, Telecel Cash, Cash) narrows Home, Activity and Insights to one wallet; budgets always cover all of them.
+
+<br clear="all">
 
 ## <img src="assets/icons/manual.svg" width="28" height="28" alt=""> Manual entries and cash
 
