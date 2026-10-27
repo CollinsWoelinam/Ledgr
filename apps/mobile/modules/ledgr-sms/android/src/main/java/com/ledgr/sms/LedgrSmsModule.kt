@@ -27,6 +27,11 @@ data class SmsArrived(val sender: String)
 class LedgrSmsModule : Module() {
   private var receiver: BroadcastReceiver? = null
 
+  companion object {
+    // True while JS is listening for new SMS; then SmsBackgroundReceiver leaves it to this module.
+    @Volatile var listening = false
+  }
+
   // Fires while JS listens. Carries only the sender: JS re-reads the inbox, so there is one code path
   // and the same timestamps whether a message arrives live or is found by a later scan.
   @Event(name = "onSmsArrived")
@@ -48,6 +53,10 @@ class LedgrSmsModule : Module() {
     }
     out
   }
+
+  // Wallet senders to watch while Ledgr isn't running (see SmsBackgroundReceiver). Empty turns it off.
+  @JS
+  fun setWatchedSenders(senders: List<String>) = WatchedSenders.set(androidContext, senders)
 
   @JS
   suspend fun countInbox(senders: List<String>, sinceMs: Double): Int = withContext(Dispatchers.IO) {
@@ -83,10 +92,12 @@ class LedgrSmsModule : Module() {
       androidContext.registerReceiver(r, filter)
     }
     receiver = r
+    listening = true
   }
 
   private fun unregister() {
     receiver?.let { runCatching { androidContext.unregisterReceiver(it) } }
     receiver = null
+    listening = false
   }
 }

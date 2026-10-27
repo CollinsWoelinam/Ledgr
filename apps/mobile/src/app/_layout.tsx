@@ -11,7 +11,7 @@ import { useAppLockLifecycle, useLockState } from '@/features/security/useAppLoc
 import { useSmsSync } from '@/features/sms/useSmsSync';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { EmptyState, LockScreen } from '@/ui/components';
+import { DialogHost, EmptyState, LockScreen } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 // Keep the native splash up until fonts, settings and the database are ready, instead of a blank screen.
@@ -69,6 +69,7 @@ export default function RootLayout() {
     <ThemeProvider value={theme}>
       <StatusBar style="auto" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg } }} />
+      <DialogHost />
       {locked && <LockScreen />}
     </ThemeProvider>
   );
@@ -79,6 +80,7 @@ function useLedgerDatabase(): string | null {
   const attach = useLedger((s) => s.attach);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
+    if (useLedger.getState().ready) return; // already loaded by a background sync in this process
     openLedgerDb()
       .then(({ db, encrypted }) => attach(db, encrypted))
       .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)));

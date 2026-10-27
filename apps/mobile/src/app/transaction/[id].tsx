@@ -1,13 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Alert, View } from 'react-native';
+import {View} from 'react-native';
 import { walletName } from '@/features/cash/pocket';
 import { counterpartyKey } from '@/features/categorization/categorize';
 import { formatAmount, formatMoney } from '@/lib/format';
 import { highlight } from '@/lib/highlight';
 import { useCategory, useLedger } from '@/state/ledger';
-import { Button, Card, CategoryIcon, Chip, EmptyState, Screen, ScreenHeader, Text, titleCase, Toggle } from '@/ui/components';
+import { Button, Card, CategoryIcon, Chip, EmptyState, Screen, ScreenHeader, showDialog, Text, titleCase, Toggle } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 const TYPE_LABELS: Record<string, string> = {
@@ -134,7 +134,7 @@ export default function TransactionDetailScreen() {
               kind="dashed"
               small
               onPress={() =>
-                Alert.alert('Delete this transaction?', 'It was added by you, so only Ledgr’s copy is removed.', [
+                showDialog('Delete this transaction?', 'It was added by you, so only Ledgr’s copy is removed.', [
                   { text: 'Cancel', style: 'cancel' },
                   { text: 'Delete', style: 'destructive', onPress: () => (deleteTransaction(tx.id), router.back()) },
                 ])

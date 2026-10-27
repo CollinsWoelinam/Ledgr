@@ -3,10 +3,10 @@ import { bundledConfig } from '@ledgr/parser';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Alert, PermissionsAndroid, Platform, Pressable, View } from 'react-native';
+import {PermissionsAndroid, Platform, Pressable, View} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSettings } from '@/state/settings';
-import { Button, IconButton, Text } from '@/ui/components';
+import { Button, IconButton, showDialog, Text } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 const toImport = (source: 'demo' | 'sms') => router.push({ pathname: '/import', params: { source } });
@@ -35,7 +35,7 @@ export default function PermissionsScreen() {
       const granted = Object.values(result).every((r) => r === PermissionsAndroid.RESULTS.GRANTED);
       if (granted) toImport('sms');
       else
-        Alert.alert('SMS access not granted', 'You can still explore Ledgr with demo data, and allow SMS access later.', [
+        showDialog('SMS access not granted', 'You can still explore Ledgr with demo data, and allow SMS access later.', [
           { text: 'Try again', onPress: requestSms },
           { text: 'Use demo data', onPress: () => toImport('demo') },
         ]);

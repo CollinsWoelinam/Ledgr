@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { bundledConfig } from '@ledgr/parser';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState, type ReactNode } from 'react';
-import { Alert, Pressable, View } from 'react-native';
+import {Pressable, View} from 'react-native';
 import { notificationsAllowed } from '@/features/budgets/notifications';
 import { phoneHasScreenLock } from '@/features/security/appLock';
 import { LOCK_AFTER_OPTIONS } from '@/features/security/lockPolicy';
@@ -10,7 +10,7 @@ import { confirmWithLock } from '@/features/security/useAppLock';
 import { useLedger } from '@/state/ledger';
 import { useReviewCount } from '@/state/hooks';
 import { useSettings } from '@/state/settings';
-import { Button, Card, Chip, ListRow, Screen, ScreenHeader, Text, ThemeToggle, Toggle } from '@/ui/components';
+import { Button, Card, Chip, ListRow, Screen, ScreenHeader, showDialog, Text, ThemeToggle, Toggle } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 // FR-6: control. Backup and export are shown but switched off until they exist.
@@ -22,7 +22,7 @@ export default function SettingsScreen() {
   useFocusEffect(useCallback(() => void notificationsAllowed(false).then(setNotificationsOn), []));
   const toggleAlerts = async (on: boolean) => {
     if (on && !(await notificationsAllowed(true))) {
-      Alert.alert('Notifications are off for Ledgr', 'To get budget alerts, allow notifications in Android Settings › Apps › Ledgr › Notifications.');
+      showDialog('Notifications are off for Ledgr', 'To get budget alerts, allow notifications in Android Settings › Apps › Ledgr › Notifications.');
       setNotificationsOn(false);
       return;
     }
@@ -34,7 +34,7 @@ export default function SettingsScreen() {
   // so someone holding an unlocked phone can't just switch it off.
   const toggleLock = async (on: boolean) => {
     if (on && !(await phoneHasScreenLock())) {
-      Alert.alert('Set up a screen lock first', 'App lock uses your phone’s fingerprint or PIN. Add one in Android Settings › Security, then try again.');
+      showDialog('Set up a screen lock first', 'App lock uses your phone’s fingerprint or PIN. Add one in Android Settings › Security, then try again.');
       return;
     }
     if (await confirmWithLock(on ? 'Turn on app lock' : 'Turn off app lock')) setAppLock(on);
@@ -46,7 +46,7 @@ export default function SettingsScreen() {
 
   // FR-6.3: delete all data in one action.
   const deleteAll = () =>
-    Alert.alert('Delete all data?', 'This removes every transaction, budget, category and setting from this phone. It cannot be undone.', [
+    showDialog('Delete all data?', 'This removes every transaction, budget, category and setting from this phone. It cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',

@@ -1,2 +1,15 @@
-<!-- READ_SMS and RECEIVE_SMS are declared in app.json. The receiver is registered at runtime while JS listens. -->
-<manifest />
+<!-- READ_SMS and RECEIVE_SMS are declared in app.json. While Ledgr runs, the module registers its own receiver;
+     SmsBackgroundReceiver covers the rest of the time. BROADCAST_SMS means only the system can send it SMS_RECEIVED. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <application>
+    <receiver
+      android:name="com.ledgr.sms.SmsBackgroundReceiver"
+      android:exported="true"
+      android:permission="android.permission.BROADCAST_SMS">
+      <intent-filter>
+        <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+      </intent-filter>
+    </receiver>
+    <service android:name="com.ledgr.sms.LedgrHeadlessService" android:exported="false" />
+  </application>
+</manifest>

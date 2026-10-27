@@ -11,6 +11,8 @@ interface LedgrSmsModule {
   /** Inbox messages from `senders` after `sinceMs`, oldest first, at most `limit`. */
   readInbox(senders: string[], sinceMs: number, limit: number): Promise<InboxSms[]>;
   countInbox(senders: string[], sinceMs: number): Promise<number>;
+  /** Wallet senders that wake Ledgr in the background when it isn't running. Empty turns that off. */
+  setWatchedSenders(senders: string[]): void;
   /** Fires while subscribed when an SMS arrives; re-read the inbox to get it. */
   addListener(event: 'onSmsArrived', listener: (e: { sender: string }) => void): EventSubscription;
 }

@@ -1,9 +1,9 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
-import { Alert, Pressable, TextInput, View } from 'react-native';
+import {Pressable, TextInput, View} from 'react-native';
 import type { Category } from '@/db/schema';
 import { useLedger } from '@/state/ledger';
-import { Button, Card, CategoryIcon, Screen, ScreenHeader, Text } from '@/ui/components';
+import { Button, Card, CategoryIcon, Screen, ScreenHeader, showDialog, Text } from '@/ui/components';
 import { fonts, useColors } from '@/ui/theme';
 
 const PALETTE = ['#F28C38', '#3B82F6', '#EAB308', '#8B5CF6', '#EC4899', '#14B8A6', '#22A05A', '#9A6B4F', '#6366F1', '#8A948F'];
@@ -18,7 +18,7 @@ export default function CategoriesScreen() {
 
   const remove = (cat: Category) => {
     const count = transactions.filter((t) => t.categoryId === cat.id).length;
-    Alert.alert(`Delete ${cat.name}?`, count ? `${count} transactions will move to Other.` : undefined, [
+    showDialog(`Delete ${cat.name}?`, count ? `${count} transactions will move to Other.` : undefined, [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Delete', style: 'destructive', onPress: () => deleteCategory(cat.id) },
     ]);

@@ -17,3 +17,8 @@ android {
     versionName '0.1.0'
   }
 }
+
+dependencies {
+  // HeadlessJsTaskService, to run the sync in JS while Ledgr isn't open.
+  implementation 'com.facebook.react:react-android'
+}

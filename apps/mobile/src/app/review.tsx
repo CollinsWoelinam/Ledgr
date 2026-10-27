@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View } from 'react-native';
+import {KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ReviewItem } from '@/db/schema';
 import { walletName } from '@/features/cash/pocket';
@@ -10,7 +10,7 @@ import { reviewHint } from '@/features/sms/reviewHint';
 import { formatDateTime, formatMoney } from '@/lib/format';
 import { useBalanceGaps } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
-import { Button, Card, Chip, EmptyState, Screen, ScreenHeader, Text } from '@/ui/components';
+import { Button, Card, Chip, EmptyState, Screen, ScreenHeader, showDialog, Text } from '@/ui/components';
 import { fonts, useColors } from '@/ui/theme';
 
 // Two kinds of things to review: balance changes no SMS explains (so every cedi is accounted for), and wallet
@@ -21,7 +21,7 @@ export default function ReviewQueueScreen() {
   const [recording, setRecording] = useState<BalanceGap | null>(null);
 
   const clearAll = () =>
-    Alert.alert(`Clear all ${reviewQueue.length}?`, 'Their message text will be deleted from Ledgr. Your SMS inbox is not touched.', [
+    showDialog(`Clear all ${reviewQueue.length}?`, 'Their message text will be deleted from Ledgr. Your SMS inbox is not touched.', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Clear all', style: 'destructive', onPress: clearReview },
     ]);

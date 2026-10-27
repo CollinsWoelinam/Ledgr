@@ -2,6 +2,7 @@ export { Button } from './Button';
 export { Card } from './Card';
 export { CategoryIcon } from './CategoryIcon';
 export { Chip } from './Chip';
+export { DialogHost, showDialog, type DialogButton } from './Dialog';
 export { EmptyState } from './EmptyState';
 export { IconButton, type IconName } from './IconButton';
 export { ListRow } from './ListRow';

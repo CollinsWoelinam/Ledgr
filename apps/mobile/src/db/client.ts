@@ -22,7 +22,17 @@ async function databaseKey(): Promise<string> {
   return key;
 }
 
-export async function openLedgerDb(): Promise<OpenedDb> {
+// Opened once per launch: the app and the background sync (features/sms/background) share the connection.
+let opening: Promise<OpenedDb> | null = null;
+export function openLedgerDb(): Promise<OpenedDb> {
+  opening ??= open().catch((e: unknown) => {
+    opening = null;
+    throw e;
+  });
+  return opening;
+}
+
+async function open(): Promise<OpenedDb> {
   const native = await openDatabaseAsync(DB_NAME);
   const key = await databaseKey();
   // Must be the first statement on the connection. Ignored by plain SQLite.

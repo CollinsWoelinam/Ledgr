@@ -3,14 +3,10 @@ import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { alertMessage, crossedKeys, dueAlerts, keysForPeriod } from './alerts';
-import { notificationsAllowed, notify } from './notifications';
-import { daysLeft } from './pace';
-import { periodContaining } from './period';
-import { budgetProgress } from './progress';
+import { checkBudgetAlerts } from './checkAlerts';
 
-// Announces budgets reaching 80% and 100% (US-10). Checked whenever transactions change: on launch, and after
-// each SMS sync, so a threshold crossed while Ledgr was closed is announced the next time it opens.
+// While Ledgr is open: checks budget alerts whenever transactions or budgets change (the background sync does
+// the same while it's closed), and opens Budgets when an alert is tapped.
 export function useBudgetAlerts(): void {
   const ready = useLedger((s) => s.ready);
   const transactions = useLedger((s) => s.transactions);
@@ -22,30 +18,10 @@ export function useBudgetAlerts(): void {
 
   useEffect(() => {
     if (!ready || source !== 'sms') return;
-    const settings = useSettings.getState();
-    const now = new Date();
-    const period = periodContaining(now, settings.monthStartDay);
-    const progress = budgetProgress(budgets, transactions, period);
-    const sent = keysForPeriod(settings.alertedBudgets, period);
-
-    // A budget just set or changed: what it already shows is on screen, so nothing to announce. Budgets loading
-    // at launch aren't a change.
+    // A budget just set or changed is on screen, so nothing to announce. Budgets loading at launch aren't a change.
     const budgetsChanged = lastBudgets.current !== null && lastBudgets.current !== budgets;
     lastBudgets.current = budgets;
-    const due = enabled && !budgetsChanged ? dueAlerts(progress, period, sent) : [];
-    const crossed = budgetsChanged || !enabled ? progress.flatMap((p) => crossedKeys(p, period)) : due.flatMap((a) => crossedKeys(a.progress, period));
-    const next = [...new Set([...sent, ...crossed])];
-    if (next.length !== settings.alertedBudgets.length || next.some((k, i) => k !== settings.alertedBudgets[i])) settings.setAlertedBudgets(next);
-    if (!due.length) return;
-
-    void notificationsAllowed(false).then(async (allowed) => {
-      if (!allowed) return;
-      for (const alert of due) {
-        const name = alert.progress.categoryId === null ? 'Overall' : (categories.find((c) => c.id === alert.progress.categoryId)?.name ?? 'Category');
-        const { title, body } = alertMessage(alert, name, settings.currency, daysLeft(period, now.getTime()));
-        await notify(title, body, '/budgets');
-      }
-    });
+    void checkBudgetAlerts(budgetsChanged);
   }, [ready, source, enabled, transactions, budgets, categories]);
 
   // Tapping an alert opens Budgets, also when it launched the app.
