@@ -37,7 +37,7 @@ Ledgr's code makes no network requests, has no analytics, ads or trackers, and d
 | Notifications | Budget alerts and the weekly summary. Optional; Ledgr works without them. |
 | Biometrics | App lock, with your fingerprint or the phone's PIN. Optional. |
 
-The app package also declares a few permissions that come with Expo's standard Android template (internet, storage, and display over other apps). Ledgr doesn't use them.
+The app package also declares internet access, which React Native includes by default and development builds use. Ledgr's code makes no network requests.
 
 ## Your control
 

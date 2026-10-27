@@ -8,7 +8,7 @@
 
 [![CI](https://github.com/CollinsWoelinam/Ledgr/actions/workflows/ci.yml/badge.svg)](https://github.com/CollinsWoelinam/Ledgr/actions/workflows/ci.yml) ![Android](https://img.shields.io/badge/Android-7%2B-0E2A22?logo=android&logoColor=C9F26C) ![Expo SDK 58](https://img.shields.io/badge/Expo-SDK%2058-0E2A22?logo=expo&logoColor=C9F26C) ![React Native 0.88](https://img.shields.io/badge/React%20Native-0.88-0E2A22?logo=react&logoColor=C9F26C) ![TypeScript](https://img.shields.io/badge/TypeScript-6-0E2A22?logo=typescript&logoColor=C9F26C)
 
-[Features](docs/features.md) · [How it works](docs/architecture.md) · [Privacy](docs/privacy-policy.md) · [Development](docs/development.md) · [Changelog](CHANGELOG.md)
+[Install](docs/install.md) · [Features](docs/features.md) · [How it works](docs/architecture.md) · [Privacy](docs/privacy-policy.md) · [Development](docs/development.md) · [Changelog](CHANGELOG.md)
 
 </div>
 
@@ -155,7 +155,11 @@ The full **[privacy policy](docs/privacy-policy.md)** explains each permission a
 | **Tests** | 143 unit tests, plus 159 anonymised SMS fixtures that every parser change must pass |
 | **Performance** | Cold start to dashboard in 1.0–1.5 s with 1,900+ transactions; first import of 3,300+ SMS in about 10 s |
 
-## Get started
+## Install
+
+Download the APK from [Releases](https://github.com/CollinsWoelinam/Ledgr/releases) and follow the **[install guide](docs/install.md)**: it covers Play Protect's warning and allowing SMS access on newer Android versions.
+
+## Get started (development)
 
 ```sh
 npm install

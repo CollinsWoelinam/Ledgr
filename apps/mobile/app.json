@@ -2,6 +2,7 @@
   "expo": {
     "name": "Ledgr",
     "slug": "ledgr",
+    "version": "0.2.0",
     "scheme": "ledgr",
     "userInterfaceStyle": "automatic",
     "android": {
@@ -11,6 +12,11 @@
         "RECEIVE_SMS",
         "USE_BIOMETRIC",
         "POST_NOTIFICATIONS"
+      ],
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

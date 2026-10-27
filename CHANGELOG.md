@@ -1,6 +1,14 @@
 # Changelog
 
 ## [Unreleased]
+
+## [0.2.0] - 2026-10-27
+First release for testers.
+- Signed with Ledgr's own upload key, for phones with 32-bit and 64-bit processors; the build number follows the version.
+- Only the permissions Ledgr uses: storage access and drawing over other apps are removed.
+- Settings › Send feedback, and an install guide for testers (docs/install.md).
+- Fields near the bottom of a page stay above the keyboard.
+- README with screenshots, and feature, architecture, privacy and development guides.
 - Balance gaps name a likely cause: an airtime notice with no MoMo receipt, or a round amount plus the wallet's own charges. Ignored gaps can be restored.
 - Budget alerts at 80% and 100% (US-10), also while Ledgr is closed; a weekly summary on Sunday evenings (US-15).
 - Manual entry (US-09): a Cash wallet whose spending re-sorts cash withdrawals instead of adding to them; MoMo entries for movements with no SMS, replaced if the SMS arrives later; edit and delete.

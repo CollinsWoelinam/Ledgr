@@ -1,8 +1,9 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { bundledConfig } from '@ledgr/parser';
+import Constants from 'expo-constants';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState, type ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { Linking, Platform, Pressable, View } from 'react-native';
 import { notificationsAllowed } from '@/features/notifications/notifications';
 import { phoneHasScreenLock } from '@/features/security/appLock';
 import { LOCK_AFTER_OPTIONS } from '@/features/security/lockPolicy';
@@ -12,6 +13,11 @@ import { useReviewCount } from '@/state/hooks';
 import { useSettings } from '@/state/settings';
 import { Button, Card, Chip, ListRow, Screen, ScreenHeader, showDialog, Text, ThemeToggle, Toggle } from '@/ui/components';
 import { useColors } from '@/ui/theme';
+
+const VERSION = Constants.expoConfig?.version ?? '';
+// Testers report problems here. The issue starts with the version and Android release, nothing personal.
+const feedbackUrl = () =>
+  `https://github.com/CollinsWoelinam/Ledgr/issues/new?body=${encodeURIComponent(`\n\n---\nLedgr ${VERSION} · Android ${Platform.Version}`)}`;
 
 // FR-6: control. Backup is shown but switched off until it exists.
 export default function SettingsScreen() {
@@ -126,6 +132,7 @@ export default function SettingsScreen() {
         />
         {dataSource === 'demo' && <ListRow title="Reset demo data" detail="Restore the original sample transactions" divider onPress={loadDemo} />}
         <ListRow title="Export CSV or PDF" detail="Your transactions, for spreadsheets or records" divider onPress={() => router.push('/export')} />
+        <ListRow title="Send feedback" detail="Report a problem or a message Ledgr misread (opens GitHub)" divider onPress={() => Linking.openURL(feedbackUrl())} />
       </Group>
 
       <Group title="Security">
@@ -148,7 +155,7 @@ export default function SettingsScreen() {
       <Button title="Delete all data" kind="danger" icon={<Ionicons name="trash-outline" size={18} color={c.danger} />} onPress={deleteAll} />
 
       <Text variant="caption" muted style={{ textAlign: 'center' }}>
-        Ledgr 0.1.0
+        Ledgr {VERSION}
       </Text>
     </Screen>
   );
