@@ -2,6 +2,7 @@ import { bundledConfig } from '@ledgr/parser';
 import { useMemo } from 'react';
 import type { Transaction } from '@/db/schema';
 import { periodContaining, type Period } from '@/features/budgets/period';
+import { CASH_WALLET } from '@/features/cash/pocket';
 import { findBalanceGaps, type BalanceGap } from '@/features/reconcile/balanceGaps';
 import { useLedger } from './ledger';
 import { useSettings } from './settings';
@@ -19,7 +20,7 @@ export interface Wallet {
 // Wallets that actually have transactions, in provider order.
 export function walletsIn(transactions: Transaction[]): Wallet[] {
   const present = new Set(transactions.map((t) => t.provider));
-  return bundledConfig.providers.filter((p) => present.has(p.id)).map((p) => ({ id: p.id, name: p.name }));
+  return [...bundledConfig.providers, CASH_WALLET].filter((p) => present.has(p.id)).map((p) => ({ id: p.id, name: p.name }));
 }
 
 // A choice that no longer matches any wallet (e.g. after deleting data) means all wallets.

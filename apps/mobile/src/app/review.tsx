@@ -1,8 +1,9 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { bundledConfig } from '@ledgr/parser';
 import type { ReviewItem } from '@/db/schema';
+import { walletName } from '@/features/cash/pocket';
 import type { BalanceGap } from '@/features/reconcile/balanceGaps';
 import { causeNoun, ratePercent, recordDefaults } from '@/features/reconcile/likelyCause';
 import { reviewHint } from '@/features/sms/reviewHint';
@@ -79,7 +80,7 @@ const STATEMENT_CODE: Record<string, string> = { mtn_momo: '*170#', telecel_cash
 function GapCard({ gap, onRecord, onIgnore }: { gap: BalanceGap; onRecord: () => void; onIgnore: () => void }) {
   const c = useColors();
   const out = gap.amountMinor < 0;
-  const wallet = bundledConfig.providers.find((p) => p.id === gap.provider)?.name ?? gap.provider;
+  const wallet = walletName(gap.provider);
   const money = (minor: number, signed = false) => `${signed ? (minor < 0 ? '−' : '+') : ''}${formatMoney(Math.abs(minor), 'GHS')}`;
   const day = (at: number) => new Date(at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const code = STATEMENT_CODE[gap.provider];
@@ -253,8 +254,10 @@ function ReviewCard({ item, onClear }: { item: ReviewItem; onClear: () => void }
         </Text>
       </Pressable>
 
-      {/* TODO: "Add manually", pre-filled from the message, once manual entry (US-09) exists. */}
-      <Button title="Clear" kind="dashed" small onPress={onClear} style={{ alignSelf: 'flex-start' }} />
+      <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+        <Button title="Add manually…" small onPress={() => router.push({ pathname: '/transaction/new', params: { review: item.id } })} />
+        <Button title="Clear" kind="dashed" small onPress={onClear} />
+      </View>
     </Card>
   );
 }

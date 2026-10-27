@@ -15,6 +15,20 @@ import { categorize, counterpartyKey } from '@/features/categorization/categoriz
 import type { BalanceGap } from '@/features/reconcile/balanceGaps';
 import { DEFAULT_CATEGORIES, SYSTEM_RULES } from '@/features/categorization/defaultCategories';
 
+// A transaction you record yourself (US-09): cash, or a wallet movement that had no SMS.
+export interface ManualEntry {
+  provider: string; // a wallet id, or 'cash'
+  direction: 'in' | 'out';
+  amountMinor: number;
+  feeMinor: number;
+  name: string;
+  categoryId: string;
+  occurredAt: number;
+}
+
+// An SMS this close to a manual entry with the same wallet, direction and amount is the same movement.
+const SUPERSEDE_MS = 3 * 86_400_000;
+
 // The UI reads this in-memory copy; every action also writes through to the database (when one is attached).
 export interface LedgerState {
   transactions: Transaction[];
@@ -39,6 +53,8 @@ export interface LedgerState {
   updateCategory: (id: string, patch: Partial<Pick<Category, 'name' | 'color' | 'icon'>>) => void;
   deleteCategory: (id: string) => void;
   dismissReview: (id: string) => void;
+  saveManual: (entry: ManualEntry, id?: string) => string;
+  deleteTransaction: (id: string) => void;
   reset: () => void;
 }
 
@@ -114,6 +130,17 @@ export const useLedger = create<LedgerState>()((set, get) => ({
       const categoryId = categorize(t, rules);
       fresh.push({ ...t, categoryId: present.has(categoryId) ? categoryId : 'other' });
     }
+    // A wallet SMS for something you'd already recorded by hand replaces your entry, keeping your category.
+    const superseded = new Set<string>();
+    for (const f of fresh) {
+      if (f.source !== 'sms') continue;
+      const mine = transactions.find(
+        (t) => t.source === 'manual' && !superseded.has(t.id) && t.provider === f.provider && t.direction === f.direction && t.amountMinor === f.amountMinor && Math.abs(t.occurredAt - f.occurredAt) <= SUPERSEDE_MS,
+      );
+      if (!mine) continue;
+      superseded.add(mine.id);
+      f.categoryId = mine.categoryId;
+    }
     const knownReview = new Set(reviewQueue.map((r) => r.id));
     const knownRefs = new Set([...transactions, ...fresh].map((t) => t.externalRef).filter((r): r is string => !!r));
     const reviewRefs = new Set(reviewQueue.map((r) => transactionIdIn(r.body)).filter((r): r is string => !!r));
@@ -125,10 +152,11 @@ export const useLedger = create<LedgerState>()((set, get) => ({
     if (fresh.length === 0 && newReview.length === 0) return { added: 0, reviewAdded: 0 };
 
     set({
-      transactions: [...fresh, ...transactions].sort((a, b) => b.occurredAt - a.occurredAt),
+      transactions: [...fresh, ...transactions.filter((t) => !superseded.has(t.id))].sort((a, b) => b.occurredAt - a.occurredAt),
       reviewQueue: [...newReview, ...reviewQueue].sort((a, b) => b.receivedAt - a.receivedAt),
     });
     persist(async (d) => {
+      if (superseded.size) await transactionsRepo.deleteTransactions(d, [...superseded]);
       if (fresh.length) await transactionsRepo.insertTransactions(d, fresh);
       if (newReview.length) await reviewRepo.addReviewItems(d, newReview);
     });
@@ -261,6 +289,36 @@ export const useLedger = create<LedgerState>()((set, get) => ({
   dismissReview: (id) => {
     set({ reviewQueue: get().reviewQueue.filter((r) => r.id !== id) });
     persist((d) => reviewRepo.removeReviewItem(d, id));
+  },
+
+  // Adds a manual entry, or rewrites one (also a recorded gap, which keeps its type). Returns its id.
+  saveManual: (entry, id) => {
+    const existing = id ? get().transactions.find((t) => t.id === id && t.source === 'manual') : undefined;
+    const tx: Transaction = {
+      id: existing?.id ?? `manual:${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+      provider: entry.provider,
+      type: existing && existing.direction === entry.direction ? existing.type : entry.direction === 'out' ? 'payment' : 'transfer_in',
+      direction: entry.direction,
+      amountMinor: entry.amountMinor,
+      feeMinor: entry.direction === 'out' ? entry.feeMinor : 0,
+      taxMinor: 0,
+      currency: 'GHS',
+      counterpartyName: entry.name.trim() || (entry.direction === 'out' ? 'Cash spending' : 'Cash received'),
+      occurredAt: entry.occurredAt,
+      categoryId: entry.categoryId,
+      source: 'manual',
+    };
+    const others = get().transactions.filter((t) => t.id !== tx.id);
+    set({ transactions: [tx, ...others].sort((a, b) => b.occurredAt - a.occurredAt) });
+    persist((d) => (existing ? transactionsRepo.replaceTransaction(d, tx) : transactionsRepo.insertTransactions(d, [tx]).then(() => undefined)));
+    return tx.id;
+  },
+
+  // Only entries you made can be deleted: a wallet SMS is the record of what happened.
+  deleteTransaction: (id) => {
+    if (!get().transactions.some((t) => t.id === id && t.source === 'manual')) return;
+    set({ transactions: get().transactions.filter((t) => t.id !== id) });
+    persist((d) => transactionsRepo.deleteTransactions(d, [id]));
   },
 
   // FR-6.3: delete all data.

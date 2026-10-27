@@ -1,4 +1,5 @@
 import type { Budget, Transaction } from '@/db/schema';
+import { drawDownCash } from '@/features/cash/pocket';
 import { inPeriod, type Period } from './period';
 
 export interface BudgetProgress {
@@ -15,8 +16,9 @@ export function spentIn(transactions: Transaction[], period: Period, categoryId:
 }
 
 export function budgetProgress(budgets: Budget[], transactions: Transaction[], period: Period): BudgetProgress[] {
+  const spending = drawDownCash(transactions);
   return budgets.map((b) => {
-    const spentMinor = spentIn(transactions, period, b.categoryId);
+    const spentMinor = spentIn(spending, period, b.categoryId);
     return { categoryId: b.categoryId, limitMinor: b.amountMinor, spentMinor, ratio: b.amountMinor > 0 ? spentMinor / b.amountMinor : 0 };
   });
 }

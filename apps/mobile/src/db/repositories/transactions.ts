@@ -69,6 +69,19 @@ export async function insertTransactions(db: SqlDb, transactions: Transaction[])
   return (await countTransactions(db)) - before;
 }
 
+// Rewrites one transaction in place (an edited manual entry), recomputing its dedupe key.
+export async function replaceTransaction(db: SqlDb, t: Transaction): Promise<void> {
+  await db.transaction(async () => {
+    await db.run('DELETE FROM transactions WHERE id = ?', [t.id]);
+    await db.run(`INSERT INTO transactions (${COLUMNS}) VALUES (${COLUMNS.split(',').map(() => '?').join(', ')})`, toParams(t, Date.now()));
+  });
+}
+
+export async function deleteTransactions(db: SqlDb, ids: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  await db.run(`DELETE FROM transactions WHERE id IN (${ids.map(() => '?').join(', ')})`, ids);
+}
+
 export async function setTransactionCategory(db: SqlDb, ids: string[], categoryId: string): Promise<void> {
   if (ids.length === 0) return;
   await db.run(`UPDATE transactions SET category_id = ?, updated_at = ? WHERE id IN (${ids.map(() => '?').join(', ')})`, [categoryId, Date.now(), ...ids]);

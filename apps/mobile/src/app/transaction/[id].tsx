@@ -1,13 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { bundledConfig } from '@ledgr/parser';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
+import { walletName } from '@/features/cash/pocket';
 import { counterpartyKey } from '@/features/categorization/categorize';
 import { formatAmount, formatMoney } from '@/lib/format';
 import { highlight } from '@/lib/highlight';
 import { useCategory, useLedger } from '@/state/ledger';
-import { Card, CategoryIcon, Chip, EmptyState, Screen, ScreenHeader, Text, titleCase, Toggle } from '@/ui/components';
+import { Button, Card, CategoryIcon, Chip, EmptyState, Screen, ScreenHeader, Text, titleCase, Toggle } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
 const TYPE_LABELS: Record<string, string> = {
@@ -27,6 +27,7 @@ export default function TransactionDetailScreen() {
   const tx = useLedger((s) => s.transactions.find((t) => t.id === id));
   const categories = useLedger((s) => s.categories);
   const setCategory = useLedger((s) => s.setCategory);
+  const deleteTransaction = useLedger((s) => s.deleteTransaction);
   const category = useCategory(tx?.categoryId);
   const key = tx && counterpartyKey(tx);
   const others = useLedger((s) => (key ? s.transactions.filter((t) => t.id !== id && counterpartyKey(t) === key).length : 0));
@@ -41,7 +42,8 @@ export default function TransactionDetailScreen() {
     );
   }
 
-  const provider = bundledConfig.providers.find((p) => p.id === tx.provider)?.name;
+  const provider = walletName(tx.provider);
+  const manual = tx.source === 'manual';
   const name = titleCase(tx.counterpartyName ?? 'Unknown');
   const when = new Date(tx.occurredAt);
   const dateLine = [
@@ -117,11 +119,38 @@ export default function TransactionDetailScreen() {
         </Card>
       )}
 
+      {manual && (
+        <Card style={{ borderRadius: 22, gap: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Ionicons name="create-outline" size={16} color={c.muted} />
+            <Text variant="caption" weight="semibold" muted>
+              Added by you{tx.feeMinor ? ` · charges ${formatMoney(tx.feeMinor, tx.currency)}` : ''}
+            </Text>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <Button title="Edit" small onPress={() => router.push({ pathname: '/transaction/new', params: { edit: tx.id } })} />
+            <Button
+              title="Delete"
+              kind="dashed"
+              small
+              onPress={() =>
+                Alert.alert('Delete this transaction?', 'It was added by you, so only Ledgr’s copy is removed.', [
+                  { text: 'Cancel', style: 'cancel' },
+                  { text: 'Delete', style: 'destructive', onPress: () => (deleteTransaction(tx.id), router.back()) },
+                ])
+              }
+            />
+          </View>
+        </Card>
+      )}
+
+      {!manual && (
       <View style={{ flexDirection: 'row', gap: 8 }}>
         <Tile label="Fee" value={formatAmount(tx.feeMinor)} />
         <Tile label="E-levy" value={formatAmount(tx.taxMinor)} />
         <Tile label="Balance after" value={tx.balanceAfterMinor === undefined ? '—' : formatAmount(tx.balanceAfterMinor)} />
       </View>
+      )}
       {tx.externalRef && (
         <Text variant="caption" muted selectable style={{ textAlign: 'center' }}>
           Transaction ID {tx.externalRef}

@@ -9,7 +9,7 @@ import { formatAmount, formatDay } from '@/lib/format';
 import { usePeriod, useReviewCount, useWalletTransactions } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { Card, Chip, EmptyState, ScreenHeader, Text, TransactionRow, WalletSwitcher } from '@/ui/components';
+import { Card, Chip, EmptyState, IconButton, ScreenHeader, Text, TransactionRow, WalletSwitcher } from '@/ui/components';
 import { fonts, space, TAB_BAR_CLEARANCE, useColors } from '@/ui/theme';
 
 type Direction = 'all' | 'out' | 'in';
@@ -58,7 +58,7 @@ export default function ActivityScreen() {
 
   const header = (
     <View style={{ gap: 14, paddingBottom: 6 }}>
-      <ScreenHeader title="Activity" />
+      <ScreenHeader title="Activity" right={<IconButton icon="add" label="Add transaction" filled onPress={() => router.push('/transaction/new')} />} />
       <WalletSwitcher />
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 48, paddingHorizontal: 16, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line, borderRadius: 16 }}>
