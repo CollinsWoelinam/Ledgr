@@ -18,7 +18,7 @@ Categories, budgets, manual and cash entries, notes like "business", and your se
 
 ## Where it's kept
 
-Everything is stored in a database on your phone, encrypted with SQLCipher. Its key is generated on the phone and held in Android Keystore. Preferences (such as theme and notification switches) are stored separately and contain no financial data.
+Everything is stored in a database on your phone, encrypted with SQLCipher. Its key is generated on the phone and held in Android Keystore. Preferences (such as theme and notification switches) are stored separately and contain no financial data. Ledgr opts out of Android's automatic backup, so none of it is copied to your Google account.
 
 ## What leaves the phone
 

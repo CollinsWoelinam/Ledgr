@@ -5,7 +5,8 @@
 ## [0.2.0] - 2026-10-27
 First release for testers.
 - Signed with Ledgr's own upload key, for phones with 32-bit and 64-bit processors; the build number follows the version.
-- Only the permissions Ledgr uses: storage access and drawing over other apps are removed.
+- Only the permissions Ledgr uses: storage access, drawing over other apps, push messaging and launcher badges are removed.
+- Opts out of Android's automatic backup to Google, so Ledgr's data stays on the phone (versions before 0.2.0 were backed up).
 - Settings › Send feedback, and an install guide for testers (docs/install.md).
 - Fields near the bottom of a page stay above the keyboard.
 - README with screenshots, and feature, architecture, privacy and development guides.
