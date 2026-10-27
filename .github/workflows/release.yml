@@ -1,10 +1,60 @@
 name: Release
+# Pushing a tag like v0.2.0 builds an APK signed with Ledgr's upload key and attaches it to a GitHub Release.
+# Needs four repository secrets: LEDGR_UPLOAD_KEYSTORE_BASE64 (the .keystore file, base64), LEDGR_UPLOAD_STORE_PASSWORD,
+# LEDGR_UPLOAD_KEY_ALIAS, LEDGR_UPLOAD_KEY_PASSWORD. Without them it stops rather than publish a debug-signed build.
 on:
   push:
     tags: ['v*']
+permissions:
+  contents: write
 jobs:
   apk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # TODO: build signed APK (keystore from secrets) and attach to GitHub Release
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: npm }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - run: npm ci
+      - run: npm test
+
+      - name: Upload key
+        env:
+          KEYSTORE: ${{ secrets.LEDGR_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.LEDGR_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.LEDGR_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.LEDGR_UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE" ] || [ -z "$STORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "::error::Upload key secrets are missing; not publishing a debug-signed release." && exit 1
+          fi
+          echo "$KEYSTORE" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+          mkdir -p ~/.gradle
+          {
+            echo "LEDGR_UPLOAD_STORE_FILE=$RUNNER_TEMP/upload.keystore"
+            echo "LEDGR_UPLOAD_STORE_PASSWORD=$STORE_PASSWORD"
+            echo "LEDGR_UPLOAD_KEY_ALIAS=$KEY_ALIAS"
+            echo "LEDGR_UPLOAD_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> ~/.gradle/gradle.properties
+
+      - name: Generate the Android project
+        working-directory: apps/mobile
+        run: npx expo prebuild -p android --no-install
+
+      - name: Build the APK
+        working-directory: apps/mobile/android
+        run: ./gradlew app:assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+
+      - name: Check it's signed with the upload key
+        run: |
+          APK=apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+          APKSIGNER="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
+          "$APKSIGNER" verify --print-certs "$APK" | tee certs.txt
+          if grep -q "CN=Android Debug" certs.txt; then echo "::error::APK is debug-signed" && exit 1; fi
+          mv "$APK" "ledgr-${GITHUB_REF_NAME}.apk"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ledgr-${{ github.ref_name }}.apk
+          generate_release_notes: true

@@ -13,7 +13,7 @@ import { useSettings } from '@/state/settings';
 import { Button, Card, Chip, ListRow, Screen, ScreenHeader, showDialog, Text, ThemeToggle, Toggle } from '@/ui/components';
 import { useColors } from '@/ui/theme';
 
-// FR-6: control. Backup and export are shown but switched off until they exist.
+// FR-6: control. Backup is shown but switched off until it exists.
 export default function SettingsScreen() {
   const c = useColors();
   const { monthStartDay, setMonthStartDay, currency, dataSource, providers, appLock, setAppLock, lockAfterMs, setLockAfterMs, budgetAlerts, setBudgetAlerts, weeklySummary, setWeeklySummary } = useSettings();
@@ -125,7 +125,7 @@ export default function SettingsScreen() {
           }
         />
         {dataSource === 'demo' && <ListRow title="Reset demo data" detail="Restore the original sample transactions" divider onPress={loadDemo} />}
-        <ListRow title="Export CSV or PDF" detail="Coming in v1.1" divider disabled />
+        <ListRow title="Export CSV or PDF" detail="Your transactions, for spreadsheets or records" divider onPress={() => router.push('/export')} />
       </Group>
 
       <Group title="Security">

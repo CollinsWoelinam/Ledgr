@@ -1,6 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+- Balance gaps name a likely cause: an airtime notice with no MoMo receipt, or a round amount plus the wallet's own charges. Ignored gaps can be restored.
+- Budget alerts at 80% and 100% (US-10), also while Ledgr is closed; a weekly summary on Sunday evenings (US-15).
+- Manual entry (US-09): a Cash wallet whose spending re-sorts cash withdrawals instead of adding to them; MoMo entries for movements with no SMS, replaced if the SMS arrives later; edit and delete.
+- Business and personal tags (US-14), with counterparty memory, an Activity filter and an Insights split.
+- Export (US-13): CSV for spreadsheets and a PDF statement, shared through the phone's share menu; never includes SMS text.
+- Confirmations use Ledgr's own bottom sheet instead of the system dialog.
 - Project scaffold from PRD.
 - Parser: template engine with `{amount}`/`{cur}` macros, date parsing, reversal links, field-accuracy gate.
 - Mobile app: all MVP screens on demo data, redesigned (Space Grotesk + Inter, dark-green hero cards, floating tab bar).
