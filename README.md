@@ -1,80 +1,171 @@
+<div align="center">
+
+<img src="docs/assets/logo.svg" width="96" height="96" alt="Ledgr logo: an SMS bubble holding ledger rows">
+
 # Ledgr
 
-Ledgr turns mobile money SMS alerts into an automatic, categorized spending record. It is offline-first, Android-first, and SMS never leaves the device.
+**Your mobile money SMS, turned into a spending record. On your phone, and only there.**
+
+[![CI](https://github.com/CollinsWoelinam/Ledgr/actions/workflows/ci.yml/badge.svg)](https://github.com/CollinsWoelinam/Ledgr/actions/workflows/ci.yml) ![Android](https://img.shields.io/badge/Android-7%2B-0E2A22?logo=android&logoColor=C9F26C) ![Expo SDK 58](https://img.shields.io/badge/Expo-SDK%2058-0E2A22?logo=expo&logoColor=C9F26C) ![React Native 0.88](https://img.shields.io/badge/React%20Native-0.88-0E2A22?logo=react&logoColor=C9F26C) ![TypeScript](https://img.shields.io/badge/TypeScript-6-0E2A22?logo=typescript&logoColor=C9F26C)
+
+[Features](docs/features.md) · [How it works](docs/architecture.md) · [Privacy](docs/privacy-policy.md) · [Development](docs/development.md) · [Changelog](CHANGELOG.md)
+
+</div>
+
+---
+
+Every MTN MoMo and Telecel Cash transaction already arrives as an SMS: the amount, the fee, the e-levy and your new balance. Ledgr reads those messages on the phone, records each one, sorts it into a category and tracks it against your budgets, so you see where your money went without typing anything in. Nothing is uploaded: there's no account and no server, and your SMS never leave the device.
 
 ## What it does
 
-- **Reads MTN MoMo and Telecel Cash SMS** on the phone, including your history on first launch, and records each transaction with its fee, e-levy and balance. Messages from any other sender are never read.
-- **Accounts for every cedi.** Each wallet's reported balances are reconciled; money that moved without an SMS is flagged, with a likely cause where there is one (an airtime top-up notice, or a round amount plus that wallet's usual charges).
-- **Categories** that learn from your corrections, **budgets** per category or overall, and **insights** by month.
-- **Notifications**, posted by the phone itself: a budget reaching 80% and 100%, even while Ledgr is closed, and a weekly summary on Sunday evenings.
-- **Cash and manual entries.** Recorded cash spending re-sorts your cash withdrawals into real categories instead of counting twice.
-- **Business or personal** tags, remembered per counterparty.
-- **Export** to CSV or a PDF statement, through the phone's share menu.
-- **Private by design**: an encrypted database (SQLCipher, key in Android Keystore), app lock, and nothing uploaded.
+<table>
+<tr>
+<td width="50%" valign="top">
+<img src="docs/assets/icons/sms.svg" width="40" height="40" alt=""><br>
+<b>Reads your wallet SMS</b><br>
+Imports your history on first launch, then records new transactions within seconds, with fee, e-levy and balance. Only wallet senders are read; other messages are never touched.
+</td>
+<td width="50%" valign="top">
+<img src="docs/assets/icons/reconcile.svg" width="40" height="40" alt=""><br>
+<b>Accounts for every cedi</b><br>
+Checks each wallet's balances against its transactions and flags money that moved with no SMS, naming a likely cause where it can: an airtime top-up, or a round amount plus your usual charges.
+</td>
+</tr>
+<tr>
+<td valign="top">
+<img src="docs/assets/icons/categories.svg" width="40" height="40" alt=""><br>
+<b>Sorts itself</b><br>
+Twelve categories out of the box. Correct one and choose “apply to all”, and everything from that person or shop follows, now and later.
+</td>
+<td valign="top">
+<img src="docs/assets/icons/budgets.svg" width="40" height="40" alt=""><br>
+<b>Budgets that keep pace</b><br>
+A monthly limit overall or per category, measured against how far through the month you are. The month can start on payday.
+</td>
+</tr>
+<tr>
+<td valign="top">
+<img src="docs/assets/icons/alerts.svg" width="40" height="40" alt=""><br>
+<b>Tells you in time</b><br>
+A notification when a budget reaches 80% and 100%, even while Ledgr is closed, and a weekly summary every Sunday evening.
+</td>
+<td valign="top">
+<img src="docs/assets/icons/insights.svg" width="40" height="40" alt=""><br>
+<b>Shows the pattern</b><br>
+Spending by category, day by day and month by month, your top recipients, and what you paid in fees and e-levy. Per wallet or all together.
+</td>
+</tr>
+<tr>
+<td valign="top">
+<img src="docs/assets/icons/cash.svg" width="40" height="40" alt=""><br>
+<b>Cash, too</b><br>
+Record what you spend in cash. It moves out of “Cash withdrawals” into its real category, so nothing is counted twice.
+</td>
+<td valign="top">
+<img src="docs/assets/icons/manual.svg" width="40" height="40" alt=""><br>
+<b>Fill the gaps yourself</b><br>
+Add a transaction that never got an SMS. If the SMS turns up later, it replaces your entry and keeps your category.
+</td>
+</tr>
+<tr>
+<td valign="top">
+<img src="docs/assets/icons/business.svg" width="40" height="40" alt=""><br>
+<b>Business or personal</b><br>
+Mark transactions, or everyone you trade with, as business, and see the two flows apart.
+</td>
+<td valign="top">
+<img src="docs/assets/icons/export.svg" width="40" height="40" alt=""><br>
+<b>Take it with you</b><br>
+Export any period to CSV for a spreadsheet, or to a PDF statement, through your phone's share menu.
+</td>
+</tr>
+<tr>
+<td valign="top">
+<img src="docs/assets/icons/privacy.svg" width="40" height="40" alt=""><br>
+<b>Private by design</b><br>
+An encrypted database with its key in Android Keystore, fingerprint or PIN lock, and amounts hidden on a secure lock screen.
+</td>
+<td valign="top">
+<img src="docs/assets/icons/offline.svg" width="40" height="40" alt=""><br>
+<b>Works offline</b><br>
+No sign-up, no internet needed, no ads or trackers. Light and dark themes, following your phone until you choose.
+</td>
+</tr>
+</table>
 
-See [the PRD](./MoMo%20Expense%20Tracker%20—%20PRD.md) and [docs/architecture.md](docs/architecture.md).
+See **[the feature guide](docs/features.md)** for how each one behaves.
+
+## Supported wallets
+
+| Wallet | SMS sender | Message formats | Statement code |
+| --- | --- | --- | --- |
+| MTN MoMo | `MobileMoney` | 14, from 1,800+ real messages | `*170#` |
+| Telecel Cash | `T-CASH` | 8 | `*110#` |
+| AT Money | — | Planned | — |
+
+Formats live in versioned JSON templates, so new message wording can be taught without changing the app's code. Messages Ledgr can't read yet go to **Needs review** instead of being dropped.
+
+## How it works
+
+```mermaid
+flowchart LR
+  A[Wallet SMS] --> B["Android: Ledgr's SMS module<br/>wallet senders only"]
+  B --> C[Parser<br/>templates → transaction]
+  C --> D[Categorise · dedupe ·<br/>reconcile balances]
+  D --> E[(Encrypted database<br/>SQLCipher)]
+  E --> F[Screens]
+  E --> G[Budget alerts ·<br/>weekly summary]
+```
+
+Everything in this chart runs on the phone. When a wallet SMS arrives while Ledgr is closed, Android starts it briefly in the background to do the same work. More in **[How it works](docs/architecture.md)**.
+
+## Privacy at a glance
+
+- **SMS stay on the phone.** Ledgr reads only messages from wallet senders; nothing is sent anywhere.
+- **Encrypted at rest.** The database is SQLCipher-encrypted with a random key held in Android Keystore.
+- **You decide what leaves.** The only way data leaves Ledgr is an export you share yourself, and an export never includes SMS text.
+- **One tap to erase.** *Delete all data* removes everything Ledgr stored.
+
+The full **[privacy policy](docs/privacy-policy.md)** explains each permission and why it's needed.
+
+## Status
+
+| | |
+| --- | --- |
+| **Built and verified on a Galaxy A32** | SMS import and live sync · balance reconciliation · categories · budgets and alerts · weekly summary · insights · manual and cash entries · business tags · export · app lock · encrypted database |
+| **Next** | Encrypted backup (US-12), a client-side encrypted file that only your passphrase opens |
+| **Tests** | 143 unit tests, plus 159 anonymised SMS fixtures that every parser change must pass |
+| **Performance** | Cold start to dashboard in 1.0–1.5 s with 1,900+ transactions; first import of 3,300+ SMS in about 10 s |
+
+## Get started
+
+```sh
+npm install
+npm test                 # parser + app tests
+cd apps/mobile
+npx expo start --go      # try it in Expo Go, on demo data
+```
+
+Reading real SMS, encryption and notifications need a development or release build (`npx expo run:android`). The **[development guide](docs/development.md)** covers setup, the parser workflow, release builds and publishing.
 
 ## Repository layout
 
 ```
-apps/mobile/            React Native (Expo dev build) app
-  src/app/              Screens (expo-router): onboarding flow + 5 tabs, transaction detail, review, categories
-  src/features/         Feature logic: sms, categorization, budgets, insights, security, backup, export
-  src/db/               SQLCipher database: migrations, repositories, Keystore-held key
-  src/state/            Zustand stores
-  src/ui/               Theme, shared components, floating tab bar
-  src/demo/             Seeded demo data, including the SMS each transaction came from
-  modules/ledgr-sms/    Kotlin native module: SMS BroadcastReceiver + inbox scan
-  e2e/                  Maestro flows
-packages/parser/        Provider-agnostic SMS parsing engine (pure TS, no RN deps)
-  templates/            Versioned per-provider templates (JSON)
-  fixtures/             Anonymized SMS corpus → expected output (the test suite)
-services/backup-api/    v1.1: encrypted backup backend (Fastify + PostgreSQL)
-docs/                   Architecture, decisions (ADRs), privacy policy
-.github/workflows/      CI (lint, test, typecheck) and release (signed APK)
+apps/mobile/                 The app: React Native (Expo) with TypeScript
+  src/app/                   Screens (expo-router): onboarding, five tabs, review, export…
+  src/features/              Logic by feature: sms, reconcile, budgets, insights, cash, export, notifications…
+  src/db/                    Encrypted database: migrations and repositories
+  modules/ledgr-sms/         Kotlin: inbox reader, live and background SMS receivers
+  plugins/                   Expo config plugins (release signing)
+packages/parser/             The SMS parser: pure TypeScript, no app dependencies
+  templates/                 Message formats per wallet (JSON)
+  fixtures/                  Anonymised SMS with expected results: the parser's test suite
+services/backup-api/         Planned: storage for encrypted backups
+docs/                        Feature guide, architecture, privacy, development, decisions
 ```
 
-## Running it
+---
 
-```sh
-npm install
-npm test               # parser + app unit tests
-npm run typecheck
-npm run lint
-
-cd apps/mobile
-npx expo start --go    # open in Expo Go on an Android device or emulator
-```
-
-The app runs on demo data in Expo Go, where the database is plain SQLite. Encryption (SQLCipher) and reading real SMS need a dev build (`npx expo run:android`).
-
-## Status
-
-| Area | State |
-| --- | --- |
-| Parser | MTN MoMo and Telecel Cash templates built from 3,329 real SMS; 151 anonymized fixtures; balance-chain consistency 99.2% (MTN), 95.6% (Telecel) |
-| Screens | All MVP screens built to the redesign, running on real SMS data or demo data |
-| Categorization, budgets, insights | Logic done and tested |
-| SMS reading (Kotlin) | Done: inbox import (US-01) and live sync on launch, foreground and new SMS (US-02); verified on a Galaxy A32 |
-| Encrypted database | Done: expo-sqlite with SQLCipher, key in Android Keystore; encrypted file header confirmed on device. Expo Go has no SQLCipher |
-| App lock (US-08) | Done: fingerprint with the phone's PIN/pattern as fallback; locks on launch and after 0/1/5 min away; verified on device |
-| Budgets and notifications (US-06, US-10, US-15) | Done: 80%/100% alerts, also while Ledgr is closed (a manifest SMS receiver starts a headless JS sync); weekly summary on Sundays |
-| Manual entry (US-09) | Done: cash wallet, MoMo entries without an SMS (replaced if the SMS turns up), edit and delete |
-| Business tags (US-14) | Done |
-| Export (US-13) | Done: CSV and PDF through the share menu |
-| Encrypted backup (US-12) | Not started (shown as "coming soon") |
-| Performance (release, Galaxy A32) | Cold start to dashboard 1.0–1.5 s with 1,914 transactions; import of 3,329 SMS ≈ 10 s |
-
-## Releasing
-
-Pushing a tag like `v0.2.0` runs `.github/workflows/release.yml`, which builds an APK signed with Ledgr's upload key and attaches it to a GitHub Release. The key is never in the repository: the workflow reads it from four repository secrets (`LEDGR_UPLOAD_KEYSTORE_BASE64`, `LEDGR_UPLOAD_STORE_PASSWORD`, `LEDGR_UPLOAD_KEY_ALIAS`, `LEDGR_UPLOAD_KEY_PASSWORD`) and refuses to publish a debug-signed build. Locally, the same values in `~/.gradle/gradle.properties` (`LEDGR_UPLOAD_STORE_FILE` and the other three) make `npx expo run:android --variant release` use it (see `apps/mobile/plugins/withReleaseSigning.js`).
-
-Keep the keystore and its passwords backed up: updates must be signed with the same key. A phone with a debug-signed Ledgr must uninstall it (losing its local data) before installing a release-signed one.
-
-## Build order
-
-1. `packages/parser` until it passes the accuracy gate (≥ 98% fields correct).
-2. `modules/ledgr-sms` + import pipeline.
-3. Database, categorization, budgets.
-4. UI.
+<div align="center">
+<sub>Built from the <a href="MoMo%20Expense%20Tracker%20—%20PRD.md">product requirements</a> · <a href="CHANGELOG.md">Changelog</a> · <a href="docs/decisions">Decisions</a></sub>
+</div>

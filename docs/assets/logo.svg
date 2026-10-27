@@ -1,0 +1,11 @@
+<!-- The Ledgr app icon with rounded corners, for the README and docs. Source: apps/mobile/assets/brand/icon.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Ledgr">
+  <rect width="1024" height="1024" rx="230" fill="#0E2A22"/>
+  <path fill="#C9F26C" d="M232 352a120 120 0 0 1 120-120h320a120 120 0 0 1 120 120v260a120 120 0 0 1-120 120H372l-140 80z"/>
+  <rect fill="#0E2A22" x="332" y="350" width="196" height="48" rx="24"/>
+  <rect fill="#0E2A22" x="572" y="350" width="120" height="48" rx="24"/>
+  <rect fill="#0E2A22" x="332" y="446" width="136" height="48" rx="24"/>
+  <rect fill="#0E2A22" x="512" y="446" width="180" height="48" rx="24"/>
+  <rect fill="#0E2A22" x="332" y="542" width="226" height="48" rx="24"/>
+  <rect fill="#0E2A22" x="602" y="542" width="90" height="48" rx="24"/>
+</svg>
