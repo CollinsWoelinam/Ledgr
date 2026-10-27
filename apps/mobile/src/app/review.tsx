@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import {KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View} from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { ReviewItem } from '@/db/schema';
 import { walletName } from '@/features/cash/pocket';

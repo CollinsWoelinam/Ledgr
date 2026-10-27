@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import {View} from 'react-native';
+import { View } from 'react-native';
 import { walletName } from '@/features/cash/pocket';
 import { counterpartyKey } from '@/features/categorization/categorize';
 import { formatAmount, formatMoney } from '@/lib/format';

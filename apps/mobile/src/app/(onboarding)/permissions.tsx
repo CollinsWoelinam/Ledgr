@@ -3,7 +3,7 @@ import { bundledConfig } from '@ledgr/parser';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import {PermissionsAndroid, Platform, Pressable, View} from 'react-native';
+import { PermissionsAndroid, Platform, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSettings } from '@/state/settings';
 import { Button, IconButton, showDialog, Text } from '@/ui/components';

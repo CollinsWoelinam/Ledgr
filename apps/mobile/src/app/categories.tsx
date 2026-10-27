@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
-import {Pressable, TextInput, View} from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 import type { Category } from '@/db/schema';
 import { useLedger } from '@/state/ledger';
 import { Button, Card, CategoryIcon, Screen, ScreenHeader, showDialog, Text } from '@/ui/components';

@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { bundledConfig } from '@ledgr/parser';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState, type ReactNode } from 'react';
-import {Pressable, View} from 'react-native';
+import { Pressable, View } from 'react-native';
 import { notificationsAllowed } from '@/features/notifications/notifications';
 import { phoneHasScreenLock } from '@/features/security/appLock';
 import { LOCK_AFTER_OPTIONS } from '@/features/security/lockPolicy';
