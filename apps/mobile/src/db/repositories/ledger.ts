@@ -6,7 +6,7 @@ import { listEvidence } from './evidence';
 import { listDismissedGaps } from './gaps';
 import { listCategories, listRules, upsertCategory, upsertRule } from './categories';
 import { listReviewItems } from './reviewQueue';
-import { listTransactions } from './transactions';
+import { listBusinessCounterparties, listTransactions } from './transactions';
 
 export interface LedgerSnapshot {
   transactions: Transaction[];
@@ -16,6 +16,7 @@ export interface LedgerSnapshot {
   reviewQueue: ReviewItem[];
   dismissedGaps: string[];
   evidence: StoredEvidence[];
+  businessCounterparties: string[]; // counterparty keys whose transactions are business
 }
 
 // First run installs the default categories. System rules are the app's, not the user's, so they're refreshed on
@@ -31,7 +32,7 @@ export async function ensureDefaults(db: SqlDb): Promise<void> {
 }
 
 export async function loadLedger(db: SqlDb): Promise<LedgerSnapshot> {
-  const [transactions, categories, rules, budgets, reviewQueue, dismissedGaps, evidence] = await Promise.all([
+  const [transactions, categories, rules, budgets, reviewQueue, dismissedGaps, evidence, businessCounterparties] = await Promise.all([
     listTransactions(db),
     listCategories(db),
     listRules(db),
@@ -39,14 +40,15 @@ export async function loadLedger(db: SqlDb): Promise<LedgerSnapshot> {
     listReviewItems(db),
     listDismissedGaps(db),
     listEvidence(db),
+    listBusinessCounterparties(db),
   ]);
-  return { transactions, categories, rules, budgets, reviewQueue, dismissedGaps, evidence };
+  return { transactions, categories, rules, budgets, reviewQueue, dismissedGaps, evidence, businessCounterparties };
 }
 
 // FR-6.3: everything the user has, gone, then defaults back so the app still works.
 export async function wipeLedger(db: SqlDb): Promise<void> {
   await db.transaction(async () => {
-    for (const table of ['transactions', 'budgets', 'category_rules', 'review_queue', 'categories', 'parser_templates', 'sync_state', 'dismissed_gaps', 'evidence']) {
+    for (const table of ['transactions', 'budgets', 'category_rules', 'review_queue', 'categories', 'parser_templates', 'sync_state', 'dismissed_gaps', 'evidence', 'business_counterparties']) {
       await db.run(`DELETE FROM ${table}`);
     }
   });

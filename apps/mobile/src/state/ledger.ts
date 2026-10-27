@@ -19,6 +19,7 @@ import { DEFAULT_CATEGORIES, SYSTEM_RULES } from '@/features/categorization/defa
 export interface ManualEntry {
   provider: string; // a wallet id, or 'cash'
   direction: 'in' | 'out';
+  business?: boolean;
   amountMinor: number;
   feeMinor: number;
   name: string;
@@ -38,6 +39,7 @@ export interface LedgerState {
   reviewQueue: ReviewItem[];
   dismissedGaps: string[];
   evidence: StoredEvidence[];
+  businessCounterparties: string[];
   ready: boolean;
   encrypted: boolean;
   attach: (db: SqlDb, encrypted: boolean) => Promise<void>;
@@ -49,6 +51,7 @@ export interface LedgerState {
   recordGap: (gap: BalanceGap, details?: { name?: string; categoryId?: string; at?: number; type?: TransactionType; feeMinor?: number }) => void;
   clearReview: () => void;
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
+  setBusiness: (transactionId: string, business: boolean, applyToCounterparty: boolean) => number;
   setBudget: (categoryId: string | null, amountMinor: number | null) => void;
   addCategory: (category: Omit<Category, 'id' | 'isDefault'>) => void;
   updateCategory: (id: string, patch: Partial<Pick<Category, 'name' | 'color' | 'icon'>>) => void;
@@ -67,7 +70,7 @@ const DEMO_BUDGETS: Budget[] = [
   { categoryId: 'shopping', amountMinor: 50000 },
 ];
 
-const empty = { transactions: [], categories: DEFAULT_CATEGORIES, rules: SYSTEM_RULES, budgets: [], reviewQueue: [], dismissedGaps: [] as string[], evidence: [] as StoredEvidence[] };
+const empty = { transactions: [], categories: DEFAULT_CATEGORIES, rules: SYSTEM_RULES, budgets: [], reviewQueue: [], dismissedGaps: [] as string[], evidence: [] as StoredEvidence[], businessCounterparties: [] as string[] };
 
 let db: SqlDb | null = null;
 let writes: Promise<void> = Promise.resolve();
@@ -124,12 +127,14 @@ export const useLedger = create<LedgerState>()((set, get) => ({
     const known = new Set(transactions.map((t) => t.id));
     // A rule or default can name a category the user has since deleted; those land in Other.
     const present = new Set(categories.map((c) => c.id));
+    const business = new Set(get().businessCounterparties);
     const fresh: Transaction[] = [];
     for (const t of incoming) {
       if (known.has(t.id)) continue;
       known.add(t.id);
       const categoryId = categorize(t, rules);
-      fresh.push({ ...t, categoryId: present.has(categoryId) ? categoryId : 'other' });
+      const key = counterpartyKey(t);
+      fresh.push({ ...t, categoryId: present.has(categoryId) ? categoryId : 'other', ...(key && business.has(key) ? { business: true as const } : {}) });
     }
     // A wallet SMS for something you'd already recorded by hand replaces your entry, keeping your category.
     const superseded = new Set<string>();
@@ -141,6 +146,7 @@ export const useLedger = create<LedgerState>()((set, get) => ({
       if (!mine) continue;
       superseded.add(mine.id);
       f.categoryId = mine.categoryId;
+      if (mine.business) f.business = true;
     }
     const knownReview = new Set(reviewQueue.map((r) => r.id));
     const knownRefs = new Set([...transactions, ...fresh].map((t) => t.externalRef).filter((r): r is string => !!r));
@@ -256,6 +262,30 @@ export const useLedger = create<LedgerState>()((set, get) => ({
     return changed.length;
   },
 
+  // US-14: business or personal. With applyToCounterparty, everything from them (and anything later) follows.
+  setBusiness: (transactionId, business, applyToCounterparty) => {
+    const { transactions, businessCounterparties } = get();
+    const target = transactions.find((t) => t.id === transactionId);
+    const key = target && counterpartyKey(target);
+    if (!target) return 0;
+    const affected = new Set(applyToCounterparty && key ? transactions.filter((t) => counterpartyKey(t) === key).map((t) => t.id) : [transactionId]);
+    const mark = (t: Transaction): Transaction => {
+      if (!affected.has(t.id) || !!t.business === business) return t;
+      const { business: _old, ...rest } = t;
+      return business ? { ...rest, business: true } : rest;
+    };
+    const changed = transactions.filter((t) => affected.has(t.id) && !!t.business !== business).map((t) => t.id);
+    set({
+      transactions: transactions.map(mark),
+      ...(applyToCounterparty && key ? { businessCounterparties: business ? [...new Set([...businessCounterparties, key])] : businessCounterparties.filter((k) => k !== key) } : {}),
+    });
+    persist(async (d) => {
+      if (applyToCounterparty && key) await transactionsRepo.setBusinessCounterparty(d, key, business);
+      await transactionsRepo.setBusiness(d, changed, business);
+    });
+    return changed.length;
+  },
+
   setBudget: (categoryId, amountMinor) => {
     const others = get().budgets.filter((b) => b.categoryId !== categoryId);
     set({ budgets: amountMinor && amountMinor > 0 ? [...others, { categoryId, amountMinor }] : others });
@@ -313,6 +343,7 @@ export const useLedger = create<LedgerState>()((set, get) => ({
       occurredAt: entry.occurredAt,
       categoryId: entry.categoryId,
       source: 'manual',
+      ...(entry.business ? { business: true as const } : {}),
     };
     const others = get().transactions.filter((t) => t.id !== tx.id);
     set({ transactions: [tx, ...others].sort((a, b) => b.occurredAt - a.occurredAt) });

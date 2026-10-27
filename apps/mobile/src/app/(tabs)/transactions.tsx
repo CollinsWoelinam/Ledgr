@@ -31,6 +31,8 @@ export default function ActivityScreen() {
   const { transactions } = useWalletTransactions();
   const [query, setQuery] = useState('');
   const [direction, setDirection] = useState<Direction>('all');
+  const [businessOnly, setBusinessOnly] = useState(false);
+  const hasBusiness = useMemo(() => transactions.some((t) => t.business), [transactions]);
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [showCategories, setShowCategories] = useState(false);
 
@@ -42,6 +44,7 @@ export default function ActivityScreen() {
     const groups = new Map<string, DaySection>();
     for (const t of transactions) {
       if (direction !== 'all' && t.direction !== direction) continue;
+      if (businessOnly && hasBusiness && !t.business) continue;
       if (categoryId && t.categoryId !== categoryId) continue;
       if (q && !(t.counterpartyName?.toLowerCase().includes(q) || t.counterpartyNumber?.includes(q) || t.externalRef?.includes(q))) continue;
       const key = new Date(t.occurredAt).toDateString();
@@ -52,7 +55,7 @@ export default function ActivityScreen() {
       groups.set(key, section);
     }
     return [...groups.values()];
-  }, [transactions, query, direction, categoryId]);
+  }, [transactions, query, direction, categoryId, businessOnly, hasBusiness]);
 
   const selectedCategory = categories.find((cat) => cat.id === categoryId);
 
@@ -79,12 +82,15 @@ export default function ActivityScreen() {
         )}
       </View>
 
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }} style={{ marginHorizontal: -space.xl }}>
+        <View style={{ width: space.xl - 8 }} />
         <Chip label="All" selected={direction === 'all'} onPress={() => setDirection('all')} />
         <Chip label="Money out" selected={direction === 'out'} onPress={() => setDirection('out')} />
         <Chip label="Money in" selected={direction === 'in'} onPress={() => setDirection('in')} />
+        {hasBusiness && <Chip label="Business" selected={businessOnly} onPress={() => setBusinessOnly(!businessOnly)} />}
         <Chip label={selectedCategory?.name ?? 'Category'} dot={selectedCategory?.color} selected={showCategories || !!categoryId} onPress={() => setShowCategories(!showCategories)} />
-      </View>
+        <View style={{ width: space.xl - 8 }} />
+      </ScrollView>
       {showCategories && (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }} style={{ marginHorizontal: -space.xl }}>
           <View style={{ width: space.xl - 8 }} />

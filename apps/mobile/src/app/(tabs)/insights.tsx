@@ -28,6 +28,11 @@ export default function InsightsScreen() {
   const byCategory = useMemo(() => spendByCategory(transactions, period), [transactions, period]);
   const daily = useMemo(() => dailySpend(transactions, period), [transactions, period]);
   const top = useMemo(() => topCounterparties(transactions, period, 3), [transactions, period]);
+  // US-14: shown once anything is marked business, so traders see the two flows apart.
+  const split = useMemo(() => {
+    if (!transactions.some((t) => t.business)) return null;
+    return { business: summarize(transactions.filter((t) => t.business), period), personal: summarize(transactions.filter((t) => !t.business), period) };
+  }, [transactions, period]);
   const summary = useMemo(() => summarize(transactions, period), [transactions, period]);
 
   const total = byCategory.reduce((s, x) => s + x.amountMinor, 0);
@@ -182,6 +187,27 @@ export default function InsightsScreen() {
               </Text>
             </View>
           </Card>
+
+          {split && (
+            <Card style={{ borderRadius: 24, paddingVertical: 8, paddingHorizontal: 18 }}>
+              <Text variant="heading" style={{ paddingVertical: 8 }}>
+                Business and personal
+              </Text>
+              {(['business', 'personal'] as const).map((kind) => (
+                <View key={kind} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderTopWidth: 1, borderColor: c.divider }}>
+                  <Text size={14}>{kind === 'business' ? 'Business' : 'Personal'}</Text>
+                  <Text numeric size={14}>
+                    <Text numeric weight="semibold" size={14}>
+                      −{formatAmount(split[kind].outMinor)}
+                    </Text>
+                    <Text numeric size={14} color={c.positive}>
+                      {'  '}+{formatAmount(split[kind].inMinor)}
+                    </Text>
+                  </Text>
+                </View>
+              ))}
+            </Card>
+          )}
         </>
       )}
     </Screen>

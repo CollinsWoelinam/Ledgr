@@ -9,7 +9,7 @@ import { amountIn, reviewHint } from '@/features/sms/reviewHint';
 import { formatAmount, parseMoneyInput } from '@/lib/format';
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
-import { Button, Card, Chip, Screen, ScreenHeader, Text } from '@/ui/components';
+import { Button, Card, Chip, Screen, ScreenHeader, Text, Toggle } from '@/ui/components';
 import { fonts, useColors } from '@/ui/theme';
 
 const DAY = 86_400_000;
@@ -24,6 +24,7 @@ interface Draft {
   name: string;
   categoryId: string;
   at: number;
+  business: boolean;
 }
 
 // US-09: record a transaction yourself: cash, or a wallet movement that never got an SMS. Also edits one you made
@@ -53,7 +54,7 @@ export default function ManualEntryScreen() {
   const switchDirection = (direction: 'in' | 'out') => set({ direction, categoryId: direction === 'out' ? (draft.categoryId === 'income' ? 'other' : draft.categoryId) : 'income' });
   const save = () => {
     if (!ready) return;
-    saveManual({ provider: draft.provider, direction: draft.direction, amountMinor: amountMinor!, feeMinor: showFee ? feeMinor! : 0, name: draft.name, categoryId: draft.categoryId, occurredAt: draft.at }, editing?.id);
+    saveManual({ provider: draft.provider, direction: draft.direction, business: draft.business, amountMinor: amountMinor!, feeMinor: showFee ? feeMinor! : 0, name: draft.name, categoryId: draft.categoryId, occurredAt: draft.at }, editing?.id);
     if (item) dismissReview(item.id);
     router.back();
   };
@@ -136,6 +137,18 @@ export default function ManualEntryScreen() {
         </View>
       </Field>
 
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text variant="label" size={14}>
+            Business
+          </Text>
+          <Text variant="caption" muted>
+            Keeps business money apart from personal
+          </Text>
+        </View>
+        <Toggle value={draft.business} onChange={(business) => set({ business })} label="Business transaction" />
+      </View>
+
       <Field label="When">
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <DayButton icon="chevron-back" label="Day before" onPress={() => set({ at: draft.at - DAY })} />
@@ -166,15 +179,16 @@ function initialDraft(editing: Transaction | undefined, item: ReviewItem | undef
       name: editing.counterpartyName ?? '',
       categoryId: editing.categoryId,
       at: editing.occurredAt,
+      business: !!editing.business,
     };
   }
   if (item) {
     const hint = reviewHint(item.sender, item.body);
     const direction = IN_KINDS.has(hint.kind) ? 'in' : 'out';
     const provider = bundledConfig.providers.find((p) => p.senderIds.some((id) => id.toLowerCase() === item.sender.toLowerCase()))?.id ?? CASH_WALLET.id;
-    return { direction, provider, amount: amountIn(item.body)?.replace(/^GHS\s?/, '') ?? '', fee: '', name: hint.kind, categoryId: direction === 'in' ? 'income' : 'other', at: item.receivedAt };
+    return { direction, provider, amount: amountIn(item.body)?.replace(/^GHS\s?/, '') ?? '', fee: '', name: hint.kind, categoryId: direction === 'in' ? 'income' : 'other', at: item.receivedAt, business: false };
   }
-  return { direction: 'out', provider: CASH_WALLET.id, amount: '', fee: '', name: '', categoryId: 'food', at: Date.now() };
+  return { direction: 'out', provider: CASH_WALLET.id, amount: '', fee: '', name: '', categoryId: 'food', at: Date.now(), business: false };
 }
 
 function Field({ label, children }: { label: string; children: ReactNode }) {

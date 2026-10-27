@@ -27,6 +27,7 @@ export default function TransactionDetailScreen() {
   const tx = useLedger((s) => s.transactions.find((t) => t.id === id));
   const categories = useLedger((s) => s.categories);
   const setCategory = useLedger((s) => s.setCategory);
+  const setBusiness = useLedger((s) => s.setBusiness);
   const deleteTransaction = useLedger((s) => s.deleteTransaction);
   const category = useCategory(tx?.categoryId);
   const key = tx && counterpartyKey(tx);
@@ -166,6 +167,17 @@ export default function TransactionDetailScreen() {
             <Chip key={cat.id} label={cat.name} dot={cat.color} selected={cat.id === tx.categoryId} onPress={() => pick(cat.id)} />
           ))}
         </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 12, borderTopWidth: 1, borderColor: c.divider }}>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text variant="label" size={14}>
+              Business
+            </Text>
+            <Text variant="caption" muted>
+              Keeps business money apart from personal
+            </Text>
+          </View>
+          <Toggle value={!!tx.business} onChange={(on) => setBusiness(tx.id, on, canApplyAll && applyAll)} label="Business transaction" />
+        </View>
         {canApplyAll && (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 12, borderTopWidth: 1, borderColor: c.divider }}>
             <View style={{ flex: 1, gap: 2 }}>
@@ -176,7 +188,7 @@ export default function TransactionDetailScreen() {
                 {others > 0 ? `${others} other transaction${others > 1 ? 's' : ''}, and future ones` : 'Future transactions too'}
               </Text>
             </View>
-            <Toggle value={applyAll} onChange={setApplyAll} label={`Apply category changes to all transactions from ${name}`} />
+            <Toggle value={applyAll} onChange={setApplyAll} label={`Apply changes to all transactions from ${name}`} />
           </View>
         )}
       </Card>

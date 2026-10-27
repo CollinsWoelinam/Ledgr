@@ -126,6 +126,13 @@ export const MIGRATIONS: Migration[] = [
   );
   CREATE INDEX idx_evidence_at ON evidence(provider, at);
   `,
+
+  // v5: business or personal (US-14). Unmarked is personal. Counterparties listed here are business for
+  // their future transactions too.
+  `
+  ALTER TABLE transactions ADD COLUMN business INTEGER NOT NULL DEFAULT 0;
+  CREATE TABLE business_counterparties (counterparty_key TEXT PRIMARY KEY);
+  `,
 ];
 
 // `target` exists for tests that need a database at an older version.

@@ -7,6 +7,7 @@ export interface Transaction extends Omit<ParsedTransaction, 'templateVersion'> 
   categoryId: string;
   source: 'sms' | 'manual' | 'demo';
   smsBody?: string; // kept on-device only, for the detail screen
+  business?: true; // marked as business money (US-14); otherwise personal
 }
 
 export interface Category {

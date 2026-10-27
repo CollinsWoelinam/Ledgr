@@ -34,7 +34,7 @@ export function TransactionRow({ tx, divider }: { tx: Transaction; divider?: boo
           {titleCase(tx.counterpartyName ?? 'Unknown')}
         </Text>
         <Text variant="caption" muted numberOfLines={1}>
-          {category?.name} · {formatTime(tx.occurredAt)}
+          {category?.name}{tx.business ? ' · Business' : ''} · {formatTime(tx.occurredAt)}
         </Text>
       </View>
       <Text numeric weight="semibold" size={15} color={incoming ? c.positive : c.ink}>

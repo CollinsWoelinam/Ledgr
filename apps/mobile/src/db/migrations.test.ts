@@ -54,3 +54,12 @@ test('a fresh install gets all twelve categories exactly once', async () => {
   await ensureDefaults(db);
   expect((await loadLedger(db)).categories.map((c) => c.id)).toEqual(DEFAULT_CATEGORIES.map((c) => c.id));
 });
+
+test('upgrading to v5 keeps every transaction, all personal', async () => {
+  const db = await v1Install();
+  await migrate(db);
+  const { transactions, businessCounterparties } = await loadLedger(db);
+  expect(transactions).toHaveLength(5);
+  expect(transactions.some((t) => t.business)).toBe(false);
+  expect(businessCounterparties).toEqual([]);
+});
