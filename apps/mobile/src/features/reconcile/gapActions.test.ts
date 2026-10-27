@@ -70,3 +70,13 @@ test('recording a guessed cash-out splits out the charges, still closing the gap
   expect(stored.transactions.find((t) => t.source === 'manual')).toMatchObject({ type: 'cash_out', amountMinor: 1200, feeMinor: 12, categoryId: 'cash' });
   expect(findBalanceGaps(stored.transactions)).toEqual([]);
 });
+
+test('an ignored gap can be restored, also after a restart', async () => {
+  const db = await ledgerWithGap();
+  const [gap] = findBalanceGaps(useLedger.getState().transactions);
+  useLedger.getState().ignoreGap(gap!.key);
+  useLedger.getState().restoreGap(gap!.key);
+  await flushLedgerWrites();
+  expect(useLedger.getState().dismissedGaps).toEqual([]);
+  expect((await loadLedger(db)).dismissedGaps).toEqual([]);
+});

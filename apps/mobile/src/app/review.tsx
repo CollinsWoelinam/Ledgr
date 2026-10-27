@@ -8,7 +8,7 @@ import type { BalanceGap } from '@/features/reconcile/balanceGaps';
 import { causeNoun, ratePercent, recordDefaults } from '@/features/reconcile/likelyCause';
 import { reviewHint } from '@/features/sms/reviewHint';
 import { formatDateTime, formatMoney } from '@/lib/format';
-import { useBalanceGaps } from '@/state/hooks';
+import { useGaps } from '@/state/hooks';
 import { useLedger } from '@/state/ledger';
 import { Button, Card, Chip, EmptyState, Screen, ScreenHeader, showDialog, Text } from '@/ui/components';
 import { fonts, useColors } from '@/ui/theme';
@@ -16,9 +16,10 @@ import { fonts, useColors } from '@/ui/theme';
 // Two kinds of things to review: balance changes no SMS explains (so every cedi is accounted for), and wallet
 // messages Ledgr couldn't read (FR-2.5). Cards lead with what matters; an SMS stays collapsed until asked for.
 export default function ReviewQueueScreen() {
-  const { reviewQueue, dismissReview, clearReview, ignoreGap, recordGap } = useLedger();
-  const gaps = useBalanceGaps();
+  const { reviewQueue, dismissReview, clearReview, ignoreGap, restoreGap, recordGap } = useLedger();
+  const { open: gaps, ignored } = useGaps();
   const [recording, setRecording] = useState<BalanceGap | null>(null);
+  const [showIgnored, setShowIgnored] = useState(false);
 
   const clearAll = () =>
     showDialog(`Clear all ${reviewQueue.length}?`, 'Their message text will be deleted from Ledgr. Your SMS inbox is not touched.', [
@@ -30,7 +31,7 @@ export default function ReviewQueueScreen() {
     <Screen>
       <ScreenHeader title="Needs review" back right={reviewQueue.length > 1 ? <Button title={gaps.length ? 'Clear messages' : 'Clear all'} kind="dashed" small onPress={clearAll} /> : undefined} />
       {reviewQueue.length === 0 && gaps.length === 0 ? (
-        <EmptyState icon="checkmark-done-outline" title="All caught up" body="Every message was read and every balance adds up." />
+        <EmptyState icon="checkmark-done-outline" title="All caught up" body={ignored.length ? 'Every message was read, and every balance change is explained or ignored.' : 'Every message was read and every balance adds up.'} />
       ) : null}
 
       {gaps.length > 0 && (
@@ -56,6 +57,31 @@ export default function ReviewQueueScreen() {
             <ReviewCard key={item.id} item={item} onClear={() => dismissReview(item.id)} />
           ))}
         </>
+      )}
+
+      {ignored.length > 0 && (
+        <View style={{ gap: 10, marginTop: 8 }}>
+          <Pressable accessibilityRole="button" accessibilityState={{ expanded: showIgnored }} onPress={() => setShowIgnored(!showIgnored)} hitSlop={8}>
+            <Text variant="label" size={14} muted>
+              {ignored.length} ignored balance change{ignored.length === 1 ? '' : 's'} · {showIgnored ? 'Hide' : 'Show'}
+            </Text>
+          </Pressable>
+          {showIgnored &&
+            ignored.map((g) => (
+              <Card key={g.key} style={{ borderRadius: 18, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text variant="label" weight="semibold">
+                    {g.amountMinor < 0 ? '−' : '+'}
+                    {formatMoney(Math.abs(g.amountMinor), 'GHS')} · {walletName(g.provider)}
+                  </Text>
+                  <Text variant="caption" muted>
+                    {formatDateTime(g.from)} to {formatDateTime(g.to)}
+                  </Text>
+                </View>
+                <Button title="Restore" kind="dashed" small onPress={() => restoreGap(g.key)} />
+              </Card>
+            ))}
+        </View>
       )}
 
       {recording && (

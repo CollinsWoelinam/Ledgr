@@ -44,12 +44,18 @@ export function useWalletTransactions(): { transactions: Transaction[]; wallet: 
 
 // Unexplained balance changes the user hasn't ignored or recorded, newest first.
 export function useBalanceGaps(): BalanceGap[] {
+  return useGaps().open;
+}
+
+// Both lists: the ones to review, and the ones the user ignored (which can be restored).
+export function useGaps(): { open: BalanceGap[]; ignored: BalanceGap[] } {
   const transactions = useLedger((s) => s.transactions);
   const dismissed = useLedger((s) => s.dismissedGaps);
   const evidence = useLedger((s) => s.evidence);
   return useMemo(() => {
     const ignored = new Set(dismissed);
-    return findBalanceGaps(transactions, evidence).filter((g) => !ignored.has(g.key));
+    const all = findBalanceGaps(transactions, evidence);
+    return { open: all.filter((g) => !ignored.has(g.key)), ignored: all.filter((g) => ignored.has(g.key)) };
   }, [transactions, evidence, dismissed]);
 }
 

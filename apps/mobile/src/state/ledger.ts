@@ -45,6 +45,7 @@ export interface LedgerState {
   ingest: (incoming: Incoming[], review: ReviewItem[], evidence?: StoredEvidence[]) => { added: number; reviewAdded: number };
   recheckReview: () => void;
   ignoreGap: (key: string) => void;
+  restoreGap: (key: string) => void;
   recordGap: (gap: BalanceGap, details?: { name?: string; categoryId?: string; at?: number; type?: TransactionType; feeMinor?: number }) => void;
   clearReview: () => void;
   setCategory: (transactionId: string, categoryId: string, applyToCounterparty: boolean) => number;
@@ -182,6 +183,11 @@ export const useLedger = create<LedgerState>()((set, get) => ({
     if (get().dismissedGaps.includes(key)) return;
     set({ dismissedGaps: [...get().dismissedGaps, key] });
     persist((d) => gapsRepo.dismissGap(d, key));
+  },
+
+  restoreGap: (key) => {
+    set({ dismissedGaps: get().dismissedGaps.filter((k) => k !== key) });
+    persist((d) => gapsRepo.restoreGap(d, key));
   },
 
   // Records the change as a transaction inside the gap (no balance of its own, so it closes the gap), named and

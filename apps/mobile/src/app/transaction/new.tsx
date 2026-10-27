@@ -40,7 +40,8 @@ export default function ManualEntryScreen() {
 
   const out = draft.direction === 'out';
   const wallets = [CASH_WALLET.id, ...providers.filter((p) => p !== CASH_WALLET.id), ...(editing && !providers.includes(editing.provider) && editing.provider !== CASH_WALLET.id ? [editing.provider] : [])];
-  const choices = out ? categories.filter((cat) => cat.kind === 'expense') : [...categories].sort((a, b) => (a.kind === 'income' ? -1 : 0) - (b.kind === 'income' ? -1 : 0));
+  // Spending your cash is never a cash withdrawal: that's where the cash came from.
+  const choices = out ? categories.filter((cat) => cat.kind === 'expense' && !(draft.provider === CASH_WALLET.id && cat.id === 'cash')) : [...categories].sort((a, b) => (a.kind === 'income' ? -1 : 0) - (b.kind === 'income' ? -1 : 0));
   const amountMinor = parseMoneyInput(draft.amount);
   const feeMinor = draft.fee.trim() ? parseMoneyInput(draft.fee) : 0;
   const showFee = out && draft.provider !== CASH_WALLET.id;
@@ -98,7 +99,7 @@ export default function ManualEntryScreen() {
       <Field label="Wallet">
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {wallets.map((w) => (
-            <Chip key={w} label={walletName(w)} selected={draft.provider === w} onPress={() => set({ provider: w })} />
+            <Chip key={w} label={walletName(w)} selected={draft.provider === w} onPress={() => set({ provider: w, ...(w === CASH_WALLET.id && draft.categoryId === 'cash' ? { categoryId: 'other' } : {}) })} />
           ))}
         </View>
         <Text variant="caption" muted style={{ lineHeight: 18 }}>
