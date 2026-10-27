@@ -3,7 +3,7 @@ import { bundledConfig } from '@ledgr/parser';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState, type ReactNode } from 'react';
 import {Pressable, View} from 'react-native';
-import { notificationsAllowed } from '@/features/budgets/notifications';
+import { notificationsAllowed } from '@/features/notifications/notifications';
 import { phoneHasScreenLock } from '@/features/security/appLock';
 import { LOCK_AFTER_OPTIONS } from '@/features/security/lockPolicy';
 import { confirmWithLock } from '@/features/security/useAppLock';
@@ -16,18 +16,18 @@ import { useColors } from '@/ui/theme';
 // FR-6: control. Backup and export are shown but switched off until they exist.
 export default function SettingsScreen() {
   const c = useColors();
-  const { monthStartDay, setMonthStartDay, currency, dataSource, providers, appLock, setAppLock, lockAfterMs, setLockAfterMs, budgetAlerts, setBudgetAlerts } = useSettings();
+  const { monthStartDay, setMonthStartDay, currency, dataSource, providers, appLock, setAppLock, lockAfterMs, setLockAfterMs, budgetAlerts, setBudgetAlerts, weeklySummary, setWeeklySummary } = useSettings();
   // Notification permission can be changed in Android settings at any time, so it's re-checked on each visit.
   const [notificationsOn, setNotificationsOn] = useState(true);
   useFocusEffect(useCallback(() => void notificationsAllowed(false).then(setNotificationsOn), []));
-  const toggleAlerts = async (on: boolean) => {
+  const toggleNotice = (setter: (on: boolean) => void) => async (on: boolean) => {
     if (on && !(await notificationsAllowed(true))) {
-      showDialog('Notifications are off for Ledgr', 'To get budget alerts, allow notifications in Android Settings › Apps › Ledgr › Notifications.');
+      showDialog('Notifications are off for Ledgr', 'To get budget alerts and the weekly summary, allow notifications in Android Settings › Apps › Ledgr › Notifications.');
       setNotificationsOn(false);
       return;
     }
     setNotificationsOn(true);
-    setBudgetAlerts(on);
+    setter(on);
   };
 
   // Turning the lock on needs a phone screen lock and one successful unlock; turning it off needs an unlock too,
@@ -89,7 +89,13 @@ export default function SettingsScreen() {
           title="Budget alerts"
           detail={budgetAlerts && !notificationsOn ? 'Notifications are off for Ledgr in Android settings' : 'When a budget reaches 80% and 100%'}
           divider
-          right={<Toggle value={budgetAlerts && notificationsOn} onChange={toggleAlerts} label="Budget alerts" />}
+          right={<Toggle value={budgetAlerts && notificationsOn} onChange={toggleNotice(setBudgetAlerts)} label="Budget alerts" />}
+        />
+        <ListRow
+          title="Weekly summary"
+          detail={weeklySummary && !notificationsOn ? 'Notifications are off for Ledgr in Android settings' : 'Sundays at 7 pm: your week’s spending'}
+          divider
+          right={<Toggle value={weeklySummary && notificationsOn} onChange={toggleNotice(setWeeklySummary)} label="Weekly summary" />}
         />
         <ListRow title="Wallets" value={wallets} divider />
         <ListRow title="Currency" value={currency} divider />

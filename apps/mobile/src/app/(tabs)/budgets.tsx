@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Category } from '@/db/schema';
-import { notificationsAllowed } from '@/features/budgets/notifications';
+import { notificationsAllowed } from '@/features/notifications/notifications';
 import { daysLeft, elapsedRatio, paceStatus, type PaceStatus } from '@/features/budgets/pace';
 import { budgetProgress, type BudgetProgress } from '@/features/budgets/progress';
 import { formatAmount, formatMoney, parseMoneyInput } from '@/lib/format';

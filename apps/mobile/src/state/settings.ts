@@ -19,6 +19,7 @@ export interface SettingsState {
   lockAfterMs: number; // how long the app may be in the background before it locks again
   budgetAlerts: boolean; // notify at 80% and 100% of a budget
   alertedBudgets: string[]; // thresholds already announced this budget month (see features/budgets/alerts)
+  weeklySummary: boolean; // a summary notification on Sunday evenings
   setProviders: (providers: string[]) => void;
   completeOnboarding: (source: 'demo' | 'sms') => void;
   setMonthStartDay: (day: number) => void;
@@ -30,6 +31,7 @@ export interface SettingsState {
   setLockAfterMs: (ms: number) => void;
   setBudgetAlerts: (on: boolean) => void;
   setAlertedBudgets: (keys: string[]) => void;
+  setWeeklySummary: (on: boolean) => void;
   reset: () => void;
 }
 
@@ -47,6 +49,7 @@ const initial = {
   lockAfterMs: 0,
   budgetAlerts: true,
   alertedBudgets: [] as string[],
+  weeklySummary: true,
 } satisfies Partial<SettingsState>;
 
 export const useSettings = create<SettingsState>()(
@@ -64,6 +67,7 @@ export const useSettings = create<SettingsState>()(
       setLockAfterMs: (lockAfterMs) => set({ lockAfterMs }),
       setBudgetAlerts: (budgetAlerts) => set({ budgetAlerts }),
       setAlertedBudgets: (alertedBudgets) => set({ alertedBudgets }),
+      setWeeklySummary: (weeklySummary) => set({ weeklySummary }),
       reset: () => set(initial),
     }),
     {

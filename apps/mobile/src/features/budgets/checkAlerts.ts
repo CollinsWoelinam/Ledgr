@@ -1,7 +1,7 @@
 import { useLedger } from '@/state/ledger';
 import { useSettings } from '@/state/settings';
 import { alertMessage, crossedKeys, dueAlerts, keysForPeriod } from './alerts';
-import { notificationsAllowed, notify } from './notifications';
+import { notificationsAllowed, notify } from '@/features/notifications/notifications';
 import { daysLeft } from './pace';
 import { periodContaining } from './period';
 import { budgetProgress } from './progress';
