@@ -8,6 +8,7 @@ First release for testers.
 - Only the permissions Ledgr uses: storage access, drawing over other apps, push messaging and launcher badges are removed.
 - Opts out of Android's automatic backup to Google, so Ledgr's data stays on the phone (versions before 0.2.0 were backed up).
 - Settings › Send feedback, and an install guide for testers (docs/install.md).
+- Settings › Wallets: add or remove a wallet at any time; adding one reads its messages already on the phone. AT Money is shown as coming soon.
 - Fields near the bottom of a page stay above the keyboard.
 - README with screenshots, and feature, architecture, privacy and development guides.
 - Balance gaps name a likely cause: an airtime notice with no MoMo receipt, or a round amount plus the wallet's own charges. Ignored gaps can be restored.

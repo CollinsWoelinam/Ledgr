@@ -103,7 +103,7 @@ export default function SettingsScreen() {
           divider
           right={<Toggle value={weeklySummary && notificationsOn} onChange={toggleNotice(setWeeklySummary)} label="Weekly summary" />}
         />
-        <ListRow title="Wallets" value={wallets} divider />
+        <ListRow title="Wallets" value={wallets} divider onPress={() => router.push('/wallets')} />
         <ListRow title="Currency" value={currency} divider />
       </Group>
 

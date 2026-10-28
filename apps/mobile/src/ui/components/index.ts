@@ -17,4 +17,5 @@ export { Text } from './Text';
 export { ThemeToggle } from './ThemeToggle';
 export { Toggle } from './Toggle';
 export { TransactionRow, titleCase } from './TransactionRow';
+export { WalletPicker, walletSupported } from './WalletPicker';
 export { WalletSwitcher } from './WalletSwitcher';

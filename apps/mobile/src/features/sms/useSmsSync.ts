@@ -36,5 +36,5 @@ export function useSmsSync(): void {
       app.remove();
       arrived.remove();
     };
-  }, [ready, source]);
+  }, [ready, source, providers]);
 }

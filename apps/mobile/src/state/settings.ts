@@ -56,7 +56,9 @@ export const useSettings = create<SettingsState>()(
   persist(
     (set) => ({
       ...initial,
-      setProviders: (providers) => set({ providers }),
+      // A newly added wallet's older messages are behind the saved position, so adding one re-reads the inbox once
+      // (already-recorded transactions are skipped).
+      setProviders: (providers) => set((s) => ({ providers, parsedWith: providers.some((p) => !s.providers.includes(p)) ? null : s.parsedWith })),
       completeOnboarding: (dataSource) => set({ onboarded: true, dataSource }),
       setMonthStartDay: (monthStartDay) => set({ monthStartDay: Math.min(28, Math.max(1, monthStartDay)) }),
       setSmsCursor: (smsCursor) => set({ smsCursor }),
